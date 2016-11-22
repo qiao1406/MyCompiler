@@ -1,0 +1,200 @@
+const int ad=0,bd=+1,cd=-2,dd=+3;
+const float af=0.,bf=-1.0,cf=10,df=-100.00;
+
+const float ed=--4,fd=-+5,gd=+-6,hd=++7;
+
+const char ac='A',bc='Z',cc='a',dc='z';
+
+const int MAXN=10;
+
+const float PI=3.14159,E=2.71828;
+
+int t0,t[10];
+float f0,f[10];
+
+char c0,c[10];
+
+void starttest(){
+
+	printf("Test start!");
+
+	return;
+
+}
+
+void endtest(){
+
+	printf("Test end!");
+
+	return;
+
+}
+
+void print(){
+
+	printf("positive integer:");
+
+	printf(bd);
+
+	printf(cd);
+
+	printf(dd);
+
+	printf("zero:",ad);
+
+	printf("negative integer:");
+
+	printf(ed);
+
+	printf(fd);
+
+	printf(gd);
+
+	printf(hd);
+
+	
+
+	printf("floating number:");
+
+	printf(af);
+
+	printf(bf);
+
+	printf(cf);
+
+	printf(df);
+
+
+	printf("characters:");
+
+	printf(ac);
+
+	printf(bc);
+
+	printf(cc);
+	printf(dc);
+	
+
+	return;
+
+}
+int mod(int x,int y){
+
+	int a;
+
+	a=x-x/y*y;
+
+	return(a);
+
+}
+
+char toupper(char a){
+
+	if(a>='a')if(a<='z')return(a-32);
+}
+
+
+char tolower(char a){
+
+	if(a>='A')if(a<='Z')return(a+32);
+}
+
+float reciprocal_e(){
+
+	return(1/e);
+
+}
+
+void circumference(float r){
+
+	printf(2*Pi*r);
+
+}
+
+int fib(int n){
+
+	int res;
+
+	if(n<=0)res=0;
+
+	else if(n<=2)res=1;
+
+	else res=fib(n-1)+fib(n-2);
+
+	return(res);
+
+}
+
+
+void main(){
+
+	int i;
+
+	float r;
+
+	char ch;
+
+	starttest();
+
+	i=0;
+
+	while(i<MAXN){
+
+		t[i]=fib(i);
+
+		i=i+1;
+
+	}
+
+	scanf(ch);
+
+	while(ch!='!'){
+
+		switch(ch){
+
+			case 'f':{
+
+				scanf(i);
+
+				if(i<10)printf(t[i]);
+								else{
+
+					i=mod(i,10);
+
+					printf(t[i]);
+
+				}
+
+			}
+
+			case 'e':{
+
+				printf(reciprocal_e());
+
+			}
+
+			case 'c':{
+
+				scanf(r);
+
+				circumference(r);
+
+			}
+
+			case 'l':printf(toupper(ch));
+
+			case 'U':printf(tolower(ch));
+	
+		}
+
+		scanf(ch);
+
+	}
+
+	print();
+
+	endtest();
+
+	return;
+
+}  

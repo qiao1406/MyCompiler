@@ -1,0 +1,13 @@
+const float pi = 3.14; 
+const int a = 5,b=6; 
+int c[2], res, d[3]; 
+float f1, _root; 
+char ch;
+
+int add_two_nums ( int a1, int a2 ) { 
+	return (a1+a2);
+}
+
+void main() {
+	printf("xx");
+}
