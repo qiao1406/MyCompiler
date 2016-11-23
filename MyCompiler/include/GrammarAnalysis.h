@@ -10,9 +10,10 @@ class GrammarAnalysis
         static void ga_programme();
 
     private:
-        static Word nextword ();
-        static void lastword ();
+        static Word nextword();
+        static void lastword();
         static void prt_grammar_info ( string name);
+        static void err_report ( int index );
 
         static void ga_constant();
         static void ga_constdef();

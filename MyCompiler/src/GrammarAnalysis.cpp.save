@@ -3,6 +3,7 @@
 //分别表示在词法分析缓存里的行列坐标值，用于定位
 int GrammarAnalysis::row_index = 0;
 int GrammarAnalysis::col_index = 0;
+int GrammarAnalysis::now_line = 0;1
 
 //当期指针指向的词法分析缓存的位置的词语
 Word GrammarAnalysis::nowword;
@@ -64,8 +65,8 @@ void GrammarAnalysis::prt_grammar_info ( string name ) {
 
 void GrammarAnalysis::err_report ( int index ) {
     //报错
-    ErrorProcess::add_err(nowword.loc,index);
-}
+    ErrorProcess::add_err(,index);
+} 
 
 void GrammarAnalysis::ga_programme () {
     /*

@@ -8,12 +8,13 @@ class GrammarAnalysis
 {
     public:
         static void ga_programme();
-        
+
     private:
-        static Word nextword ();
-        void Word lastword ();
+        static Word nextword();
+        static void lastword();
         static void prt_grammar_info ( string name);
-        
+        static void err_report ( int index );
+
         static void ga_constant();
         static void ga_constdef();
         static void ga_variable();
@@ -38,7 +39,7 @@ class GrammarAnalysis
         static void ga_expression();
         static void ga_item();
         static void ga_factor();
-        
+
         static int row_index;
         static int col_index;
         static Word nowword;
