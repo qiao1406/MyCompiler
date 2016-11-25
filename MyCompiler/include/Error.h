@@ -21,7 +21,7 @@ class Error
         int location;
         error_type errinfo;
 
-        static error errtyp_list[ERROR_NUM];
+        static error_type errtyp_list[ERROR_NUM];
 
         void prt_err();
 };

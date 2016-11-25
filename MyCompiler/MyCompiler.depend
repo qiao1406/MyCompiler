@@ -1,15 +1,15 @@
 # depslib dependency file v1.0
-1479823661 source:e:\git\mycompiler\mycompiler\main.cpp
+1480001707 source:e:\git\mycompiler\mycompiler\main.cpp
 	<iostream>
 	"Word.h"
 	"WordAnalysis.h"
 	"Identifier.h"
 	"GrammarAnalysis.h"
 
-1479821234 e:\git\mycompiler\mycompiler\include\word.h
+1480001306 e:\git\mycompiler\mycompiler\include\word.h
 	<string>
 
-1479821228 e:\git\mycompiler\mycompiler\include\wordanalysis.h
+1479921470 e:\git\mycompiler\mycompiler\include\wordanalysis.h
 	<iostream>
 	<fstream>
 	<string>
@@ -20,19 +20,39 @@
 1479821241 e:\git\mycompiler\mycompiler\include\identifier.h
 	<string>
 
-1479822201 e:\git\mycompiler\mycompiler\include\grammaranalysis.h
+1479921471 e:\git\mycompiler\mycompiler\include\grammaranalysis.h
 	"Word.h"
 	"WordAnalysis.h"
 
-1479823643 source:e:\git\mycompiler\mycompiler\src\grammaranalysis.cpp
+1480001278 source:e:\git\mycompiler\mycompiler\src\grammaranalysis.cpp
 	"GrammarAnalysis.h"
+	"ErrorProcess.h"
 
 1479821244 source:e:\git\mycompiler\mycompiler\src\identifier.cpp
 	"Identifier.h"
 
-1479821168 source:e:\git\mycompiler\mycompiler\src\word.cpp
+1479921463 source:e:\git\mycompiler\mycompiler\src\word.cpp
 	"Word.h"
 
-1479821263 source:e:\git\mycompiler\mycompiler\src\wordanalysis.cpp
+1480002283 source:e:\git\mycompiler\mycompiler\src\wordanalysis.cpp
 	"WordAnalysis.h"
+
+1479909533 source:e:\git\mycompiler\mycompiler\src\codegenerate.cpp
+	"CodeGenerate.h"
+
+1479909533 e:\git\mycompiler\mycompiler\include\codegenerate.h
+
+1480001226 source:e:\git\mycompiler\mycompiler\src\error.cpp
+	"Error.h"
+
+1480001094 e:\git\mycompiler\mycompiler\include\error.h
+	<iostream>
+	<string>
+
+1479921477 source:e:\git\mycompiler\mycompiler\src\errorprocess.cpp
+	"ErrorProcess.h"
+
+1479921474 e:\git\mycompiler\mycompiler\include\errorprocess.h
+	<queue>
+	"Error.h"
 

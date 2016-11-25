@@ -10,7 +10,6 @@ class Word {
         Word ( string value, string type );
         Word ( string value, string type, int loc );
         Word();
-        virtual ~Word();
         string value; //词的值
         string type; //词的类型
         int loc; // 词所在行值

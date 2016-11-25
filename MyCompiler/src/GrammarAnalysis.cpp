@@ -1,4 +1,5 @@
 #include "GrammarAnalysis.h"
+#include "ErrorProcess.h"
 
 //分别表示在词法分析缓存里的行列坐标值，用于定位
 int GrammarAnalysis::row_index = 0;
