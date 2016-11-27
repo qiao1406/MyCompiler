@@ -11,8 +11,7 @@ struct error_type {
     string prompt_info;
 };
 
-class Error
-{
+class Error {
     public:
         Error ( int line, int index);
         const static int ERROR_NUM = 40;

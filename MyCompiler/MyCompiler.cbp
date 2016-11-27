@@ -38,7 +38,8 @@
 		<Unit filename="include/Error.h" />
 		<Unit filename="include/ErrorProcess.h" />
 		<Unit filename="include/GrammarAnalysis.h" />
-		<Unit filename="include/IdentTable.h" />
+		<Unit filename="include/Runtime.h" />
+		<Unit filename="include/Table.h" />
 		<Unit filename="include/Word.h" />
 		<Unit filename="include/WordAnalysis.h" />
 		<Unit filename="main.cpp" />
@@ -46,7 +47,8 @@
 		<Unit filename="src/Error.cpp" />
 		<Unit filename="src/ErrorProcess.cpp" />
 		<Unit filename="src/GrammarAnalysis.cpp" />
-		<Unit filename="src/IdentTable.cpp" />
+		<Unit filename="src/Runtime.cpp" />
+		<Unit filename="src/Table.cpp" />
 		<Unit filename="src/Word.cpp" />
 		<Unit filename="src/WordAnalysis.cpp" />
 		<Extensions>

@@ -3,6 +3,7 @@
 
 #include "Word.h"
 #include "WordAnalysis.h"
+#include "Table.h"
 
 class GrammarAnalysis
 {
@@ -34,7 +35,7 @@ class GrammarAnalysis
         static void ga_return_stmt();
         static void ga_case_stmt();
         static void ga_subcase_stmt();
-        static void ga_argulist();
+        static void ga_argulist ( string func_name );
         static void ga_condition();
         static void ga_expression();
         static void ga_item();
