@@ -3,10 +3,19 @@
 
 #include <stack>
 
+enum data_type {
+    
+};
+
+struct run_stack{
+    
+};
+
 class Runtime {
     public:
     private:
-        static stack<int> runtime_stack;//ÔËĞĞÕ»
+        static stack<int> runtime_stack;//è¿è¡Œæ ˆ
+        
 };
 
 #endif // RUNTIME_H

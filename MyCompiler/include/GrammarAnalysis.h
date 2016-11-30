@@ -13,6 +13,7 @@ class GrammarAnalysis
     private:
         static Word nextword();
         static void lastword();
+        static void renew_pointer();
         static void prt_grammar_info ( string name);
         static void err_report ( int index );
 
@@ -43,6 +44,7 @@ class GrammarAnalysis
 
         static int row_index;
         static int col_index;
+        static int pointer;
         static Word nowword;
 
 };

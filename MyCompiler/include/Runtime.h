@@ -3,10 +3,24 @@
 
 #include <stack>
 
+enum data_type {
+    RS_INT,
+    RS_FLOAT,
+    RS_CHAR
+};
+
+struct run_stack{
+    data_type type;
+    int value;
+};
+
 class Runtime {
     public:
+        int get_top_value();
+        data_type get_top_type();
     private:
-        static stack<int> runtime_stack;//ÔËĞĞÕ»
+        static stack<int> runtime_stack;//è¿è¡Œæ ˆ
+
 };
 
 #endif // RUNTIME_H

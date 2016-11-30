@@ -1,1 +1,5 @@
 #include "Runtime.h"
+
+int Runtime::get_top_value() {
+    retur
+}

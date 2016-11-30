@@ -37,6 +37,30 @@ bool Table::is_funcrcd ( id_rcd r ) {
     /*
         判断符号表的某条记录是否为函数名记录
     */
+    return r.type == INT_ARRAY || r.type == CHAR_ARRAY
+                || r.type == FLOAT_ARRAY;
+}
+
+bool Table::is_varrcd ( id_rcd r ) {
+    /*
+        判断符号表的某条记录是否为变量名记录
+    */
+    return r.type == INT_VAR || r.type == CHAR_VAR
+                || r.type == FLOAT_VAR;
+}
+
+bool Table::is_constrcd ( id_rcd r ) {
+    /*
+        判断符号表的某条记录是否为常量名记录
+    */
+    return r.type == INT_CONST || r.type == CHAR_CONST
+                || r.type == FLOAT_CONST;
+}
+
+bool Table::is_arrayrcd ( id_rcd r ) {
+    /*
+        判断符号表的某条记录是否为数组名记录
+    */
     return r.type == INT_FUNCTION || r.type == CHAR_FUNCTION
             || r.type == FLOAT_FUNCTION || r.type == VOID_FUNCTION;
 }
@@ -93,6 +117,83 @@ void Table::set_lastid () {
         更新当前函数表中的last项
     */
     func_table[func_table.size()-1].last = id_table.size();
+}
+
+void Table::add_floatrcd ( float fl ) {
+    /*
+        增加一项实常量记录
+    */
+    rconst_table.push_back(fl);
+}
+
+int Table::get_idtable_size() {
+    return id_table.size();
+}
+
+int Table::get_rctable_size() {
+    return rconst_table.size();
+}
+
+int Table::find_ident ( int p, string name ) {
+    /*
+        根据标识符的名字和开始查找的位置来查找
+        若找到则返回其下标值，否则返回-1
+    */
+
+    if ( p < 0 || p >= id_table.size() || !is_funcrcd(id_table[p]) ) {
+        //排除掉越界的情况和p没有指向函数的情况
+        return -1;
+    }
+
+     // 把标识符改成小写形式
+    transform(name.begin(),name.end(),name.begin(),::tolower);
+
+    //先在函数内部找
+    int i = p+1;
+    for ( ; i <= func_table[id_table[p].ref].last; i++ ) {
+        if ( id_table[i].name == name ){
+            return i;
+        }
+    }
+
+    //若没有找到则在全局找
+    if ( i > func_table[id_table[p].ref].last ) {
+        for ( i = 0; i < id_table.size(); i++ ) {
+            if ( id_table[i].lev == 1 && id_table[i].name == name ) {
+                return i;
+            }
+        }
+    }
+
+    //还是没有找到，则返回-1
+    if ( i >= id_table.size() ) {
+        return -1;
+    }
+}
+
+id_rcd Table::get_idrcd ( int index ) {
+    /*
+        返回对应合法下标的符号表记录
+    */
+
+    if ( index < id_table.size() && index >= 0 ) {
+        return id_table[index];
+    }
+    else {
+        return {};
+    }
+}
+
+int Table::get_array_size ( id_rcd r ) {
+    /*
+        返回数组的大小，即元素个数
+    */
+    if ( !is_arrayrcd(r) ) { //不是数组的话返回0
+        return 0;
+    }
+    else {
+        return array_table[r.ref].size;
+    }
 }
 
 void Table::add_arrayrcd ( element_type type, int elsize, int size ) {
@@ -220,7 +321,7 @@ void Table::add_idrcd ( string name, id_type type, float float_value ) {
 
     //填实常量表和标识符表
     int adr = rconst_table.size();
-    rconst_table.push_back(float_value);
+    add_floatrcd(float_value);
     id_table.push_back({name,type,-1,lev,adr});
 
 }

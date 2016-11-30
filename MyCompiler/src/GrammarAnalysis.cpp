@@ -1,11 +1,17 @@
 #include "GrammarAnalysis.h"
 #include "ErrorProcess.h"
+#include "Runtime.h"
 
 #include<sstream>
 
 //分别表示在词法分析缓存里的行列坐标值，用于定位
 int GrammarAnalysis::row_index = 0;
 int GrammarAnalysis::col_index = 0;
+
+//表示当前分析的时候所在的函数块位置，值表示该函数名在
+//符号表中的位置，-1表示不在任何函数块内，而是在全局中
+//所以该指针初始化为-1
+int GrammarAnalysis::pointer = -1;
 
 //当期指针指向的词法分析缓存的位置的词语
 Word GrammarAnalysis::nowword;
@@ -65,6 +71,13 @@ void GrammarAnalysis::lastword () {
 
         col_index--;
     }
+}
+
+void GrammarAnalysis::renew_pointer() {
+    /*
+        更新指向当前函数位置的指针
+    */
+    pointer = Table::get_idtable_size();
 }
 
 void GrammarAnalysis::prt_grammar_info ( string name ) {
@@ -189,7 +202,7 @@ void GrammarAnalysis::ga_constdef () {
         while ( true ) {
             nowword = nextword();
             if ( nowword.type == "IDENT") {
-                string name = nowword; //记录标识符的名字
+                string name = nowword.value; //记录标识符的名字
                 nowword = nextword();
                 if ( nowword.type != "EQUAL" ) {
                     //报错
@@ -202,14 +215,14 @@ void GrammarAnalysis::ga_constdef () {
                 //填符号表
                 if ( data_typ == "int" ) {
                     //把string转成数字
-                    Table::add_idrcd(name,str2num<int>(nowword),INT_CONST);
+                    Table::add_idrcd(name,str2num<int>(nowword.value),INT_CONST);
                 }
                 else if ( data_type == "char" ) {
-                    int ascii_code = nowword[0];
+                    int ascii_code = nowword.value[0];
                     Table::add_idrcd(name,ascii_code,CHAR_CONST);
                 }
                 else {
-                    Table::add_idrcd(name,str2num<float>(nowword),FLOAT_CONST);
+                    Table::add_idrcd(name,str2num<float>(nowword.value),FLOAT_CONST);
                 }
 
             }
@@ -292,10 +305,10 @@ void GrammarAnalysis::ga_vardef () {
         出口有预读
     */
     if ( nowword.is_vartype() ) {
-        string data_type = nowword;//记录数据类型
+        string data_type = nowword.value;//记录数据类型
         while ( true ) {
             nowword = nextword();
-            string name = nowword;//记录标识符名字
+            string name = nowword.value;//记录标识符名字
             if ( nowword.type != "IDENT" ) {
                 //baocuo
             }
@@ -356,6 +369,7 @@ void GrammarAnalysis::ga_returnfun () {
         id_type t = (rtn_type == "int")?INT_FUNCTION:
                         (rtn_type=="char")?CHAR_FUNCTION:FLOAT_FUNCTION;
         Table::add_idrcd(name,t);
+        renew_pointer();
     }
 
     nowword = nextword();
@@ -407,6 +421,7 @@ void GrammarAnalysis::ga_voidfun () {
     }
     else { //填符号表
         Table::add_idrcd(name,VOID_FUNCTION);
+        renew_pointer();
     }
 
     nowword = nextword();
@@ -457,6 +472,7 @@ void GrammarAnalysis::ga_mainfun () {
     }
     else { //填符号表
         Table::add_idrcd("main",VOID_FUNCTION);
+        renew_pointer();
     }
 
     nowword = nextword();
@@ -1043,35 +1059,108 @@ void GrammarAnalysis::ga_factor() {
         出口有预读
     */
     if ( nowword.type == "INTEGER" || nowword.type == "CHARACTER"
-        || nowword.type == "FLOAT" ) {
-            nowword = nextword();
-            return;
-    }
-    else if ( nowword.type == "IDENT" ) {
-        nowword = nextword();
+        || nowword.type == "FLOAT" ) { //未定义的常量
 
+        int a;
+        int t;
+        if ( nowword.type == "INTEGER") {
+            a = str2num<int>(nowword.value);
+            t = 0;
+        }
+        else if ( nowword.type == "FLOAT" ) {
+            a = Table::get_rctable_size();
+            //把该实数的值加入实常量表
+            Table::add_floatrcd(str2num<float>(nowword.value));
+            t = 2;
+        }
+        else {
+            a = nowword.value[0];
+            t = 1;
+        }
+        Table::emit(LOI,t,a);
+        nowword = nextword();
+        return;
+    }
+    else if ( nowword.type == "IDENT" ) { //变量、常量或函数调用
+
+        string id = nowword.value;//记录标识符的名字
+        int loc = Table::find_ident(pointer,id);
+        id_rcd r;
+        if ( loc == -1 ) { //没找到该标识符
+            //baocuo
+        }
+        else {
+            //从符号表中提取出该标识符的记录
+            r = Table::get_idrcd(loc);
+        }
+
+        nowword = nextword();
         if ( nowword.value == "[" ) { // 有可能是数组
+
+            //先判断该标识符是不是数组
+            if ( !Table::is_arrayrcd(r) ) {
+                //baocuo
+            }
+            int arr_size = Table::get_array_size(r);
+            int index;
+            if ( arr_size <= 0 ) { //元素个数应该是正数
+                //baocuo
+            }
+
             nowword = nextword();
-            ga_expression();
+            ga_expression(); // 识别表示数组下标的表达式
+            //得到运行栈栈顶的类型,进行判断
+            if ( Runtime.get_top_type() != RS_INT ) {
+            //baocuo
+            }
+            else {
+                index = Runtime::get_top_value();//数组下标
+                if ( index < 0 || index >= arr_size ) { //数组下标越界
+                    //报错
+                }
+            }
+
             if ( nowword.value != "]" ) {
                 //baocuo
             }
+            else { //生成指令
+                int l = ( r.type == INT_ARRAY )? 0:( r.type == CHAR_ARRAY )? 1:2;
+                Table::emit(LOD,l,r.adr+index);
+            }
             nowword = nextword();
-            return;//数组
+            return;
+
         }
+
         else if ( nowword.value == "(" ) { // 可能是有返回值的函数调用语句
             ga_retfuncall_stmt();
             return;
         }
-        else {
-            //cout << "mimi";
-            return;//标识符
+
+        else if ( Table::is_constrcd(r) ) { //常量
+            int l = ( r.type == INT_CONST )? 0:( r.type == CHAR_CONST )? 1:2;
+            Table::emit(LIT,l,r.adr);
+            return;
         }
+
+        else if ( Table::is_varrcd(r) ) { //普通变量
+            int l = ( r.type == INT_VAR )? 0:( r.type == CHAR_VAR )? 1:2;
+            Table::emit(LOD,l,r.adr);
+            return;
+        }
+        else {
+            //未知标识符报错
+        }
+
+
 
     }
     else if ( nowword.type == "(" ) { //可能是表达式
         nowword = nextword();
         ga_expression();
+
+
+
         if( nowword.type != ")") {
             //baocuo
         }

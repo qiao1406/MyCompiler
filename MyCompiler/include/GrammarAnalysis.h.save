@@ -43,6 +43,7 @@ class GrammarAnalysis
 
         static int row_index;
         static int col_index;
+        static int pointer
         static Word nowword;
 
 };
