@@ -20,9 +20,10 @@
 1479821241 e:\git\mycompiler\mycompiler\include\identifier.h
 	<string>
 
-1479921471 e:\git\mycompiler\mycompiler\include\grammaranalysis.h
+1480682942 e:\git\mycompiler\mycompiler\include\grammaranalysis.h
 	"Word.h"
 	"WordAnalysis.h"
+	"Table.h"
 
 1480001278 source:e:\git\mycompiler\mycompiler\src\grammaranalysis.cpp
 	"GrammarAnalysis.h"
@@ -45,7 +46,7 @@
 1480001226 source:e:\git\mycompiler\mycompiler\src\error.cpp
 	"Error.h"
 
-1480001094 e:\git\mycompiler\mycompiler\include\error.h
+1480217506 e:\git\mycompiler\mycompiler\include\error.h
 	<iostream>
 	<string>
 
@@ -55,4 +56,9 @@
 1479921474 e:\git\mycompiler\mycompiler\include\errorprocess.h
 	<queue>
 	"Error.h"
+
+1480683446 e:\git\mycompiler\mycompiler\include\table.h
+	<queue>
+	<vector>
+	<string>
 

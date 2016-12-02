@@ -4,6 +4,7 @@
 #include "Word.h"
 #include "WordAnalysis.h"
 #include "Table.h"
+#include "Runtime.h"
 
 class GrammarAnalysis
 {
@@ -16,6 +17,7 @@ class GrammarAnalysis
         static void renew_pointer();
         static void prt_grammar_info ( string name);
         static void err_report ( int index );
+        static bool is_sametype ( id_type t1, data_type t2 );
 
         static void ga_constant();
         static void ga_constdef();
@@ -30,10 +32,10 @@ class GrammarAnalysis
         static void ga_cycle_stmt();
         static void ga_retfuncall_stmt();
         static void ga_voidfuncall_stmt();
-        static void ga_assign_stmt();
+        static void ga_assign_stmt ( string id_name );
         static void ga_read_stmt();
         static void ga_write_stmt();
-        static void ga_return_stmt();
+        static void ga_return_stmt ( string func_name );
         static void ga_case_stmt();
         static void ga_subcase_stmt();
         static void ga_argulist ( string func_name );

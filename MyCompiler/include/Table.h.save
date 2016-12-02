@@ -1,7 +1,6 @@
 #ifndef IDENTTABLE_H
 #define IDENTTABLE_H
 
-#include <queue>
 #include <vector>
 #include <string>
 
@@ -29,10 +28,12 @@ enum element_type { INT, CHAR, FLOAT };
 enum op_code {
     ADD,
     DIV,
+    JSR,
     LIT,
     LOD,
     LOI,
     MUL,
+    STI,
     STO,
     SUB
 };
@@ -49,7 +50,7 @@ struct id_rcd {
             其他情况下为-1
         lev 表示该标识符所在位置的层次，全局为0，函数内为1
         adr 对于变量名，应该填入该变量在运行栈S中分配存储单元的
-            相对地址；对于函数名，填入它相应目标代码的入口地址；
+            相对地址；对于函数名，填入它相应目标代码的入口地址（Pcode位置）；
             对于int和char常量名，填入他们对应的整数值或者是ASCII值；
             对于float常量名，填入它在rconst_table中登录的位置
      */
@@ -96,13 +97,16 @@ class Table {
         static bool is_funcrcd ( id_rcd r );
         static bool is_arrayrcd ( id_rcd r );
         static bool is_varrcd ( id_rcd r );
-        static bool is_constrcd ( id_rcd r )
+        static bool is_constrcd ( id_rcd r );
         static id_rcd get_idrcd ( int index );
+        static array_rcd get_arrayrcd ( int index );
         static int get_idtable_size();
         static int get_rctable_size();
+        static int get_pctable_size();
         static int get_array_size( id_rcd r );
         static void add_floatrcd ( float fl );
         static void set_lastpar ( string func_name );
+        static int get_lastpar ( id_rcd r );
         static void set_lastid();
         static id_type get_func_type ( string func_name );
         static void emit ( op_code f );
@@ -117,7 +121,7 @@ class Table {
         static vector<func_rcd> func_table;//函数信息表
         static vector<float> rconst_table;//实常量表
         static vector<string> str_table;//字符串常量表
-        static queue<pcode> pcode_table;//PCode码表
+        static vector<pcode> pcode_table;//PCode码表
 
         static bool is_id_repeat ( string name, int lev );
         static void add_arrayrcd ( element_type eltype, int elsize, int size);

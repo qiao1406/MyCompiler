@@ -67,7 +67,7 @@ bool Table::is_arrayrcd ( id_rcd r ) {
 
 id_type Table::get_func_type ( string func_name ) {
     /*
-        在符号表中寻找名为func_name的函数，返回其返回值
+        在符号表中寻找名为func_name的函数，返回其返回值类型
         若它不是函数或者没有找到则返回ERROR
     */
     //查找前先把标识符改成小写的
@@ -112,6 +112,20 @@ void Table::set_lastpar ( string func_name ) {
     func_table[ref].lastpar = id_table.size()-1;
 }
 
+int Table::get_lastpar ( id_rcd r ) {
+    /*
+        求得某个函数的最后一个参数在符号表中的下标值
+        如果这个函数没参数则该值是该函数在符号表中的下标值
+    */
+    if ( is_funcrcd(r) ) {
+        return func_table[r.ref].lastpar;
+    }
+    else {
+        //baocuo
+    }
+
+}
+
 void Table::set_lastid () {
     /*
         更新当前函数表中的last项
@@ -132,6 +146,10 @@ int Table::get_idtable_size() {
 
 int Table::get_rctable_size() {
     return rconst_table.size();
+}
+
+int Table::get_pctable_size() {
+    return pcode_table.size();
 }
 
 int Table::find_ident ( int p, string name ) {
@@ -178,6 +196,19 @@ id_rcd Table::get_idrcd ( int index ) {
 
     if ( index < id_table.size() && index >= 0 ) {
         return id_table[index];
+    }
+    else {
+        return {};
+    }
+}
+
+array_rcd Table::get_idrcd ( int index ) {
+    /*
+        返回对应合法下标的符号表记录
+    */
+
+    if ( index < array_table.size() && index >= 0 ) {
+        return array_table[index];
     }
     else {
         return {};
@@ -383,19 +414,19 @@ void Table::emit ( op_code f ) {
     /*
         往PCode表中增加一条指令
     */
-    pcode_table.push({f,0,0});
+    pcode_table.push_back({f,0,0});
 }
 
 void Table::emit ( op_code f, int l ) {
     /*
         往PCode表中增加一条指令
     */
-    pcode_table.push({f,l,0});
+    pcode_table.push_back({f,l,0});
 }
 
 void Table::emit ( op_code f, int l, int a ) {
     /*
         往PCode表中增加一条指令
     */
-    pcode_table.push({f,l,a});
+    pcode_table.push_back({f,l,a});
 }

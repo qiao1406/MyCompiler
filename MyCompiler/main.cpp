@@ -1,13 +1,11 @@
 #include <iostream>
 #include "Word.h"
 #include "WordAnalysis.h"
-#include "Identifier.h"
 #include "GrammarAnalysis.h"
 
 using namespace std;
 
-int main()
-{
+int main() {
     //WordAnalysis::prt_analysis_res("test.txt");
     ofstream out;
     out.open("result.txt");

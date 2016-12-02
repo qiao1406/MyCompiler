@@ -8,7 +8,7 @@
 	</File>
 	<File name="include\GrammarAnalysis.h" open="1" top="0" tabpos="4" split="0" active="1" splitpos="0" zoom_1="3" zoom_2="0">
 		<Cursor>
-			<Cursor1 position="318" topLine="18" />
+			<Cursor1 position="1053" topLine="26" />
 		</Cursor>
 	</File>
 	<File name="include\Word.h" open="1" top="0" tabpos="12" split="0" active="1" splitpos="0" zoom_1="0" zoom_2="0">
@@ -18,25 +18,37 @@
 	</File>
 	<File name="src\Table.cpp" open="1" top="0" tabpos="1" split="0" active="1" splitpos="0" zoom_1="3" zoom_2="0">
 		<Cursor>
-			<Cursor1 position="1470" topLine="21" />
+			<Cursor1 position="5071" topLine="22" />
 		</Cursor>
 		<Folding>
 			<Collapse line="8" />
+			<Collapse line="35" />
+			<Collapse line="43" />
+			<Collapse line="51" />
+			<Collapse line="59" />
 			<Collapse line="67" />
 			<Collapse line="92" />
 			<Collapse line="114" />
-			<Collapse line="121" />
-			<Collapse line="128" />
-			<Collapse line="132" />
-			<Collapse line="136" />
-			<Collapse line="173" />
-			<Collapse line="294" />
-			<Collapse line="328" />
+			<Collapse line="142" />
+			<Collapse line="146" />
+			<Collapse line="150" />
+			<Collapse line="154" />
+			<Collapse line="191" />
+			<Collapse line="204" />
+			<Collapse line="217" />
+			<Collapse line="229" />
+			<Collapse line="236" />
+			<Collapse line="293" />
+			<Collapse line="325" />
+			<Collapse line="359" />
+			<Collapse line="412" />
+			<Collapse line="419" />
+			<Collapse line="426" />
 		</Folding>
 	</File>
 	<File name="src\WordAnalysis.cpp" open="1" top="0" tabpos="5" split="0" active="1" splitpos="0" zoom_1="0" zoom_2="0">
 		<Cursor>
-			<Cursor1 position="2737" topLine="0" />
+			<Cursor1 position="2737" topLine="42" />
 		</Cursor>
 		<Folding>
 			<Collapse line="7" />
@@ -44,12 +56,12 @@
 	</File>
 	<File name="include\Error.h" open="1" top="0" tabpos="7" split="0" active="1" splitpos="0" zoom_1="3" zoom_2="0">
 		<Cursor>
-			<Cursor1 position="379" topLine="8" />
+			<Cursor1 position="379" topLine="4" />
 		</Cursor>
 	</File>
-	<File name="main.cpp" open="0" top="0" tabpos="1" split="0" active="1" splitpos="0" zoom_1="0" zoom_2="0">
+	<File name="main.cpp" open="1" top="0" tabpos="13" split="0" active="1" splitpos="0" zoom_1="0" zoom_2="0">
 		<Cursor>
-			<Cursor1 position="169" topLine="0" />
+			<Cursor1 position="67" topLine="0" />
 		</Cursor>
 	</File>
 	<File name="include\WordAnalysis.h" open="0" top="0" tabpos="4" split="0" active="1" splitpos="0" zoom_1="0" zoom_2="0">
@@ -57,36 +69,40 @@
 			<Cursor1 position="811" topLine="8" />
 		</Cursor>
 	</File>
-	<File name="src\GrammarAnalysis.cpp" open="1" top="0" tabpos="3" split="0" active="1" splitpos="0" zoom_1="2" zoom_2="0">
+	<File name="src\GrammarAnalysis.cpp" open="1" top="1" tabpos="3" split="0" active="1" splitpos="0" zoom_1="2" zoom_2="0">
 		<Cursor>
-			<Cursor1 position="27342" topLine="166" />
+			<Cursor1 position="25108" topLine="187" />
 		</Cursor>
 		<Folding>
-			<Collapse line="20" />
-			<Collapse line="27" />
-			<Collapse line="94" />
-			<Collapse line="170" />
-			<Collapse line="246" />
-			<Collapse line="300" />
-			<Collapse line="353" />
-			<Collapse line="409" />
-			<Collapse line="461" />
-			<Collapse line="501" />
-			<Collapse line="550" />
-			<Collapse line="579" />
-			<Collapse line="715" />
-			<Collapse line="745" />
-			<Collapse line="765" />
-			<Collapse line="794" />
-			<Collapse line="821" />
-			<Collapse line="856" />
-			<Collapse line="886" />
-			<Collapse line="915" />
-			<Collapse line="936" />
-			<Collapse line="980" />
-			<Collapse line="1000" />
-			<Collapse line="1016" />
-			<Collapse line="1037" />
+			<Collapse line="19" />
+			<Collapse line="26" />
+			<Collapse line="50" />
+			<Collapse line="74" />
+			<Collapse line="81" />
+			<Collapse line="88" />
+			<Collapse line="93" />
+			<Collapse line="188" />
+			<Collapse line="207" />
+			<Collapse line="264" />
+			<Collapse line="318" />
+			<Collapse line="371" />
+			<Collapse line="427" />
+			<Collapse line="479" />
+			<Collapse line="519" />
+			<Collapse line="568" />
+			<Collapse line="597" />
+			<Collapse line="733" />
+			<Collapse line="763" />
+			<Collapse line="783" />
+			<Collapse line="849" />
+			<Collapse line="1021" />
+			<Collapse line="1051" />
+			<Collapse line="1080" />
+			<Collapse line="1099" />
+			<Collapse line="1143" />
+			<Collapse line="1163" />
+			<Collapse line="1179" />
+			<Collapse line="1200" />
 		</Folding>
 	</File>
 	<File name="src\ErrorProcess.cpp" open="0" top="0" tabpos="8" split="0" active="1" splitpos="0" zoom_1="2" zoom_2="0">
@@ -94,9 +110,9 @@
 			<Cursor1 position="202" topLine="0" />
 		</Cursor>
 	</File>
-	<File name="include\Table.h" open="1" top="1" tabpos="2" split="0" active="1" splitpos="0" zoom_1="2" zoom_2="0">
+	<File name="include\Table.h" open="1" top="0" tabpos="2" split="0" active="1" splitpos="0" zoom_1="2" zoom_2="0">
 		<Cursor>
-			<Cursor1 position="3872" topLine="105" />
+			<Cursor1 position="507" topLine="93" />
 		</Cursor>
 	</File>
 	<File name="include\CodeGenerate.h" open="1" top="0" tabpos="6" split="0" active="1" splitpos="0" zoom_1="0" zoom_2="0">

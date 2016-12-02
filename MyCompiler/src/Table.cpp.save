@@ -41,6 +41,22 @@ bool Table::is_funcrcd ( id_rcd r ) {
                 || r.type == FLOAT_ARRAY;
 }
 
+bool Table::is_varrcd ( id_rcd r ) {
+    /*
+        判断符号表的某条记录是否为变量名记录
+    */
+    return r.type == INT_VAR || r.type == CHAR_VAR
+                || r.type == FLOAT_VAR;
+}
+
+bool Table::is_constrcd ( id_rcd r ) {
+    /*
+        判断符号表的某条记录是否为常量名记录
+    */
+    return r.type == INT_CONST || r.type == CHAR_CONST
+                || r.type == FLOAT_CONST;
+}
+
 bool Table::is_arrayrcd ( id_rcd r ) {
     /*
         判断符号表的某条记录是否为数组名记录
@@ -51,7 +67,7 @@ bool Table::is_arrayrcd ( id_rcd r ) {
 
 id_type Table::get_func_type ( string func_name ) {
     /*
-        在符号表中寻找名为func_name的函数，返回其返回值
+        在符号表中寻找名为func_name的函数，返回其返回值类型
         若它不是函数或者没有找到则返回ERROR
     */
     //查找前先把标识符改成小写的
@@ -94,6 +110,12 @@ void Table::set_lastpar ( string func_name ) {
 
     //设定last_par
     func_table[ref].lastpar = id_table.size()-1;
+}
+
+int Table::get_lastpar ( id_rcd r ) {
+    /*
+        求得某个函数的最后一个
+    */
 }
 
 void Table::set_lastid () {
