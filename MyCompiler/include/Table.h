@@ -27,12 +27,18 @@ enum element_type { INT, CHAR, FLOAT };
 
 enum op_code {
     ADD,
+    BNE,
+    BRF,
     DIV,
+    JMP,
     JSR,
+    LDT,
     LIT,
     LOD,
     LOI,
     MUL,
+    PRT,
+    RDA,
     STI,
     STO,
     SUB
@@ -93,6 +99,8 @@ class Table {
         static void add_idrcd ( string name, int adr, id_type type);
         static void add_idrcd ( string name, id_type type, float float_value );
         static void add_idrcd ( string name, id_type type, int adr, int size);
+        static void add_floatrcd ( float fl );
+        static void add_strrcd ( string s );
         static int find_ident ( int p, string name );
         static bool is_funcrcd ( id_rcd r );
         static bool is_arrayrcd ( id_rcd r );
@@ -100,11 +108,12 @@ class Table {
         static bool is_constrcd ( id_rcd r );
         static id_rcd get_idrcd ( int index );
         static array_rcd get_arrayrcd ( int index );
+        static float get_floatval ( int index );
         static int get_idtable_size();
         static int get_rctable_size();
         static int get_pctable_size();
+        static int get_strtable_size();
         static int get_array_size( id_rcd r );
-        static void add_floatrcd ( float fl );
         static void set_lastpar ( string func_name );
         static int get_lastpar ( id_rcd r );
         static void set_lastid();
@@ -112,6 +121,7 @@ class Table {
         static void emit ( op_code f );
         static void emit ( op_code f, int l );
         static void emit ( op_code f, int l, int a );
+        static void update_emit ( op_code f, int l, int a, int loc );
 
     private:
         static int glb_adr;//È«¾ÖµØÖ·

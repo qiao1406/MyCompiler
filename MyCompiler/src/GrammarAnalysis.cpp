@@ -2,6 +2,7 @@
 #include "ErrorProcess.h"
 
 #include<sstream>
+#include<queue>
 
 //分别表示在词法分析缓存里的行列坐标值，用于定位
 int GrammarAnalysis::row_index = 0;
@@ -737,26 +738,32 @@ void GrammarAnalysis::ga_condition_stmt(){
         要求入口预读
         出口有预读
     */
-    //cout << nowword.value << "jojojxxx%";
 
     if ( nowword.value != "(" ) {
         //baocuo
     }
     ga_condition();
+    //int stack_top_val = Runtime::get_top_value();
     if ( nowword.value != ")" ) {
         //baocuo
     }
-    //cout << nowword.value << "jojojxxx%";
+    int brf_loc = Table::get_pctable_size();//记录BRF指令的位置
+    Table::emit(BRF,0,0);
     nowword = nextword();
     ga_statement();
 
-    //cout << nowword.value << "jojojxxx%";
-    //cout << nowword.value << "jojojxxx%";
+
     if( nowword.value == "else" ) {
+        int jmp_loc = Table::get_pctable_size();//记录JMP指令的位置
+        Table::emit(JMP,0,0);
+        Table::update_emit(BRF,0,Table::get_pctable_size(),brf_loc);
         nowword = nextword();
         ga_statement();
+        Table::update_emit(JMP,0,Table::get_pctable_size(),jmp_loc);
     }
-    //cout << nowword.value << "tytyjojojxxx%";
+    else { //没有else块的情况
+        Table::update_emit(BRF,0,Table::get_pctable_size(),brf_loc);
+    }
 
     prt_grammar_info("condition statement#");
 }
@@ -771,14 +778,18 @@ void GrammarAnalysis::ga_cycle_stmt(){
         //baocuo
     }
     ga_condition();
+    //此时已经把条件结果加载到栈顶了
     if ( nowword.value != ")" ) {
         //baocuo
     }
+    int brf_loc = Table::get_pctable_size();
+    Table::emit(BRF,0,0);
 
     nowword = nextword();
     ga_statement();
-   // cout << nowword.value << "jojojxxijijijx%";
-    prt_grammar_info("cycle statement");
+    Table::emit(JMP,0,brf_loc);
+    Table::update_emit(BRF,0,Table::get_pctable_size(),brf_loc);
+    //prt_grammar_info("cycle statement");
 }
 
 void GrammarAnalysis::ga_retfuncall_stmt ( string func_name ){
@@ -1030,9 +1041,28 @@ void GrammarAnalysis::ga_read_stmt(){
     }
     nowword = nextword();
 
+    id_rcd r;
     if ( nowword.type != "IDENT" ) {
         //baocuo
     }
+    else {//判断标识符的类型，只能是普通变量
+        int loc = Table::find_ident(pointer,nowword.value);
+        if ( loc == -1 ) {
+            //baouco
+        }
+        else {
+            r = Table::get_idrcd(loc);
+            if ( ! Table::is_varrcd(r) ) {
+                //baocuo
+            }
+            else {//生成读指令
+                Table::emit(RDA);
+                Table::emit(STO,0,r.adr);
+            }
+
+        }
+    }
+
     nowword = nextword();
     while ( nowword.value == "," ) {
 
@@ -1040,13 +1070,30 @@ void GrammarAnalysis::ga_read_stmt(){
         if ( nowword.type != "IDENT" ) {
         //baocuo
         }
+        else {//判断标识符的类型，只能是普通变量
+            int loc = Table::find_ident(pointer,nowword.value);
+            if ( loc == -1 ) {
+                //baouco
+            }
+            else {
+                r = Table::get_idrcd(loc);
+                if ( ! Table::is_varrcd(r) ) {
+                    //baocuo
+                }
+                else {//生成读指令
+                    Table::emit(RDA);
+                    Table::emit(STO,0,r.adr);
+                }
+
+            }
+        }
         nowword = nextword();
     }
 
     if ( nowword.value != ")" ) {
         //baocuo
     }
-    prt_grammar_info("read statement");
+    //prt_grammar_info("read statement");
 }
 
 void GrammarAnalysis::ga_write_stmt(){
@@ -1103,10 +1150,24 @@ void GrammarAnalysis::ga_case_stmt(){
         要求入口预读
         出口无预读
     */
+    queue<int> bq;//记录BNE指令的地址
+    queue<int> jq;//记录JMP指令的地址
+
+
     if ( nowword.value == "(" ) {
 
         nowword = nextword();
         ga_expression();
+        //此时表达式的值已写入栈顶用于比较
+//        int tgt_val;//target value
+//        if ( Runtime::get_top_type() == RS_FLOAT ) {
+//            //情况表达式的值不能是实型
+//            //baocuo
+//        }
+//        else {
+//            tgt_val = Runtime::get_top_value();
+//        }
+
         if ( nowword.value != ")" ) {
             //报错
         }
@@ -1121,16 +1182,62 @@ void GrammarAnalysis::ga_case_stmt(){
                     //baocuo
                 }
                 else {
-                    ga_statement();
-                    while ( nowword.value == "case" ) { //存在多个情况子语句的时候
+
+                    nowword = nextword();
+                    if ( nowword.type != "INTEGER" && nowword.type != "CHARACTER" ) {
+                        //baocuo
+                    }
+                    else {
+                        ( nowword.type == "CHARATER" )? Table::emit(LOI,1,(int)nowword.value[0])
+                                    :Table::emit(LOI,0,str2num<int>(nowword.value));
+                        //生成BNE指令
+                        bq.push(Table::get_pctable_size());
+                        Table::emit(BNE,0,0);
                         ga_subcase_stmt();
+                        jq.push(Table::get_pctable_size());
+                        Table::emit(JMP,0,0);
+
+                    }
+
+                    while ( nowword.value == "case" ) { //存在多个情况子语句的时候
+                        nowword = nextword();
+                        if ( nowword.type != "INTEGER"
+                             && nowword.type != "CHARACTER" ) {
+                            //baocuo
+                        }
+                        else {
+                            ( nowword.type == "CHARATER" )? Table::emit(LOI,1,(int)nowword.value[0])
+                                    :Table::emit(LOI,0,str2num<int>(nowword.value));
+                            //生成BNE指令
+                            bq.push(Table::get_pctable_size());
+                            Table::emit(BNE,0,0);
+                            ga_subcase_stmt();
+                            jq.push(Table::get_pctable_size());
+                            Table::emit(JMP,0,0);
+                        }
                     }
                 }
 
                 if ( nowword.value != "}") { //语句结尾是反大括号
                     //baocuo
                 }
-                //cout << nowword.value << "jb一样555xxx%";
+
+                int end_adr = Table::get_pctable_size();
+                while ( !jq.empty() ) {
+                    Table::update_emit(JMP,0,end_adr,jq.front());
+                    jq.pop();
+                }
+                while ( !bq.empty() ) {
+                    int i = bq.front();
+                    bq.pop();
+                    if ( bq.empty() ) {
+                        Table::update_emit(BNE,0,end_adr,i);
+                    }
+                    else {
+                        Table::update_emit(BNE,0,bq.front(),i);
+                    }
+                }
+
                 prt_grammar_info("case statement");
             }
         }
@@ -1144,14 +1251,13 @@ void GrammarAnalysis::ga_case_stmt(){
 void GrammarAnalysis::ga_subcase_stmt() {
     /*
         <情况子语句>子程序
-        入口不要求预读
+        入口要求预读
         出口有预读
     */
-    nowword = nextword();
-    //cout << nowword.value << "rrtytyxxx%";
-    if ( nowword.type != "INTEGER" && nowword.type != "CHARACTER" ) {
-        //baocuo
-    }
+//    nowword = nextword();
+//    if ( nowword.type != "INTEGER" && nowword.type != "CHARACTER" ) {
+//        //baocuo
+//    }
 
     nowword = nextword();
     if ( nowword.value != ":" ) {
@@ -1169,12 +1275,198 @@ void GrammarAnalysis::ga_condition() {
     */
     nowword = nextword();
     ga_expression();
-   // cout << nowword.value << "ppppojojxxx%";
     if ( nowword.is_relation_op() ) {
+
+        string op = nowword.value;\
+        bool logic_val;
         nowword = nextword();
         ga_expression();
+
+        //此时表达式的右值在栈顶，左值在次栈顶
+        //按照关系运算符的值的不同来进行分类
+        if ( op == "==" ) {
+
+            if ( Runtime::get_top_type() == RS_FLOAT ) {
+                float right_fl = Table::get_floatval(Runtime::get_top_value());
+                Runtime::pop_rs();
+                if ( Runtime::get_top_type() == RS_FLOAT ) {
+                    float left_fl = Table::get_floatval(Runtime::get_top_value());
+                    logic_val = ( left_fl == right_fl );
+                }
+                else {
+                    int left_int = Runtime::get_top_value();
+                    logic_val = ( left_int == right_fl );
+                }
+            }
+            else{
+                int right_int = Runtime::get_top_value();
+                Runtime::pop_rs();
+                if ( Runtime::get_top_type() == RS_FLOAT ) {
+                    float left_fl = Table::get_floatval(Runtime::get_top_value());
+                    logic_val = ( left_fl == right_int );
+                }
+                else {
+                    int left_int = Runtime::get_top_value();
+                    logic_val = ( left_int == right_int );
+                }
+            }
+
+        }
+        else if ( op == "!=" ) {
+
+            if ( Runtime::get_top_type() == RS_FLOAT ) {
+                float right_fl = Table::get_floatval(Runtime::get_top_value());
+                Runtime::pop_rs();
+                if ( Runtime::get_top_type() == RS_FLOAT ) {
+                    float left_fl = Table::get_floatval(Runtime::get_top_value());
+                    logic_val = ( left_fl != right_fl );
+                }
+                else {
+                    int left_int = Runtime::get_top_value();
+                    logic_val = ( left_int != right_fl );
+                }
+            }
+            else{
+                int right_int = Runtime::get_top_value();
+                Runtime::pop_rs();
+                if ( Runtime::get_top_type() == RS_FLOAT ) {
+                    float left_fl = Table::get_floatval(Runtime::get_top_value());
+                    logic_val = ( left_fl != right_int );
+                }
+                else {
+                    int left_int = Runtime::get_top_value();
+                    logic_val = ( left_int != right_int );
+                }
+            }
+
+        }
+        else if ( op == "<" ) {
+
+            if ( Runtime::get_top_type() == RS_FLOAT ) {
+                float right_fl = Table::get_floatval(Runtime::get_top_value());
+                Runtime::pop_rs();
+                if ( Runtime::get_top_type() == RS_FLOAT ) {
+                    float left_fl = Table::get_floatval(Runtime::get_top_value());
+                    logic_val = ( left_fl < right_fl );
+                }
+                else {
+                    int left_int = Runtime::get_top_value();
+                    logic_val = ( left_int < right_fl );
+                }
+            }
+            else{
+                int right_int = Runtime::get_top_value();
+                Runtime::pop_rs();
+                if ( Runtime::get_top_type() == RS_FLOAT ) {
+                    float left_fl = Table::get_floatval(Runtime::get_top_value());
+                    logic_val = ( left_fl < right_int );
+                }
+                else {
+                    int left_int = Runtime::get_top_value();
+                    logic_val = ( left_int < right_int );
+                }
+            }
+
+        }
+        else if  ( op == "<=" ) {
+
+            if ( Runtime::get_top_type() == RS_FLOAT ) {
+                float right_fl = Table::get_floatval(Runtime::get_top_value());
+                Runtime::pop_rs();
+                if ( Runtime::get_top_type() == RS_FLOAT ) {
+                    float left_fl = Table::get_floatval(Runtime::get_top_value());
+                    logic_val = ( left_fl == right_fl );
+                }
+                else {
+                    int left_int = Runtime::get_top_value();
+                    logic_val = ( left_int = right_fl );
+                }
+            }
+            else{
+                int right_int = Runtime::get_top_value();
+                Runtime::pop_rs();
+                if ( Runtime::get_top_type() == RS_FLOAT ) {
+                    float left_fl = Table::get_floatval(Runtime::get_top_value());
+                    logic_val = ( left_fl <= right_int );
+                }
+                else {
+                    int left_int = Runtime::get_top_value();
+                    logic_val = ( left_int <= right_int );
+                }
+            }
+
+        }
+        else if ( op == ">" ) {
+
+            if ( Runtime::get_top_type() == RS_FLOAT ) {
+                float right_fl = Table::get_floatval(Runtime::get_top_value());
+                Runtime::pop_rs();
+                if ( Runtime::get_top_type() == RS_FLOAT ) {
+                    float left_fl = Table::get_floatval(Runtime::get_top_value());
+                    logic_val = ( left_fl > right_fl );
+                }
+                else {
+                    int left_int = Runtime::get_top_value();
+                    logic_val = ( left_int > right_fl );
+                }
+            }
+            else{
+                int right_int = Runtime::get_top_value();
+                Runtime::pop_rs();
+                if ( Runtime::get_top_type() == RS_FLOAT ) {
+                    float left_fl = Table::get_floatval(Runtime::get_top_value());
+                    logic_val = ( left_fl > right_int );
+                }
+                else {
+                    int left_int = Runtime::get_top_value();
+                    logic_val = ( left_int > right_int );
+                }
+            }
+
+        }
+        else { // op是>=的情况
+
+            if ( Runtime::get_top_type() == RS_FLOAT ) {
+                float right_fl = Table::get_floatval(Runtime::get_top_value());
+                Runtime::pop_rs();
+                if ( Runtime::get_top_type() == RS_FLOAT ) {
+                    float left_fl = Table::get_floatval(Runtime::get_top_value());
+                    logic_val = ( left_fl >= right_fl );
+                }
+                else {
+                    int left_int = Runtime::get_top_value();
+                    logic_val = ( left_int >= right_fl );
+                }
+            }
+            else{
+                int right_int = Runtime::get_top_value();
+                Runtime::pop_rs();
+                if ( Runtime::get_top_type() == RS_FLOAT ) {
+                    float left_fl = Table::get_floatval(Runtime::get_top_value());
+                    logic_val = ( left_fl >= right_int );
+                }
+                else {
+                    int left_int = Runtime::get_top_value();
+                    logic_val = ( left_int >= right_int );
+                }
+            }
+
+        }
+
+        (logic_val)? Table::emit(LOI,0,1):Table::emit(LOI,0,0);
     }
-    //cout << nowword.value << "jojojxxx%";
+    else {
+        //判断此时栈顶的值是否为零
+        if ( Runtime::get_top_type() == RS_FLOAT ) {
+            ( Table::get_floatval(Runtime::get_top_value()) == 0 )?
+                Table::emit(LOI,0,0):Table::emit(LOI,0,1);
+        }
+        else {
+            ( Runtime::get_top_value()==0 )?
+                Table::emit(LOI,0,0):Table::emit(LOI,0,1);
+        }
+    }
+
 }
 
 void GrammarAnalysis::ga_expression() {
@@ -1189,7 +1481,7 @@ void GrammarAnalysis::ga_expression() {
 
     ga_item();
     while ( nowword.is_addition_op() ) {
-        string op = nowword;
+        string op = nowword.value;
         nowword = nextword();
         ga_item();
         //生成操作符的指令
@@ -1206,7 +1498,7 @@ void GrammarAnalysis::ga_item() {
     */
     ga_factor();
     while ( nowword.is_multiplication_op() ) {
-        string op = nowword;
+        string op = nowword.value;
         nowword = nextword();
         ga_factor();
         //生成操作符指令
@@ -1272,23 +1564,17 @@ void GrammarAnalysis::ga_factor() {
 
             nowword = nextword();
             ga_expression(); // 识别表示数组下标的表达式
+            //此时数组下标值已存到栈顶
             //得到运行栈栈顶的类型,进行判断
-            if ( Runtime.get_top_type() != RS_INT ) {
-            //baocuo
-            }
-            else {
-                index = Runtime::get_top_value();//数组下标
-                if ( index < 0 || index >= arr_size ) { //数组下标越界
-                    //报错
-                }
-            }
 
             if ( nowword.value != "]" ) {
                 //baocuo
             }
             else { //生成指令
+                Table::emit(LOI,0,r.adr);
+                Table::emit(ADD);//计算得到要取的数的地址
                 int l = ( r.type == INT_ARRAY )? 0:( r.type == CHAR_ARRAY )? 1:2;
-                Table::emit(LOD,l,r.adr+index);
+                Table::emit(LDT,l);
             }
             nowword = nextword();
             return;

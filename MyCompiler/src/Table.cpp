@@ -140,6 +140,13 @@ void Table::add_floatrcd ( float fl ) {
     rconst_table.push_back(fl);
 }
 
+void Table::add_strrcd ( string s ) {
+    /*
+        增加一个字符串记录
+    */
+    str_table.push_back(s);
+}
+
 int Table::get_idtable_size() {
     return id_table.size();
 }
@@ -150,6 +157,10 @@ int Table::get_rctable_size() {
 
 int Table::get_pctable_size() {
     return pcode_table.size();
+}
+
+int Table::get_strtable_size() {
+    return str_table.size();
 }
 
 int Table::find_ident ( int p, string name ) {
@@ -202,9 +213,9 @@ id_rcd Table::get_idrcd ( int index ) {
     }
 }
 
-array_rcd Table::get_idrcd ( int index ) {
+array_rcd Table::get_arrayrcd ( int index ) {
     /*
-        返回对应合法下标的符号表记录
+        返回对应合法下标的数组信息表记录
     */
 
     if ( index < array_table.size() && index >= 0 ) {
@@ -212,6 +223,19 @@ array_rcd Table::get_idrcd ( int index ) {
     }
     else {
         return {};
+    }
+}
+
+float Table::get_floatval ( int index ) {
+    /*
+        返回对应合法下标的实数表记录
+    */
+
+    if ( index < rconst_table.size() && index >= 0 ) {
+        return rconst_table[index];
+    }
+    else {
+        return 0;
     }
 }
 
@@ -429,4 +453,13 @@ void Table::emit ( op_code f, int l, int a ) {
         往PCode表中增加一条指令
     */
     pcode_table.push_back({f,l,a});
+}
+
+void Table::update_emit ( op_code f, int l, int a, int loc ){
+    /*
+        修改位于PCode表的loc处的指令
+    */
+    pcode_table[loc].f = f;
+    pcode_table[loc].l = l;
+    pcode_table[loc].a = a;
 }

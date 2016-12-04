@@ -16,10 +16,13 @@ struct run_stack{
 
 class Runtime {
     public:
-        int get_top_value();
-        data_type get_top_type();
+        static int get_top_value();
+        static data_type get_top_type();
+        static void pop_rs();
+
     private:
-        static stack<int> runtime_stack;//运行栈
+        static stack<run_stack> runtime_stack;//运行栈
+        static int ret_adr;
 
 };
 

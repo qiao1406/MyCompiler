@@ -27,7 +27,9 @@ enum element_type { INT, CHAR, FLOAT };
 
 enum op_code {
     ADD,
+    BRF,
     DIV,
+    JMP,
     JSR,
     LIT,
     LOD,
@@ -100,6 +102,7 @@ class Table {
         static bool is_constrcd ( id_rcd r );
         static id_rcd get_idrcd ( int index );
         static array_rcd get_arrayrcd ( int index );
+        static float get_floatval ( int index );
         static int get_idtable_size();
         static int get_rctable_size();
         static int get_pctable_size();
@@ -112,6 +115,7 @@ class Table {
         static void emit ( op_code f );
         static void emit ( op_code f, int l );
         static void emit ( op_code f, int l, int a );
+        static void update_emit ( op_code f, int l, int a, int loc );
 
     private:
         static int glb_adr;//È«¾ÖµØÖ·
