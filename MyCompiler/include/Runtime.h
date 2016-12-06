@@ -3,10 +3,13 @@
 
 #include <stack>
 
+using namespace std;
+
 enum data_type {
     RS_INT,
     RS_FLOAT,
-    RS_CHAR
+    RS_CHAR,
+    RS_STR
 };
 
 struct run_stack{

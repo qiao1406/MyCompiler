@@ -30,12 +30,12 @@ class GrammarAnalysis
         static void ga_statement();
         static void ga_condition_stmt();
         static void ga_cycle_stmt();
-        static void ga_retfuncall_stmt();
-        static void ga_voidfuncall_stmt();
+        static void ga_retfuncall_stmt ( string func_name );
+        static void ga_voidfuncall_stmt ( string func_name );
         static void ga_assign_stmt ( string id_name );
         static void ga_read_stmt();
         static void ga_write_stmt();
-        static void ga_return_stmt ( string func_name );
+        static void ga_return_stmt();
         static void ga_case_stmt();
         static void ga_subcase_stmt();
         static void ga_argulist ( string func_name );

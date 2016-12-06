@@ -22,6 +22,8 @@ Word syblist[] = { Word(",","COMMA"), Word(";","SEMICOLON"), Word(":","COLON"),
 queue<string> WordAnalysis::code_strs;
 // 词法分析的缓存：存放每一行识别到的词
 vector<vector<Word> > WordAnalysis::linewords;
+//记录词法分析进度的标志——行值，初始值为1
+int WordAnalysis::now_line = 1;
 
 bool WordAnalysis::is_noletter_char ( char c ) {
     /*
@@ -68,9 +70,10 @@ void WordAnalysis::read_programme_code ( string file_name ) {
 
     while ( getline(fin,buff_str) ) {
         //buff_str不会读入回车的
-        if ( buff_str == "" || buff_str == " " || buff_str == "\t"  ) { //忽略空行
-            continue;
+        if ( buff_str == "" || buff_str == " "
+            || buff_str == "\t" || buff_str ==  "\n"  ) { //忽略空行
             code_strs.push("\n");
+            continue;
         }
         // 逐个字符分析
         for ( int i = 0; i < buff_str.length(); i++ ) {
@@ -249,12 +252,13 @@ void WordAnalysis::establish_cache ( string filename ) {
         string sym = getsym();
 
         if ( sym == "\n" ) {
+            now_line++;
             linewords.push_back(linetemp);
             linetemp.clear();
         }
         else {
             string typ = judge_type(sym);
-            linetemp.push_back(Word(sym,typ));
+            linetemp.push_back(Word(sym,typ,now_line));
         }
     }
 }

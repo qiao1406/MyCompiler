@@ -7,20 +7,20 @@
 using namespace std;
 
 enum id_type {
-    INT_VAR,
-    CHAR_VAR,
-    FLOAT_VAR,
-    INT_ARRAY,
-    CHAR_ARRAY,
-    FLOAT_ARRAY,
-    INT_CONST,
-    CHAR_CONST,
-    FLOAT_CONST,
-    INT_FUNCTION,
-    CHAR_FUNCTION,
-    FLOAT_FUNCTION,
-    VOID_FUNCTION,
-    ERROR
+    INT_VAR, // 0
+    CHAR_VAR, // 1
+    FLOAT_VAR,// 2
+    INT_ARRAY,// 3
+    CHAR_ARRAY,// 4
+    FLOAT_ARRAY,// 5
+    INT_CONST,// 6
+    CHAR_CONST,// 7
+    FLOAT_CONST,// 8
+    INT_FUNCTION,// 9
+    CHAR_FUNCTION,// 10
+    FLOAT_FUNCTION,// 11
+    VOID_FUNCTION,// 12
+    ERROR // 13
 };
 
 enum element_type { INT, CHAR, FLOAT };
@@ -31,6 +31,7 @@ enum op_code {
     BRF,
     DIV,
     JMP,
+    JR,
     JSR,
     LDT,
     LIT,
@@ -55,14 +56,13 @@ struct id_rcd {
             标识符是函数名时，指向其在func_table中的位置
             其他情况下为-1
         lev 表示该标识符所在位置的层次，全局为0，函数内为1
-        adr 对于变量名，应该填入该变量在运行栈S中分配存储单元的
-            相对地址；对于函数名，填入它相应目标代码的入口地址（Pcode位置）；
+        adr 对于变量名，应该填入该变量在数据区中分配存储单元的
+            实际地址；对于函数名，填入它的实际地址；
             对于int和char常量名，填入他们对应的整数值或者是ASCII值；
             对于float常量名，填入它在rconst_table中登录的位置
      */
 
     string name;
-   // int link;
     id_type type;
     int ref;
     int lev;
@@ -80,10 +80,11 @@ struct func_rcd {
        last指向该函数说明中当前（最后）一个标识符在id_table表中的位置
        lastpar指向函数的最后一个参数在id_table表中的位置如果其指向的位置
         是该函数名称所在的位置，则说明这个函数没有参数
+        ploc是指该函数的入口地址（该函数的第一条指令在PCode表中的位置）
     */
     int last;
     int lastpar;
-    //int pszie;
+    int ploc;
     //int vsize;
 };
 
@@ -97,7 +98,7 @@ class Table {
     public:
         static void add_idrcd ( string name, id_type type);
         static void add_idrcd ( string name, int adr, id_type type);
-        static void add_idrcd ( string name, id_type type, float float_value );
+        static void add_idrcd ( string name, float float_value );
         static void add_idrcd ( string name, id_type type, int adr, int size);
         static void add_floatrcd ( float fl );
         static void add_strrcd ( string s );
@@ -123,9 +124,17 @@ class Table {
         static void emit ( op_code f, int l, int a );
         static void update_emit ( op_code f, int l, int a, int loc );
 
+        //测试函数
+        static void test_id_table();
+        static void test_func_table();
+        static void test_rconst_table();
+        static void test_arr_table();
+        static void test_pcode_table();
+        static void test_str_table();
+
     private:
-        static int glb_adr;//全局地址
-        static int fun_adr;//局部地址
+        static int data_adr;//数据区地址
+        //static int fun_adr;//局部地址
         static vector<id_rcd> id_table;//符号表
         static vector<array_rcd> array_table;//数组信息表
         static vector<func_rcd> func_table;//函数信息表

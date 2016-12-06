@@ -3,6 +3,8 @@
 //表示返回地址的寄存器
 int Runtime::ret_adr = 0;
 
+stack<run_stack> Runtime::runtime_stack;
+
 int Runtime::get_top_value() {
     return runtime_stack.top().value;
 }

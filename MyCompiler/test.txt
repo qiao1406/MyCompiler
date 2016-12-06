@@ -1,6 +1,6 @@
 const float pi = 3.14; 
 const int a = 5,b=6; 
-int c[2], res, d[3]; 
+int c[2], res, d[30]; 
 float f1, _root; 
 char ch;
  

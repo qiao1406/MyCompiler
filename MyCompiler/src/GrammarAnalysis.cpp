@@ -193,7 +193,9 @@ void GrammarAnalysis::ga_constant () {
         入口有预读
         出口有预读
     */
+    //cout << "xx";
     while ( nowword.value == "const" ) {
+        //cout << "yy567";
         ga_constdef();
 
         if ( nowword.value != ";" ) {
@@ -232,16 +234,19 @@ void GrammarAnalysis::ga_constdef () {
                 }
 
                 //填符号表
-                if ( data_typ == "int" ) {
+                if ( data_typ == "INTEGER" ) {
                     //把string转成数字
+                    //cout << "int condef";
                     Table::add_idrcd(name,str2num<int>(nowword.value),INT_CONST);
                 }
-                else if ( data_type == "char" ) {
+                else if ( data_typ == "CHARACTER" ) {
+                   // cout << "charcondef";
                     int ascii_code = nowword.value[0];
                     Table::add_idrcd(name,ascii_code,CHAR_CONST);
                 }
                 else {
-                    Table::add_idrcd(name,str2num<float>(nowword.value),FLOAT_CONST);
+                    //cout << "999uuu";
+                    Table::add_idrcd(name,str2num<float>(nowword.value));
                 }
 
             }
@@ -269,14 +274,19 @@ void GrammarAnalysis::ga_variable () {
         入口有预读
         出口有预读
     */
+    //cout << "vvvv";
     while (true) {
         ga_vardef();
         if ( nowword.value != ";" ) {
             //baocuo
         }
+        cout << "def";
 
         nowword = nextword();
+        cout << col_index << row_index;
+        cout << nowword.value << "wernbvn";
         if ( nowword.value == "void" ) { //有可能是主函数或无返回值函数
+            cout << "asd$$$";
             break; // 此时变量说明已结束，跳出循环
         }
         else {
@@ -323,8 +333,9 @@ void GrammarAnalysis::ga_vardef () {
         入口有预读
         出口有预读
     */
+
     if ( nowword.is_vartype() ) {
-        string data_type = nowword.value;//记录数据类型
+        string data_typ = nowword.value;//记录数据类型(int,char,float)
         while ( true ) {
             nowword = nextword();
             string name = nowword.value;//记录标识符名字
@@ -337,24 +348,25 @@ void GrammarAnalysis::ga_vardef () {
                 if ( nowword.type != "INTEGER" ) {
                     // 报错
                 }
-                int arr_size = str2num<int>(nowword);//记录数组的大小
+                int arr_size = str2num<int>(nowword.value);//记录数组的大小
                 nowword = nextword();
                 if ( nowword.value != "]" ) {
                     //baocuo
                 }
 
                 //填符号表，增加一项数组记录
-                id_type t = (data_type == "int")?INT_ARRAY:
-                                (data_type=="char")?CHAR_ARRAY:FLOAT_ARRAY;
+                id_type t = (data_typ == "int")?INT_ARRAY:
+                                (data_typ =="char")?CHAR_ARRAY:FLOAT_ARRAY;
                 Table::add_idrcd(name,t,0,arr_size);
 
                 nowword = nextword();
             }
             else {//普通变量
                 //填符号表,增加一项普通变量记录
-                id_type t = (data_type == "int")?INT_VAR:
-                                (data_type=="char")?CHAR_VAR:FLOAT_VAR;
+                id_type t = (data_typ == "int")?INT_VAR:
+                                (data_typ=="char")?CHAR_VAR:FLOAT_VAR;
                 Table::add_idrcd(name,t);
+                //nowword = nextword();
             }
 
             if ( nowword.value != ",") { // 多个变量的定义以逗号分隔
@@ -526,7 +538,7 @@ void GrammarAnalysis::ga_argulist ( string func_name ) {
     */
 
     if ( nowword.is_vartype() ) {
-        string data_type = nowword;//记录参数类型
+        string data_type = nowword.value;//记录参数类型
         nowword = nextword();
         if ( nowword.type != "IDENT" ) {
             //baocuo
@@ -534,14 +546,14 @@ void GrammarAnalysis::ga_argulist ( string func_name ) {
         else{ //登录符号表,同时改变函数表的lastpar值
             id_type t = (data_type == "int")?INT_VAR:
                             (data_type=="char")?CHAR_VAR:FLOAT_VAR;
-            Table::add_idrcd(nowword,t);
+            Table::add_idrcd(nowword.value,t);
             Table::set_lastpar(func_name);
         }
         nowword = nextword();
 
         while ( nowword.value == "," ) {
             nowword = nextword();
-            data_type = nowword;
+            data_type = nowword.value;
             if ( !nowword.is_vartype() ) {
                 //baocuo
             }
@@ -553,7 +565,7 @@ void GrammarAnalysis::ga_argulist ( string func_name ) {
             else { //登录符号表，同时改变函数表的lastpar值
                 id_type t = (data_type == "int")?INT_VAR:
                             (data_type=="char")?CHAR_VAR:FLOAT_VAR;
-                Table::add_idrcd(nowword,t);
+                Table::add_idrcd(nowword.value,t);
                 Table::set_lastpar(func_name);
             }
 
@@ -652,7 +664,6 @@ void GrammarAnalysis::ga_statement(){
         nowword = nextword();
         ga_return_stmt();
         nowword = nextword();
-       // cout << nowword.value << "xxx%";
         if ( nowword.value != ";" ) {
             //baocuo
             cout << "漏了分号";
@@ -661,7 +672,6 @@ void GrammarAnalysis::ga_statement(){
         return;
     }
     else if ( nowword.value == "{" ) { //语句列
-       //cout << nowword.value << "jnnnojojxxx%";
         nowword = nextword();
         if ( nowword.value == "}" ) {
             prt_grammar_info("statement list");
@@ -669,7 +679,6 @@ void GrammarAnalysis::ga_statement(){
             return;
         }
         else {
-            //cout << nowword.value << "j999ojojxxx%";
             while ( nowword.value != "}") {
                 ga_statement();
             }
@@ -707,7 +716,8 @@ void GrammarAnalysis::ga_statement(){
             }
             else if ( rt == VOID_FUNCTION ) {//无返回值函数调用
                 nowword = nextword();
-                ga_voidfuncall_stmt();
+                ga_voidfuncall_stmt(name);
+                Table::emit(JR);//调用完后要跳到返回地址
             }
             else { //有返回值函数调用
                 nowword = nextword();
@@ -858,7 +868,7 @@ void GrammarAnalysis::ga_retfuncall_stmt ( string func_name ){
 
 }
 
-void GrammarAnalysis::ga_voidfuncall_stmt(){
+void GrammarAnalysis::ga_voidfuncall_stmt ( string func_name ){
     /*
         <有返回值的函数调用语句>子程序
         要求入口处有预读
@@ -959,7 +969,7 @@ void GrammarAnalysis::ga_assign_stmt ( string id_name ) {
 
         nowword = nextword();
         ga_expression();//计算下标表达式的值
-        if ( Runtime.get_top_type() != RS_INT ) {
+        if ( Runtime::get_top_type() != RS_INT ) {
         //baocuo
         }
         else {
@@ -984,10 +994,10 @@ void GrammarAnalysis::ga_assign_stmt ( string id_name ) {
             if ( ar.eltype == FLOAT ) { //存到整型数组要进行强制转换
                 Table::add_floatrcd((float)Runtime::get_top_value());
                 //生成存指令数据区存的是指向实数表的指针
-                Table::emit(STI,Table::get_array_size()-1,r.adr+index);
+                Table::emit(STI,Table::get_array_size(r)-1,r.adr+index);
             }
             else{
-                Table::emit(STO,0,r,adr+index);
+                Table::emit(STO,0,r.adr+index);
             }
         }
         else { //表达式的值是实型
@@ -1010,7 +1020,7 @@ void GrammarAnalysis::ga_assign_stmt ( string id_name ) {
         if ( Runtime::get_top_type() == RS_INT ) {
             if ( r.type == FLOAT_VAR ) {
                 Table::add_floatrcd((float)Runtime::get_top_value());
-                Table::emit(STI,Table::get_array_size()-1,r.adr);
+                Table::emit(STI,Table::get_array_size(r)-1,r.adr);
             }
             else {
                 Table::emit(STO,0,r.adr);
@@ -1108,21 +1118,26 @@ void GrammarAnalysis::ga_write_stmt(){
 
     nowword = nextword();
     if ( nowword.type == "STRING" ) {
+        //先把字符串登记到字符串表中
+        Table::add_strrcd(nowword.value);
+        Table::emit(LIT,3,Table::get_strtable_size()-1);
         nowword = nextword();
         if ( nowword.value == "," ) {
             nowword = nextword();
             ga_expression();
+            Table::emit(PRT);
         }
 
     }
     else {
         ga_expression();
+        Table::emit(PRT);
     }
 
     if ( nowword.value != ")") {
             //baocuo
     }
-    prt_grammar_info("write statement");
+    //prt_grammar_info("write statement");
 }
 
 void GrammarAnalysis::ga_return_stmt(){
@@ -1141,7 +1156,10 @@ void GrammarAnalysis::ga_return_stmt(){
     if ( nowword.value != ")" ) {
         //baocuo
     }
-    prt_grammar_info("return statement");
+    else {
+        Table::emit(JR);
+    }
+    //prt_grammar_info("return statement");
 }
 
 void GrammarAnalysis::ga_case_stmt(){

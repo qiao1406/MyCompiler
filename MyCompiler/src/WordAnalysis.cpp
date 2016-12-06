@@ -72,7 +72,7 @@ void WordAnalysis::read_programme_code ( string file_name ) {
         //buff_str不会读入回车的
         if ( buff_str == "" || buff_str == " "
             || buff_str == "\t" || buff_str ==  "\n"  ) { //忽略空行
-            code_strs.push("\n");
+            code_strs.push("%%");
             continue;
         }
         // 逐个字符分析
@@ -250,6 +250,9 @@ void WordAnalysis::establish_cache ( string filename ) {
 
     while ( !code_strs.empty()) {
         string sym = getsym();
+
+        if ( sym == "%%")//空行
+            continue;
 
         if ( sym == "\n" ) {
             now_line++;
