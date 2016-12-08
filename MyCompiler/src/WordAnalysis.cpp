@@ -104,11 +104,14 @@ void WordAnalysis::read_programme_code ( string file_name ) {
             }
 
             else if ( buff_str[i] == '\'') { // 有可能是字符
+                //cout << "asd555666";
                 tempstr = buff_str[i];
                 if ( i+1 < buff_str.length() ) {
                     tempstr += buff_str[i+1];
                     if ( i+2 < buff_str.length() && buff_str[i+2] == '\'') {
                     tempstr += buff_str[i+2];
+                    i+=2;
+                    code_strs.push(tempstr);
                     }
                 }
 

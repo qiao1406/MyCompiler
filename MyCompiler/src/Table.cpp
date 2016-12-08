@@ -180,14 +180,18 @@ int Table::find_ident ( int p, string name ) {
         若找到则返回其下标值，否则返回-1
     */
 
-    if ( p < 0 || p >= id_table.size() || !is_funcrcd(id_table[p]) ) {
+    if ( p >= id_table.size() || !is_funcrcd(id_table[p]) ) {
         //排除掉越界的情况和p没有指向函数的情况
+        //cout << "dsadyyy";
         return -1;
+
     }
+
+    //cout << func_table[id_table[p].ref].last<<"careless";
 
      // 把标识符改成小写形式
     transform(name.begin(),name.end(),name.begin(),::tolower);
-
+    //cout << "----" << name <<"____";
     //先在函数内部找
     int i = p+1;
     for ( ; i <= func_table[id_table[p].ref].last; i++ ) {
@@ -199,7 +203,7 @@ int Table::find_ident ( int p, string name ) {
     //若没有找到则在全局找
     if ( i > func_table[id_table[p].ref].last ) {
         for ( i = 0; i < id_table.size(); i++ ) {
-            if ( id_table[i].lev == 1 && id_table[i].name == name ) {
+            if ( id_table[i].lev == 0 && id_table[i].name == name ) {
                 return i;
             }
         }
@@ -277,7 +281,7 @@ void Table::add_idrcd ( string name, id_type type ) {
 
     // 把标识符统一存成小写形式
     transform(name.begin(),name.end(),name.begin(),::tolower);
-    cout << name<<" ";
+    //cout << name<<" ";
     int adr;
     if ( type == INT_VAR || type == CHAR_VAR || type == FLOAT_VAR ) {
         int lev;
@@ -311,7 +315,8 @@ void Table::add_idrcd ( string name, id_type type ) {
         if ( !id_table.empty() && is_id_repeat(name,0) ) {
             //名称重复，报错
         }
-
+        //cout << name;
+        //cout << id_table.size();
         //设定adr的值，以及将fun_adr置零
         //函数记录的lev都是0，所以不用额外设定
         adr = data_adr++;
@@ -319,7 +324,7 @@ void Table::add_idrcd ( string name, id_type type ) {
         //填充func_table表和id_table表
         //func_table表的两个项的值先初始化为该函数名的在符号表中下标
         int ref = func_table.size();
-        func_table.push_back({id_table.size(),id_table.size()});
+        func_table.push_back({id_table.size(),id_table.size(),pcode_table.size()});
         id_table.push_back({name,type,ref,0,adr});
 
     }
@@ -399,7 +404,8 @@ void Table::add_idrcd ( string name, id_type type, int adr, int size) {
     */
     // 把标识符统一存成小写形式
     transform(name.begin(),name.end(),name.begin(),::tolower);
-     cout << name;
+    //cout << name;
+    //cout << data_adr;
     int elsize;
     element_type et;
     if ( type == INT_ARRAY ) {
@@ -441,7 +447,7 @@ void Table::add_idrcd ( string name, id_type type, int adr, int size) {
         //名称重复，报错
     }
 
-
+    //cout << adr;
     int ref = array_table.size();
     add_arrayrcd(et,elsize,size);
     id_table.push_back({name,type,ref,lev,adr});
@@ -533,10 +539,86 @@ void Table::test_pcode_table(){
     fout.open("pcode_table.txt");
     //fout<<"Eltype\tElsize\tsizer"
     for ( int i = 0; i < pcode_table.size(); i++ ) {
-       fout << pcode_table[i].f << "\t";
-       fout << pcode_table[i].l << "\t";
-       fout << pcode_table[i].a << "\t";
-       fout << endl;
+
+        string s;
+        switch ( pcode_table[i].f) {
+            case ADD:
+                s = "ADD";
+                break;
+            case BNE:
+                s = "BNE";
+                break;
+            case BRF:
+                s = "BRF";
+                break;
+            case DIV:
+                s = "DIV";
+                break;
+            case EQL:
+                s = "EQL";
+                break;
+            case GEQ:
+                s = "GEQ";
+                break;
+            case GRT:
+                s = "GRT";
+                break;
+            case JMP:
+                s = "JMP";
+                break;
+            case JR:
+                s = "JR";
+                break;
+            case JSR:
+                s = "JSR";
+                break;
+            case LDT:
+                s = "LDT";
+                break;
+            case LEQ:
+                s = "LEQ";
+                break;
+            case LES:
+                s = "LES";
+                break;
+            case LIT:
+                s = "LIT";
+                break;
+            case LOD:
+                s = "LOD";
+                break;
+            case LOI:
+                s = "LOI";
+                break;
+            case MUL:
+                s = "MUL";
+                break;
+            case NEQ:
+                s = "NEQ";
+                break;
+            case PRT:
+                s = "PRT";
+                break;
+            case RDA:
+                s = "RDA";
+                break;
+            case STA:
+                s = "STA";
+                break;
+            case STI:
+                s = "STI";
+                break;
+            case STO:
+                s = "STO";
+                break;
+            case SUB:
+                s = "SUB";
+                break;
+        }
+        fout << s << "\t";
+        fout << pcode_table[i].l << "\t";
+        fout << pcode_table[i].a << "\t";
+        fout << endl;
     }
 }
 

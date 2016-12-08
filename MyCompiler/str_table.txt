@@ -1,0 +1,5 @@
+"the f2 cannot be 0"
+"lihaile"
+"wodege"
+"the value of is 2"
+"the value of i is 3"

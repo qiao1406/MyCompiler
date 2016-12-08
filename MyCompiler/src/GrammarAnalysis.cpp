@@ -204,7 +204,7 @@ void GrammarAnalysis::ga_constant () {
         }
         nowword = nextword();
     }
-    prt_grammar_info("constant declaration\n");
+    prt_grammar_info("constant declaration");
 
 }
 
@@ -280,13 +280,13 @@ void GrammarAnalysis::ga_variable () {
         if ( nowword.value != ";" ) {
             //baocuo
         }
-        cout << "def";
+       // cout << "def";
 
         nowword = nextword();
-        cout << col_index << row_index;
-        cout << nowword.value << "wernbvn";
+        //cout << col_index << row_index;
+       // cout << nowword.value << "wernbvn";
         if ( nowword.value == "void" ) { //有可能是主函数或无返回值函数
-            cout << "asd$$$";
+            //cout << "asd$$$";
             break; // 此时变量说明已结束，跳出循环
         }
         else {
@@ -324,7 +324,7 @@ void GrammarAnalysis::ga_variable () {
         }
     }
 
-    prt_grammar_info("variable declaration\n");
+    prt_grammar_info("variable declaration");
 }
 
 void GrammarAnalysis::ga_vardef () {
@@ -397,10 +397,10 @@ void GrammarAnalysis::ga_returnfun () {
         //baocuo
     }
     else {//填符号表
+        renew_pointer();//更新所在函数块指针
         id_type t = (rtn_type == "int")?INT_FUNCTION:
                         (rtn_type=="char")?CHAR_FUNCTION:FLOAT_FUNCTION;
         Table::add_idrcd(name,t);
-        renew_pointer();
     }
 
     nowword = nextword();
@@ -451,8 +451,8 @@ void GrammarAnalysis::ga_voidfun () {
         //baocuo
     }
     else { //填符号表
+        renew_pointer();//更新所在函数块指针
         Table::add_idrcd(name,VOID_FUNCTION);
-        renew_pointer();
     }
 
     nowword = nextword();
@@ -486,7 +486,7 @@ void GrammarAnalysis::ga_voidfun () {
     if ( nowword.value != "}" ) {
         //baocuo
     }
-
+    Table::emit(JR);
     prt_grammar_info("function that has no return value\n");
 }
 
@@ -502,8 +502,8 @@ void GrammarAnalysis::ga_mainfun () {
         //baocuo
     }
     else { //填符号表
+        renew_pointer();//更新所在函数块指针
         Table::add_idrcd("main",VOID_FUNCTION);
-        renew_pointer();
     }
 
     nowword = nextword();
@@ -638,6 +638,7 @@ void GrammarAnalysis::ga_statement(){
         nowword = nextword();
         ga_case_stmt();
         nowword = nextword();
+        //cout << nowword.value << "jojojxxx%";
         return;
     }
     else if ( nowword.value == "scanf" ) { //读语句
@@ -696,14 +697,15 @@ void GrammarAnalysis::ga_statement(){
     }
     else if ( nowword.type == "IDENT" ) {
         string name = nowword.value;// 记录标识符的名称
-
+        //scout <<"___"<< nowword.value << "____";
         nowword = nextword();
         if ( nowword.value == "=" || nowword.value == "[" ) { //赋值语句
             //nowword = nextword();
             ga_assign_stmt(name);
             if ( nowword.value != ";" ) {
             //baocuo
-            cout << "漏了分号";
+            cout << "漏了jb分号";
+            cout << nowword.loc << nowword.value;
             }
             nowword = nextword();
             return;
@@ -711,6 +713,7 @@ void GrammarAnalysis::ga_statement(){
         else if ( nowword.value == "(" ) { //函数调用语句
 
             id_type rt = Table::get_func_type(name);//获得该函数的返回值类型
+            cout << "___dsf"<<rt;
             if ( rt == ERROR ) {
                 //baocuo
             }
@@ -753,7 +756,7 @@ void GrammarAnalysis::ga_condition_stmt(){
         //baocuo
     }
     ga_condition();
-    //int stack_top_val = Runtime::get_top_value();
+    //此时条件表达式的真值已经写到栈顶
     if ( nowword.value != ")" ) {
         //baocuo
     }
@@ -787,17 +790,20 @@ void GrammarAnalysis::ga_cycle_stmt(){
     if ( nowword.value != "(" ) {
         //baocuo
     }
+    int jp_loc = Table::get_pctable_size();//一次循环后跳转的地址
+
     ga_condition();
     //此时已经把条件结果加载到栈顶了
     if ( nowword.value != ")" ) {
         //baocuo
     }
+
     int brf_loc = Table::get_pctable_size();
     Table::emit(BRF,0,0);
 
     nowword = nextword();
     ga_statement();
-    Table::emit(JMP,0,brf_loc);
+    Table::emit(JMP,0,jp_loc);
     Table::update_emit(BRF,0,Table::get_pctable_size(),brf_loc);
     //prt_grammar_info("cycle statement");
 }
@@ -816,7 +822,9 @@ void GrammarAnalysis::ga_retfuncall_stmt ( string func_name ){
         //baocuo
     }
     else {
+        //cout << r.name;
         r = Table::get_idrcd(i);
+        //cout << r.name;
     }
 
     nowword = nextword();
@@ -831,23 +839,25 @@ void GrammarAnalysis::ga_retfuncall_stmt ( string func_name ){
         ga_expression();
         i++;
         id_rcd temp = Table::get_idrcd(i);
-        if ( !is_sametype(temp.type,Runtime::get_top_type()) ) {
+        //if ( !is_sametype(temp.type,Runtime::get_top_type()) ) {
             //数据类型不一致，报错
-        }
-        else {//生成指令，把实参的值写入数据区
-            Table::emit(STO,0,r.adr+temp.adr);
-        }
+        //}
+        //else {
+        //生成指令，把实参的值写入数据区
+        Table::emit(STO,0,temp.adr);
+        //}
         while ( nowword.value == "," ) {
             nowword = nextword();
             ga_expression();
             i++;
             temp = Table::get_idrcd(i);
-            if ( !is_sametype(temp.type,Runtime::get_top_type()) ) {
-            //数据类型不一致，报错
-            }
-            else {//生成指令，把实参的值写入数据区
-                Table::emit(STO,0,r.adr+temp.adr);
-            }
+//            if ( !is_sametype(temp.type,Runtime::get_top_type()) ) {
+//            //数据类型不一致，报错
+//            }
+           // else {
+            //生成指令，把实参的值写入数据区
+            Table::emit(STO,0,r.adr+temp.adr);
+            //}
         }
 
         if ( ! i == Table::get_lastpar(r) ) { //参数个数不对
@@ -938,9 +948,13 @@ void GrammarAnalysis::ga_assign_stmt ( string id_name ) {
         要求入口处有预读
         出口处有预读
     */
+    //cout << pointer << "jibabasd";
+    //cout << id_name;
+
 
     //查表，试图找到该标识符的记录
     int loc = Table::find_ident(pointer,id_name);
+    //cout << "blaodf" << loc;
     id_rcd r;
     if ( loc == -1 ) { //没找到该标识符
         //baocuo
@@ -948,6 +962,7 @@ void GrammarAnalysis::ga_assign_stmt ( string id_name ) {
     else {
         //从符号表中提取出该标识符的记录
         r = Table::get_idrcd(loc);
+        //cout << r.name << "____";
     }
 
     if( !( Table::is_varrcd(r) || Table::is_arrayrcd(r) ) ) {
@@ -969,15 +984,11 @@ void GrammarAnalysis::ga_assign_stmt ( string id_name ) {
 
         nowword = nextword();
         ga_expression();//计算下标表达式的值
-        if ( Runtime::get_top_type() != RS_INT ) {
-        //baocuo
-        }
-        else {
-            index = Runtime::get_top_value();//数组下标
-            if ( index < 0 || index >= arr_size ) { //数组下标越界
-                //报错
-            }
-        }
+        //此时数组下标的值已经写到栈顶,此时计算存放的地址
+
+        Table::emit(LOI,0,r.adr);
+        //cout << r.name<<"()()";
+        Table::emit(ADD);
 
         if ( nowword.value != "]" ) {
             //baocuo
@@ -990,25 +1001,8 @@ void GrammarAnalysis::ga_assign_stmt ( string id_name ) {
 
         nowword = nextword();
         ga_expression();//计算赋值表达式的值
-        if ( Runtime::get_top_type() == RS_INT ) { //表达式的值是整型
-            if ( ar.eltype == FLOAT ) { //存到整型数组要进行强制转换
-                Table::add_floatrcd((float)Runtime::get_top_value());
-                //生成存指令数据区存的是指向实数表的指针
-                Table::emit(STI,Table::get_array_size(r)-1,r.adr+index);
-            }
-            else{
-                Table::emit(STO,0,r.adr+index);
-            }
-        }
-        else { //表达式的值是实型
-            if ( ar.eltype == FLOAT ) {
-                //生成存指令数据区存的是指向实数表的指针
-                Table::emit(STI,Runtime::get_top_value(),r.adr+index);
-            }
-            else {
-                //baocuo
-            }
-        }
+        //此时要写入的地址在次栈顶，表达式的值在栈顶
+        Table::emit(STA);
 
         //prt_grammar_info("assignation statement");
         return;
@@ -1016,25 +1010,7 @@ void GrammarAnalysis::ga_assign_stmt ( string id_name ) {
     else if (  nowword.value == "=" ) {
         nowword = nextword();
         ga_expression();
-
-        if ( Runtime::get_top_type() == RS_INT ) {
-            if ( r.type == FLOAT_VAR ) {
-                Table::add_floatrcd((float)Runtime::get_top_value());
-                Table::emit(STI,Table::get_array_size(r)-1,r.adr);
-            }
-            else {
-                Table::emit(STO,0,r.adr);
-            }
-        }
-        else {
-            if ( r.type == FLOAT_VAR ) {
-                Table::emit(STI,Runtime::get_top_value(),r.adr);
-            }
-            else {
-                //baocuo
-            }
-        }
-
+        Table::emit(STO,0,r.adr);
         //prt_grammar_info("assignation statement");
         return;
     }
@@ -1103,7 +1079,7 @@ void GrammarAnalysis::ga_read_stmt(){
     if ( nowword.value != ")" ) {
         //baocuo
     }
-    //prt_grammar_info("read statement");
+    prt_grammar_info("read statement");
 }
 
 void GrammarAnalysis::ga_write_stmt(){
@@ -1121,6 +1097,7 @@ void GrammarAnalysis::ga_write_stmt(){
         //先把字符串登记到字符串表中
         Table::add_strrcd(nowword.value);
         Table::emit(LIT,3,Table::get_strtable_size()-1);
+        Table::emit(PRT);
         nowword = nextword();
         if ( nowword.value == "," ) {
             nowword = nextword();
@@ -1137,7 +1114,7 @@ void GrammarAnalysis::ga_write_stmt(){
     if ( nowword.value != ")") {
             //baocuo
     }
-    //prt_grammar_info("write statement");
+    prt_grammar_info("write statement");
 }
 
 void GrammarAnalysis::ga_return_stmt(){
@@ -1177,15 +1154,6 @@ void GrammarAnalysis::ga_case_stmt(){
         nowword = nextword();
         ga_expression();
         //此时表达式的值已写入栈顶用于比较
-//        int tgt_val;//target value
-//        if ( Runtime::get_top_type() == RS_FLOAT ) {
-//            //情况表达式的值不能是实型
-//            //baocuo
-//        }
-//        else {
-//            tgt_val = Runtime::get_top_value();
-//        }
-
         if ( nowword.value != ")" ) {
             //报错
         }
@@ -1206,7 +1174,7 @@ void GrammarAnalysis::ga_case_stmt(){
                         //baocuo
                     }
                     else {
-                        ( nowword.type == "CHARATER" )? Table::emit(LOI,1,(int)nowword.value[0])
+                        ( nowword.type == "CHARATER" )? Table::emit(LOI,1,(int)nowword.value[1])
                                     :Table::emit(LOI,0,str2num<int>(nowword.value));
                         //生成BNE指令
                         bq.push(Table::get_pctable_size());
@@ -1224,7 +1192,7 @@ void GrammarAnalysis::ga_case_stmt(){
                             //baocuo
                         }
                         else {
-                            ( nowword.type == "CHARATER" )? Table::emit(LOI,1,(int)nowword.value[0])
+                            ( nowword.type == "CHARATER" )? Table::emit(LOI,1,(int)nowword.value[1])
                                     :Table::emit(LOI,0,str2num<int>(nowword.value));
                             //生成BNE指令
                             bq.push(Table::get_pctable_size());
@@ -1241,6 +1209,7 @@ void GrammarAnalysis::ga_case_stmt(){
                 }
 
                 int end_adr = Table::get_pctable_size();
+                //cout << "xasd";
                 while ( !jq.empty() ) {
                     Table::update_emit(JMP,0,end_adr,jq.front());
                     jq.pop();
@@ -1255,7 +1224,7 @@ void GrammarAnalysis::ga_case_stmt(){
                         Table::update_emit(BNE,0,bq.front(),i);
                     }
                 }
-
+                Table::test_pcode_table();
                 prt_grammar_info("case statement");
             }
         }
@@ -1272,10 +1241,6 @@ void GrammarAnalysis::ga_subcase_stmt() {
         入口要求预读
         出口有预读
     */
-//    nowword = nextword();
-//    if ( nowword.type != "INTEGER" && nowword.type != "CHARACTER" ) {
-//        //baocuo
-//    }
 
     nowword = nextword();
     if ( nowword.value != ":" ) {
@@ -1295,196 +1260,33 @@ void GrammarAnalysis::ga_condition() {
     ga_expression();
     if ( nowword.is_relation_op() ) {
 
-        string op = nowword.value;\
-        bool logic_val;
+        string op = nowword.value;
         nowword = nextword();
         ga_expression();
 
         //此时表达式的右值在栈顶，左值在次栈顶
         //按照关系运算符的值的不同来进行分类
         if ( op == "==" ) {
-
-            if ( Runtime::get_top_type() == RS_FLOAT ) {
-                float right_fl = Table::get_floatval(Runtime::get_top_value());
-                Runtime::pop_rs();
-                if ( Runtime::get_top_type() == RS_FLOAT ) {
-                    float left_fl = Table::get_floatval(Runtime::get_top_value());
-                    logic_val = ( left_fl == right_fl );
-                }
-                else {
-                    int left_int = Runtime::get_top_value();
-                    logic_val = ( left_int == right_fl );
-                }
-            }
-            else{
-                int right_int = Runtime::get_top_value();
-                Runtime::pop_rs();
-                if ( Runtime::get_top_type() == RS_FLOAT ) {
-                    float left_fl = Table::get_floatval(Runtime::get_top_value());
-                    logic_val = ( left_fl == right_int );
-                }
-                else {
-                    int left_int = Runtime::get_top_value();
-                    logic_val = ( left_int == right_int );
-                }
-            }
-
+            Table::emit(EQL);
         }
         else if ( op == "!=" ) {
-
-            if ( Runtime::get_top_type() == RS_FLOAT ) {
-                float right_fl = Table::get_floatval(Runtime::get_top_value());
-                Runtime::pop_rs();
-                if ( Runtime::get_top_type() == RS_FLOAT ) {
-                    float left_fl = Table::get_floatval(Runtime::get_top_value());
-                    logic_val = ( left_fl != right_fl );
-                }
-                else {
-                    int left_int = Runtime::get_top_value();
-                    logic_val = ( left_int != right_fl );
-                }
-            }
-            else{
-                int right_int = Runtime::get_top_value();
-                Runtime::pop_rs();
-                if ( Runtime::get_top_type() == RS_FLOAT ) {
-                    float left_fl = Table::get_floatval(Runtime::get_top_value());
-                    logic_val = ( left_fl != right_int );
-                }
-                else {
-                    int left_int = Runtime::get_top_value();
-                    logic_val = ( left_int != right_int );
-                }
-            }
-
+            Table::emit(NEQ);
         }
         else if ( op == "<" ) {
-
-            if ( Runtime::get_top_type() == RS_FLOAT ) {
-                float right_fl = Table::get_floatval(Runtime::get_top_value());
-                Runtime::pop_rs();
-                if ( Runtime::get_top_type() == RS_FLOAT ) {
-                    float left_fl = Table::get_floatval(Runtime::get_top_value());
-                    logic_val = ( left_fl < right_fl );
-                }
-                else {
-                    int left_int = Runtime::get_top_value();
-                    logic_val = ( left_int < right_fl );
-                }
-            }
-            else{
-                int right_int = Runtime::get_top_value();
-                Runtime::pop_rs();
-                if ( Runtime::get_top_type() == RS_FLOAT ) {
-                    float left_fl = Table::get_floatval(Runtime::get_top_value());
-                    logic_val = ( left_fl < right_int );
-                }
-                else {
-                    int left_int = Runtime::get_top_value();
-                    logic_val = ( left_int < right_int );
-                }
-            }
-
+            Table::emit(LES);
         }
         else if  ( op == "<=" ) {
-
-            if ( Runtime::get_top_type() == RS_FLOAT ) {
-                float right_fl = Table::get_floatval(Runtime::get_top_value());
-                Runtime::pop_rs();
-                if ( Runtime::get_top_type() == RS_FLOAT ) {
-                    float left_fl = Table::get_floatval(Runtime::get_top_value());
-                    logic_val = ( left_fl == right_fl );
-                }
-                else {
-                    int left_int = Runtime::get_top_value();
-                    logic_val = ( left_int = right_fl );
-                }
-            }
-            else{
-                int right_int = Runtime::get_top_value();
-                Runtime::pop_rs();
-                if ( Runtime::get_top_type() == RS_FLOAT ) {
-                    float left_fl = Table::get_floatval(Runtime::get_top_value());
-                    logic_val = ( left_fl <= right_int );
-                }
-                else {
-                    int left_int = Runtime::get_top_value();
-                    logic_val = ( left_int <= right_int );
-                }
-            }
-
+            Table::emit(LEQ);
         }
         else if ( op == ">" ) {
-
-            if ( Runtime::get_top_type() == RS_FLOAT ) {
-                float right_fl = Table::get_floatval(Runtime::get_top_value());
-                Runtime::pop_rs();
-                if ( Runtime::get_top_type() == RS_FLOAT ) {
-                    float left_fl = Table::get_floatval(Runtime::get_top_value());
-                    logic_val = ( left_fl > right_fl );
-                }
-                else {
-                    int left_int = Runtime::get_top_value();
-                    logic_val = ( left_int > right_fl );
-                }
-            }
-            else{
-                int right_int = Runtime::get_top_value();
-                Runtime::pop_rs();
-                if ( Runtime::get_top_type() == RS_FLOAT ) {
-                    float left_fl = Table::get_floatval(Runtime::get_top_value());
-                    logic_val = ( left_fl > right_int );
-                }
-                else {
-                    int left_int = Runtime::get_top_value();
-                    logic_val = ( left_int > right_int );
-                }
-            }
-
+            Table::emit(GRT);
         }
         else { // op是>=的情况
-
-            if ( Runtime::get_top_type() == RS_FLOAT ) {
-                float right_fl = Table::get_floatval(Runtime::get_top_value());
-                Runtime::pop_rs();
-                if ( Runtime::get_top_type() == RS_FLOAT ) {
-                    float left_fl = Table::get_floatval(Runtime::get_top_value());
-                    logic_val = ( left_fl >= right_fl );
-                }
-                else {
-                    int left_int = Runtime::get_top_value();
-                    logic_val = ( left_int >= right_fl );
-                }
-            }
-            else{
-                int right_int = Runtime::get_top_value();
-                Runtime::pop_rs();
-                if ( Runtime::get_top_type() == RS_FLOAT ) {
-                    float left_fl = Table::get_floatval(Runtime::get_top_value());
-                    logic_val = ( left_fl >= right_int );
-                }
-                else {
-                    int left_int = Runtime::get_top_value();
-                    logic_val = ( left_int >= right_int );
-                }
-            }
-
+            Table::emit(GEQ);
         }
 
-        (logic_val)? Table::emit(LOI,0,1):Table::emit(LOI,0,0);
     }
-    else {
-        //判断此时栈顶的值是否为零
-        if ( Runtime::get_top_type() == RS_FLOAT ) {
-            ( Table::get_floatval(Runtime::get_top_value()) == 0 )?
-                Table::emit(LOI,0,0):Table::emit(LOI,0,1);
-        }
-        else {
-            ( Runtime::get_top_value()==0 )?
-                Table::emit(LOI,0,0):Table::emit(LOI,0,1);
-        }
-    }
-
+    //只有一个表达式而没有关系运算符的时候，可以不用生成比较的指令
 }
 
 void GrammarAnalysis::ga_expression() {
@@ -1496,7 +1298,7 @@ void GrammarAnalysis::ga_expression() {
     if ( nowword.is_addition_op() ) {
         nowword = nextword();
     }
-
+    //cout << "asd666";
     ga_item();
     while ( nowword.is_addition_op() ) {
         string op = nowword.value;
@@ -1547,7 +1349,8 @@ void GrammarAnalysis::ga_factor() {
             t = 2;
         }
         else {
-            a = nowword.value[0];
+            //cout << nowword.value << "____";
+            a = nowword.value[1];
             t = 1;
         }
         Table::emit(LOI,t,a);
@@ -1600,9 +1403,11 @@ void GrammarAnalysis::ga_factor() {
         }
 
         else if ( nowword.value == "(" ) { // 可能是有返回值的函数调用语句
-
+            //cout << r.name;
             if ( Table::is_funcrcd(r) && r.type != VOID_FUNCTION ) {
-                ga_retfuncall_stmt(r.name);
+                //cout << "asdsadasda" << id;
+                ga_retfuncall_stmt(id);
+
                 return;
             }
             else { //不是有返回值的
@@ -1629,12 +1434,15 @@ void GrammarAnalysis::ga_factor() {
         }
 
     }
-    else if ( nowword.type == "(" ) { //可能是表达式
+    else if ( nowword.value == "(" ) { //可能是表达式
+        //cout << "mimi";
         nowword = nextword();
         ga_expression();
-        if( nowword.type != ")") {
+       // cout << nowword.value<<"***";
+        if( nowword.value != ")") {
             //baocuo
         }
+        nowword = nextword();
         return;
     }
     else {

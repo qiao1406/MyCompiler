@@ -50,7 +50,6 @@ void main() {
 	scanf(ch1,ch2);
 	scanf(sml_num,res);
 	
-	_root = float_div(f1,sml_num);
 
 	
 	switch (i+1) {
