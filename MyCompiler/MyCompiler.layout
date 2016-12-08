@@ -7,19 +7,6 @@
 		</Cursor>
 		<Folding>
 			<Collapse line="18" />
-			<Collapse line="54" />
-			<Collapse line="62" />
-			<Collapse line="70" />
-			<Collapse line="78" />
-			<Collapse line="103" />
-			<Collapse line="125" />
-			<Collapse line="176" />
-			<Collapse line="217" />
-			<Collapse line="332" />
-			<Collapse line="364" />
-			<Collapse line="488" />
-			<Collapse line="527" />
-			<Collapse line="536" />
 		</Folding>
 	</File>
 	<File name="include\Word.h" open="1" top="0" tabpos="6" split="0" active="1" splitpos="0" zoom_1="0" zoom_2="0">
@@ -27,9 +14,9 @@
 			<Cursor1 position="220" topLine="0" />
 		</Cursor>
 	</File>
-	<File name="src\Error.cpp" open="1" top="0" tabpos="4" split="0" active="1" splitpos="0" zoom_1="3" zoom_2="0">
+	<File name="src\Error.cpp" open="1" top="1" tabpos="4" split="0" active="1" splitpos="0" zoom_1="3" zoom_2="0">
 		<Cursor>
-			<Cursor1 position="2052" topLine="41" />
+			<Cursor1 position="2278" topLine="48" />
 		</Cursor>
 	</File>
 	<File name="src\ErrorProcess.cpp" open="0" top="0" tabpos="8" split="0" active="1" splitpos="0" zoom_1="2" zoom_2="0">
@@ -62,9 +49,9 @@
 			<Cursor1 position="827" topLine="0" />
 		</Cursor>
 	</File>
-	<File name="src\GrammarAnalysis.cpp" open="1" top="1" tabpos="3" split="0" active="1" splitpos="0" zoom_1="1" zoom_2="0">
+	<File name="src\GrammarAnalysis.cpp" open="1" top="0" tabpos="3" split="0" active="1" splitpos="0" zoom_1="2" zoom_2="0">
 		<Cursor>
-			<Cursor1 position="12189" topLine="101" />
+			<Cursor1 position="39885" topLine="1196" />
 		</Cursor>
 		<Folding>
 			<Collapse line="27" />
@@ -73,21 +60,8 @@
 			<Collapse line="82" />
 			<Collapse line="94" />
 			<Collapse line="113" />
-			<Collapse line="181" />
-			<Collapse line="200" />
-			<Collapse line="208" />
-			<Collapse line="261" />
-			<Collapse line="317" />
-			<Collapse line="324" />
-			<Collapse line="436" />
-			<Collapse line="488" />
-			<Collapse line="528" />
-			<Collapse line="577" />
-			<Collapse line="743" />
-			<Collapse line="779" />
-			<Collapse line="1287" />
-			<Collapse line="1308" />
-			<Collapse line="1325" />
+			<Collapse line="721" />
+			<Collapse line="1166" />
 		</Folding>
 	</File>
 	<File name="include\Runtime.h" open="0" top="0" tabpos="8" split="0" active="1" splitpos="0" zoom_1="3" zoom_2="0">

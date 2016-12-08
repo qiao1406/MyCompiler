@@ -30,7 +30,24 @@ error_type Error::errtyp_list[] = {
                  {26,"Wrong Return Type"},
                  {27,"Wrong Main Function Return Type"},
                  {28,"Should Be Type Symbol"},
-                 {29,"Except Return Value"} };
+                 {29,"Except Return Value"},
+                 {30,"This Identifier Is Not Array"},
+                 {31,"Should Be Integer Value"},
+                 {32,"Should Be Array Name"},
+                 {33,"Should Be Function Or Variable"},
+                 {34,"Should Be Function"},
+                 {35,"UnEqual Constant Type"},
+                 {36,"Should Be Argument Or Right Parenthese"},
+                 {37,"Except Main"},
+                 {38,"Should Be Function Name"},
+                 {39,"Should Be Variable Or Function Name"},
+                 {40,"Not A Statement"},
+                 {41,"Should Be Variable Or Array Name"},
+                 {42,"Array Size Isn’t A Positive Number"},
+                 {43,"Can’t Find This Identifier"},
+                 {44,"Should Be A Integer Or Character Value"},
+                 {45,"Not A Factor"}
+                };
 
 Error::Error(int line, int index ) {
     // line是错误所在源代码的行值
@@ -51,19 +68,3 @@ void Error::prt_err() {
     cout << " Line: " << location <<" -> ";
     cout << errinfo.prompt_info << endl;
 }
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-

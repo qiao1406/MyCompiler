@@ -10,11 +10,11 @@ using namespace std;
 class ErrorProcess
 {
     public:
-        static queue<Error> errs;
+        static void prt_errs ();
         static void add_err ( int line, int index);
-        
-    private:
 
+    private:
+        static queue<Error> errs;
 };
 
 #endif // ERRORPROCESS_H
