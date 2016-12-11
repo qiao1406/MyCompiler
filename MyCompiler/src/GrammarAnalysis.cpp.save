@@ -536,7 +536,15 @@ void GrammarAnalysis::ga_mainfun () {
         //baocuo
         err_report(9);
     }
+    
+    
+    
+    
+    
+    
 
+    //设定main函数开始的位置
+    Runtime::set_main_pointer(Table::get_pctable_size());
     prt_grammar_info("main function");
 }
 
@@ -1370,7 +1378,6 @@ void GrammarAnalysis::ga_factor() {
             t = 2;
         }
         else {
-            //cout << nowword.value << "____";
             a = nowword.value[1];
             t = 1;
         }
@@ -1385,6 +1392,7 @@ void GrammarAnalysis::ga_factor() {
         id_rcd r;
         if ( loc == -1 ) { //没找到该标识符
             //baocuo
+            err_report(43);
         }
         else {
             //从符号表中提取出该标识符的记录
@@ -1403,6 +1411,7 @@ void GrammarAnalysis::ga_factor() {
             int index;
             if ( arr_size <= 0 ) { //元素个数应该是正数
                 //baocuo
+                err_report(42);
             }
 
             nowword = nextword();
@@ -1434,6 +1443,7 @@ void GrammarAnalysis::ga_factor() {
             }
             else { //不是有返回值的
                 //报错
+                err_report(29);
             }
 
 
@@ -1452,7 +1462,9 @@ void GrammarAnalysis::ga_factor() {
         }
         else {
             //未知标识符报错
+            err_report(43);
         }
+
 
     }
     else if ( nowword.value == "(" ) { //可能是表达式
@@ -1467,6 +1479,6 @@ void GrammarAnalysis::ga_factor() {
     }
     else {
         //baocuo
-        
+        err_report(45);
     }
 }

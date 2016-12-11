@@ -47,7 +47,6 @@ enum op_code {
     PRT,
     RDA,
     STA,
-    STI,
     STO,
     SUB
 };
@@ -117,6 +116,7 @@ class Table {
         static id_rcd get_idrcd ( int index );
         static array_rcd get_arrayrcd ( int index );
         static float get_floatval ( int index );
+        static string get_str ( int index );
         static int get_idtable_size();
         static int get_rctable_size();
         static int get_pctable_size();
@@ -141,7 +141,7 @@ class Table {
 
     private:
         static int data_adr;//数据区地址
-        //static int fun_adr;//局部地址
+        static int fun_adr;//局部地址
         static vector<id_rcd> id_table;//符号表
         static vector<array_rcd> array_table;//数组信息表
         static vector<func_rcd> func_table;//函数信息表

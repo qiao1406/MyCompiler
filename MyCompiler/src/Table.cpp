@@ -6,7 +6,7 @@
 
 //数据区地址初始化为0
 int Table::data_adr = 0;
-//int Table::fun_adr = 0;
+int Table::fun_adr = 0;
 
 vector<id_rcd> Table::id_table;//符号表
 vector<array_rcd> Table::array_table;//数组信息表
@@ -187,11 +187,8 @@ int Table::find_ident ( int p, string name ) {
 
     }
 
-    //cout << func_table[id_table[p].ref].last<<"careless";
-
      // 把标识符改成小写形式
     transform(name.begin(),name.end(),name.begin(),::tolower);
-    //cout << "----" << name <<"____";
     //先在函数内部找
     int i = p+1;
     for ( ; i <= func_table[id_table[p].ref].last; i++ ) {
@@ -254,6 +251,20 @@ float Table::get_floatval ( int index ) {
     }
 }
 
+string Table::get_str ( int index ) {
+    /*
+        返回对应合法下标的字符串表记录
+    */
+
+    if ( index < str_table.size() && index >= 0 ) {
+        return str_table[index];
+    }
+    else {
+        return "";
+    }
+
+}
+
 int Table::get_array_size ( id_rcd r ) {
     /*
         返回数组的大小，即元素个数
@@ -281,7 +292,7 @@ void Table::add_idrcd ( string name, id_type type ) {
 
     // 把标识符统一存成小写形式
     transform(name.begin(),name.end(),name.begin(),::tolower);
-    //cout << name<<" ";
+
     int adr;
     if ( type == INT_VAR || type == CHAR_VAR || type == FLOAT_VAR ) {
         int lev;
@@ -294,7 +305,7 @@ void Table::add_idrcd ( string name, id_type type ) {
             id_rcd r = id_table.back();
             if ( r.lev == 1 || ( r.lev == 0 && is_funcrcd(r)) ) {
                 lev = 1;
-                adr = data_adr++;
+                adr = fun_adr++;
                 set_lastid();
             }
             else {//全局变量
@@ -315,11 +326,11 @@ void Table::add_idrcd ( string name, id_type type ) {
         if ( !id_table.empty() && is_id_repeat(name,0) ) {
             //名称重复，报错
         }
-        //cout << name;
-        //cout << id_table.size();
+
         //设定adr的值，以及将fun_adr置零
         //函数记录的lev都是0，所以不用额外设定
         adr = data_adr++;
+        fun_adr = 0;
 
         //填充func_table表和id_table表
         //func_table表的两个项的值先初始化为该函数名的在符号表中下标
@@ -369,8 +380,7 @@ void Table::add_idrcd ( string name, float float_value ) {
 
     // 把标识符统一存成小写形式
     transform(name.begin(),name.end(),name.begin(),::tolower);
-    //cout << name;
-   // cout << float_value;
+
     //设定lev的值
     int lev;
     if ( id_table.empty() ) {
@@ -404,8 +414,7 @@ void Table::add_idrcd ( string name, id_type type, int adr, int size) {
     */
     // 把标识符统一存成小写形式
     transform(name.begin(),name.end(),name.begin(),::tolower);
-    //cout << name;
-    //cout << data_adr;
+
     int elsize;
     element_type et;
     if ( type == INT_ARRAY ) {
@@ -432,8 +441,8 @@ void Table::add_idrcd ( string name, id_type type, int adr, int size) {
         id_rcd r = id_table.back();
         if ( r.lev == 1 || r.lev == 0 && is_funcrcd(r) ) {
             lev = 1;
-            adr = data_adr;
-            data_adr += size;
+            adr = fun_adr;
+            fun_adr += size;
             set_lastid();
         }
         else {

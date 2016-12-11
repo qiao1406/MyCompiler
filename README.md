@@ -20,3 +20,9 @@ A：暂时不做任何处理，好像也没有办法处理
 
 3.
 读语句只读普通变量，不读数组
+
+3.运算类型转换表
+栈顶数\次栈顶数 int 	float 	char
+		int		int 	float 	int
+		float	float 	float 	float
+		char	int		float	int

@@ -25,7 +25,7 @@
 	"Table.h"
 	"Runtime.h"
 
-1481164780 source:e:\git\mycompiler\mycompiler\src\grammaranalysis.cpp
+1481376860 source:e:\git\mycompiler\mycompiler\src\grammaranalysis.cpp
 	"GrammarAnalysis.h"
 	"ErrorProcess.h"
 	<sstream>
@@ -45,31 +45,33 @@
 
 1479909533 e:\git\mycompiler\mycompiler\include\codegenerate.h
 
-1480001226 source:e:\git\mycompiler\mycompiler\src\error.cpp
+1481219205 source:e:\git\mycompiler\mycompiler\src\error.cpp
 	"Error.h"
 
-1480217506 e:\git\mycompiler\mycompiler\include\error.h
+1481376837 e:\git\mycompiler\mycompiler\include\error.h
 	<iostream>
 	<string>
 
-1479921477 source:e:\git\mycompiler\mycompiler\src\errorprocess.cpp
+1481376848 source:e:\git\mycompiler\mycompiler\src\errorprocess.cpp
 	"ErrorProcess.h"
 
-1479921474 e:\git\mycompiler\mycompiler\include\errorprocess.h
+1481180284 e:\git\mycompiler\mycompiler\include\errorprocess.h
 	<queue>
 	"Error.h"
 
-1481080750 e:\git\mycompiler\mycompiler\include\table.h
+1481376643 e:\git\mycompiler\mycompiler\include\table.h
 	<vector>
 	<string>
 
-1480877638 e:\git\mycompiler\mycompiler\include\runtime.h
+1481374454 e:\git\mycompiler\mycompiler\include\runtime.h
 	<stack>
+	<vector>
+	"Table.h"
 
-1480879327 source:e:\git\mycompiler\mycompiler\src\runtime.cpp
+1481376579 source:e:\git\mycompiler\mycompiler\src\runtime.cpp
 	"Runtime.h"
 
-1481082855 source:e:\git\mycompiler\mycompiler\src\table.cpp
+1481376643 source:e:\git\mycompiler\mycompiler\src\table.cpp
 	"Table.h"
 	<iostream>
 	<iomanip>

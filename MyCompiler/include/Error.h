@@ -14,7 +14,9 @@ struct error_type {
 class Error {
     public:
         Error ( int line, int index);
-        const static int ERROR_NUM = 40;
+        const static int ERROR_NUM = 50;
+
+        void prt_err();
 
     private:
         int location;
@@ -22,7 +24,7 @@ class Error {
 
         static error_type errtyp_list[ERROR_NUM];
 
-        void prt_err();
+
 };
 
 #endif // ERROR_H

@@ -34,7 +34,6 @@
 			<Add option="-Wall" />
 			<Add option="-fexceptions" />
 		</Compiler>
-		<Unit filename="include/CodeGenerate.h" />
 		<Unit filename="include/Error.h" />
 		<Unit filename="include/ErrorProcess.h" />
 		<Unit filename="include/GrammarAnalysis.h" />
@@ -43,7 +42,6 @@
 		<Unit filename="include/Word.h" />
 		<Unit filename="include/WordAnalysis.h" />
 		<Unit filename="main.cpp" />
-		<Unit filename="src/CodeGenerate.cpp" />
 		<Unit filename="src/Error.cpp" />
 		<Unit filename="src/ErrorProcess.cpp" />
 		<Unit filename="src/GrammarAnalysis.cpp" />
