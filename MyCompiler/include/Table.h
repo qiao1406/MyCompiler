@@ -139,6 +139,9 @@ class Table {
         static void test_pcode_table();
         static void test_str_table();
 
+        static vector<pcode> pcode_table;//PCode码表
+
+
     private:
         static int data_adr;//数据区地址
         static int fun_adr;//局部地址
@@ -147,7 +150,7 @@ class Table {
         static vector<func_rcd> func_table;//函数信息表
         static vector<float> rconst_table;//实常量表
         static vector<string> str_table;//字符串常量表
-        static vector<pcode> pcode_table;//PCode码表
+
 
         static bool is_id_repeat ( string name, int lev );
         static void add_arrayrcd ( element_type eltype, int elsize, int size);

@@ -2,6 +2,7 @@
 #include "Word.h"
 #include "WordAnalysis.h"
 #include "GrammarAnalysis.h"
+#include "Runtime.h"
 
 using namespace std;
 
@@ -26,5 +27,7 @@ int main() {
     Table::test_pcode_table();
     Table::test_func_table();
     Table::test_str_table();
+    Runtime::interpret(Table::pcode_table);
+
     return 0;
 }

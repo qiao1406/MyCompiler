@@ -31,15 +31,16 @@ class Runtime {
         static void push_rs ( run_stack r );
         static void set_rs ( int index, run_stack r );
         static void set_main_pointer ( int i );
+        static void interpret ( vector<pcode> p );
 
     private:
-        static stack<run_stack> runtime_stack;//运行栈
+        static vector<run_stack> runtime_stack;//运行栈
         static stack<int> fun_stack;//函数栈
         static int ret_adr;
         static int main_pointer;
         static int data_area[DATA_AREA_SIZE];//数据区
 
-        static void interpret ( vector<pcode> p );
+
 
 };
 

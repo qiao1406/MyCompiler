@@ -614,9 +614,6 @@ void Table::test_pcode_table(){
             case STA:
                 s = "STA";
                 break;
-            case STI:
-                s = "STI";
-                break;
             case STO:
                 s = "STO";
                 break;

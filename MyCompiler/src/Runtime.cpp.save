@@ -12,8 +12,9 @@ int Runtime::main_pointer = 0;
 //数据区，存放全局变量函数
 int Runtime::data_area[DATA_AREA_SIZE];
 
-//运行栈
-stack<run_stack> Runtime::runtime_stack;
+//运行栈,用vcector来实现运行栈是因为有时候要用
+//地址来访问栈的内容
+vector<run_stack> Runtime::runtime_stack;
 
 //函数栈，栈顶记录当前正在被调用的函数的
 //入口位置在运行栈中的下标值
@@ -29,11 +30,11 @@ Type str2num(const string& str) {
 }
 
 int Runtime::get_top_value() {
-    return runtime_stack.top().value;
+    return runtime_stack.back().value;
 }
 
 data_type Runtime::get_top_type() {
-    return runtime_stack.top().type;
+    return runtime_stack.back().type;
 }
 
 void Runtime::set_main_pointer ( int i ) {
@@ -41,11 +42,11 @@ void Runtime::set_main_pointer ( int i ) {
 }
 
 void Runtime::pop_rs() {
-    runtime_stack.pop();
+    runtime_stack.pop_back();
 }
 
 void Runtime::push_rs ( run_stack r ) {
-    runtime_stack.push(r);
+    runtime_stack.push_back(r);
 }
 
 run_stack Runtime::get_val ( int index ) {
@@ -95,6 +96,8 @@ void Runtime::interpret ( vector<pcode> p ) {
         解释执行PCode
     */
     int index = main_pointer;
+    bool res;
+    run_stack temp;
 
     while ( true ) {
 
@@ -104,7 +107,7 @@ void Runtime::interpret ( vector<pcode> p ) {
         }
         else {
 
-            pcode c = p[i];
+            pcode c = p[index];
 
             switch ( c.f ) {
 
@@ -149,7 +152,6 @@ void Runtime::interpret ( vector<pcode> p ) {
             //当栈顶和次栈顶的值不相等的时候跳转到地址a，
             //且同时将栈顶的值弹出；否则将弹出栈顶和次栈顶的值
 
-                bool res;
                 if ( get_top_type() == RS_FLOAT ) {
                     //栈顶为实数则，结果必为实数
                     float f1 = Table::get_floatval(get_top_value());
@@ -183,7 +185,7 @@ void Runtime::interpret ( vector<pcode> p ) {
 
             case BRF:
             //条件跳转，弹出栈顶内容，若栈顶的值为0则跳到地址a
-                bool res;
+
                 if ( get_top_type() == RS_FLOAT ) {
                     res = ( 0 == Table::get_floatval(get_top_value()) );
                 }
@@ -226,7 +228,7 @@ void Runtime::interpret ( vector<pcode> p ) {
                 else {
                     int i1 = get_top_value();
 
-                    f ( i1 == 0 ) {
+                    if ( i1 == 0 ) {
                         cout << "程序崩溃:除数不能为0" <<endl;
                         exit(0);
                     }
@@ -252,7 +254,7 @@ void Runtime::interpret ( vector<pcode> p ) {
             case EQL:
             //弹出并比较栈顶和次栈顶的值，
             //若相等则把栈顶置1，不相等则置0
-                bool res;
+
                 if ( get_top_type() == RS_FLOAT ) {
                     //栈顶为实数则，结果必为实数
                     float f1 = Table::get_floatval(get_top_value());
@@ -286,7 +288,6 @@ void Runtime::interpret ( vector<pcode> p ) {
             //弹出并比较次栈顶和栈顶的值，
             //若大于等于则把栈顶置1，否则置0
 
-                bool res;
                 if ( get_top_type() == RS_FLOAT ) {
                     float f1 = Table::get_floatval(get_top_value());
                     pop_rs();//弹出栈顶的值
@@ -355,20 +356,23 @@ void Runtime::interpret ( vector<pcode> p ) {
             case JR:
             //跳转到返回地址,并将函数出栈，
             //此时栈顶存的是返回值（保留）
-                run_stack temp = runtime_stack.top();
-                
+                temp = runtime_stack.back();
+
                 //函数出栈
                 while ( runtime_stack.size() > fun_stack.top() ) {
                     pop_rs();
                 }
                 fun_stack.pop();//把函数记录弹出
                 push_rs(temp);//把返回值压回到运行栈中
-                
+
                 index = ret_adr;//跳到返回地址
                 break;
-                
+
             case JSR:
-                index = 
+            //跳转到函数入口fa，同时设定返回地址ra
+            
+                index = c.l;
+                ret_adr = c.a;
                 break;
 
             case LDT:
@@ -628,7 +632,7 @@ void Runtime::interpret ( vector<pcode> p ) {
             //把栈顶的值存到次栈顶值所在的地址，同时将它们弹出
             //l=1表示局部地址，l=0表示全局地址
 
-                run_stack r = runtime_stack.top();
+                run_stack r = runtime_stack.back();
                 pop_rs();//弹出栈顶的值
                 int target;
 
@@ -642,7 +646,7 @@ void Runtime::interpret ( vector<pcode> p ) {
                         set_rs(get_top_value(),r);
                     }
                     else if ( c.l == 1 ) { //局部变量
-                        set_rs(fun_stack.top()+get_top_value(),r);
+                        set_rs(fun_stack.back()+get_top_value(),r);
                     }
 
                 }
@@ -654,14 +658,14 @@ void Runtime::interpret ( vector<pcode> p ) {
             case STO:
             //把栈顶的值弹出并赋给变量a,a表示该变量的地址，
             //l=1表示局部变量，l=0表示全局变量
-            
+
                 if ( c.l ==  0 ) { //全局变量
-                    set_rs(a,runtime_stack.top());
+                    set_rs(a,runtime_stack.back());
                 }
                 else if ( c.l == 1 ) { //局部变量
-                    set_rs(fun_stack.top()+a,runtime_stack.top());
+                    set_rs(fun_stack.top()+a,runtime_stack.back());
                 }
-                
+
                 pop_rs();//弹出次栈顶的值
 
                 index++;//到下一条指令

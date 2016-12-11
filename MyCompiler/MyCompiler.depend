@@ -1,9 +1,10 @@
 # depslib dependency file v1.0
-1481128131 source:e:\git\mycompiler\mycompiler\main.cpp
+1481469545 source:e:\git\mycompiler\mycompiler\main.cpp
 	<iostream>
 	"Word.h"
 	"WordAnalysis.h"
 	"GrammarAnalysis.h"
+	"Runtime.h"
 
 1480001306 e:\git\mycompiler\mycompiler\include\word.h
 	<string>
@@ -25,7 +26,7 @@
 	"Table.h"
 	"Runtime.h"
 
-1481376860 source:e:\git\mycompiler\mycompiler\src\grammaranalysis.cpp
+1481440924 source:e:\git\mycompiler\mycompiler\src\grammaranalysis.cpp
 	"GrammarAnalysis.h"
 	"ErrorProcess.h"
 	<sstream>
@@ -59,16 +60,19 @@
 	<queue>
 	"Error.h"
 
-1481376643 e:\git\mycompiler\mycompiler\include\table.h
+1481469530 e:\git\mycompiler\mycompiler\include\table.h
 	<vector>
 	<string>
 
-1481374454 e:\git\mycompiler\mycompiler\include\runtime.h
+1481471313 e:\git\mycompiler\mycompiler\include\runtime.h
 	<stack>
 	<vector>
 	"Table.h"
 
-1481376579 source:e:\git\mycompiler\mycompiler\src\runtime.cpp
+1481472154 source:e:\git\mycompiler\mycompiler\src\runtime.cpp
+	<cstdlib>
+	<iostream>
+	<sstream>
 	"Runtime.h"
 
 1481376643 source:e:\git\mycompiler\mycompiler\src\table.cpp
