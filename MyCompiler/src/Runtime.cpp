@@ -3,6 +3,7 @@
 #include <sstream>
 
 #include "Runtime.h"
+#include "Table.h"
 
 //表示返回地址的寄存器
 int Runtime::ret_adr = 0;
@@ -99,6 +100,8 @@ void Runtime::interpret ( vector<pcode> p ) {
     bool res;
     run_stack temp;
     string temp_str;
+    id_rcd rc, rc1;
+    int i;
 
     while ( true ) {
 
@@ -607,8 +610,32 @@ void Runtime::interpret ( vector<pcode> p ) {
                 index++;//到下一条指令
                 break;
 
+            case PUF:
+            //先将当前栈地址压入到函数栈中，再将该函数的所有
+            //变量压入运行栈中a表示该函数在符号表中的位置
+                fun_stack.push(runtime_stack.size());
+
+                rc = Table::get_idrcd(c.a);
+                for ( i = c.a+1; i < Table::get_funrcd(rc.ref).last; i++ ) {
+
+                    rc1 = Table::get_idrcd(i);
+                    if ( rc1.type == INT_VAR ) { //整数默认先存为0
+                        Runtime::push_rs({RS_INT,0});
+                    }
+                    else if ( rc1.type == CHAR_VAR ) {//字符默认先存为‘a’
+                        Runtime::push_rs({RS_CHAR,97});
+                    }
+                    else {
+                        Runtime::push_rs({RS_FLOAT,0});
+                    }
+
+                }
+
+                break;
+
             case RDA:
-            //从控制台读一个数，写到栈顶
+            //从控制台读一个数，写到栈顶t是读入的类型
+            //（0表示整型，1表示字符型，2表示实型）
 
                 cout << "请输入";
                 cin >> temp_str;
@@ -657,8 +684,8 @@ void Runtime::interpret ( vector<pcode> p ) {
                 break;
 
             case STO:
-            //把栈顶的值弹出并赋给变量a,a表示该变量的地址，
-            //l=1表示局部变量，l=0表示全局变量
+            //把栈顶的值弹出并赋给变量a；l=1时，该变量是局部变量
+            //a是其相对地址，l=0表示该变量是全局变量，a是绝对地址
 
                 if ( c.l ==  0 ) { //全局变量
                     set_rs(c.a,runtime_stack.back());
@@ -666,8 +693,7 @@ void Runtime::interpret ( vector<pcode> p ) {
                 else if ( c.l == 1 ) { //局部变量
                     set_rs(fun_stack.top()+c.a,runtime_stack.back());
                 }
-
-                pop_rs();//弹出次栈顶的值
+                pop_rs();//弹出栈顶的值
 
                 index++;//到下一条指令
                 break;

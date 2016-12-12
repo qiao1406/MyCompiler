@@ -531,17 +531,30 @@ void GrammarAnalysis::ga_mainfun () {
         err_report(8);
     }
 
-    ga_complex_stmt();
+    //ga_complex_stmt();
+    //在main函数的读取分析时不调用ga_complex_stmt()
+    //是为了添加PUF指令
+    nowword = nextword();
+
+    if ( nowword.value == "const" ) {//常量说明
+        ga_constant();
+    }
+
+    if ( nowword.is_vartype() ) { //变量说明
+        ga_variable();
+    }
+    
+    //生成PUF指令
+    Table::emit(PUF,0,pointer);
+    
+    while ( nowword.value != "}") {
+        ga_statement();
+    }
+     
     if ( nowword.value != "}" ) {
         //baocuo
         err_report(9);
     }
-    
-    
-    
-    
-    
-    
 
     //设定main函数开始的位置
     Runtime::set_main_pointer(Table::get_pctable_size());
@@ -841,6 +854,7 @@ void GrammarAnalysis::ga_retfuncall_stmt ( string func_name ){
 
     //i是函数名在符号表中的下标值
     int i = Table::find_ident(pointer,func_name);
+    int tmp = i;
     id_rcd r;
     if ( i == -1 ) {
         //baocuo
@@ -859,18 +873,18 @@ void GrammarAnalysis::ga_retfuncall_stmt ( string func_name ){
 
         return;
     }
-    else {
+    else { //转载参数
         ga_expression();
         i++;
         id_rcd temp = Table::get_idrcd(i);
-        Table::emit(STO,0,temp.adr);
+        Table::emit(STO,temp.lev,temp.adr);
 
         while ( nowword.value == "," ) {
             nowword = nextword();
             ga_expression();
             i++;
             temp = Table::get_idrcd(i);
-            Table::emit(STO,0,r.adr+temp.adr);
+            Table::emit(STO,temp.lev,temp.adr);
         }
 
         if ( ! i == Table::get_lastpar(r) ) { //参数个数不对
@@ -879,7 +893,7 @@ void GrammarAnalysis::ga_retfuncall_stmt ( string func_name ){
         }
 
         if ( nowword.value == ")" ) {
-            //设定返回地址
+            //设定返回地址以及将函数入栈
             Table::emit(JSR,0,Table::get_pctable_size());
             nowword = nextword();
             //prt_grammar_info("return-funcall statement");
@@ -1002,7 +1016,7 @@ void GrammarAnalysis::ga_assign_stmt ( string id_name ) {
 
         if ( nowword.value != "]" ) {
             //baocuo
-            err_report(7)
+            err_report(7);
         }
 
         nowword = nextword();
@@ -1014,7 +1028,7 @@ void GrammarAnalysis::ga_assign_stmt ( string id_name ) {
         nowword = nextword();
         ga_expression();//计算赋值表达式的值
         //此时要写入的地址在次栈顶，表达式的值在栈顶
-        Table::emit(STA);
+        Table::emit(STA,r.lev);
 
         //prt_grammar_info("assignation statement");
         return;
@@ -1058,8 +1072,10 @@ void GrammarAnalysis::ga_read_stmt(){
                 err_report(19);
             }
             else {//生成读指令
-                Table::emit(RDA);
-                Table::emit(STO,0,r.adr);
+                //根据不同的数据类型生成不同的指令
+                ( r.type == INT_VAR )? Table::emit(RDA,0):
+                    ( r.type == CHAR_VAR )? Table::emit(RDA,1):Table::emit(RDA,2);
+                Table::emit(STO,r.lev,r.adr);
             }
 
         }
@@ -1087,7 +1103,7 @@ void GrammarAnalysis::ga_read_stmt(){
                 }
                 else {//生成读指令
                     Table::emit(RDA);
-                    Table::emit(STO,0,r.adr);
+                    Table::emit(STO,r.lev,r.adr);
                 }
 
             }
@@ -1426,8 +1442,7 @@ void GrammarAnalysis::ga_factor() {
             else { //生成指令
                 Table::emit(LOI,0,r.adr);
                 Table::emit(ADD);//计算得到要取的数的地址
-                int l = ( r.type == INT_ARRAY )? 0:( r.type == CHAR_ARRAY )? 1:2;
-                Table::emit(LDT,l);
+                Table::emit(LDT,r.lev);
             }
             nowword = nextword();
             return;
@@ -1456,8 +1471,7 @@ void GrammarAnalysis::ga_factor() {
         }
 
         else if ( Table::is_varrcd(r) ) { //普通变量
-            int l = ( r.type == INT_VAR )? 0:( r.type == CHAR_VAR )? 1:2;
-            Table::emit(LOD,l,r.adr);
+            Table::emit(LOD,r.lev,r.adr);
             return;
         }
         else {

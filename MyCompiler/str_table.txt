@@ -1,5 +1,0 @@
-"the f2 cannot be 0"
-"hello"
-"worl"
-"res is not zero"
-"the fibonacci value is"

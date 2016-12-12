@@ -6,40 +6,6 @@ char ch;
 int add_two_nums ( int a1, int a2 ) { 
 	return (a1+a2);
 }
- 
-float float_div( float f1, float f2 ) {
-	if ( f2 == 0 ) {
-		printf("the f2 cannot be 0");
-		return (0);
-	}
-	else 
-		return (f1/f2);
-}
- 
-void print_hello () { 
-	ch = 'd'; 
-	printf("hello");
-	printf("worl",ch);
-}
-
-char get_lower ( char c ) {
-	if ( c > 'Z' )
-		return ('_');
-	else{
-		if ( c < 'A')
-			return ('_');
-		else 
-			return (c);
-	} 
-	
-} 
-
-int cal_fibonacci_val (int n) {
-	if (n<=2)
-		return (1);
-	else
-		return (cal_fibonacci_val(n-1)+cal_fibonacci_val(n-2));
-}
 
 void main() {
 
@@ -49,44 +15,5 @@ void main() {
 	int x,y;
 	int i;
 	scanf(x,y); 
-	scanf(ch1);
-	
-	if (x>=y) { 
-		c[0] = x;
-		c[1] = y;
-	}
-	else {
-		c[0] = y;
-		c[1] = x;
-	}
-	
-	i = c[0] - c[1];
-	
-	;
-	
-	_root = 1.23;
-	f1 = +2.33;
-	res = 2+5* add_two_nums(x,y);
-	
-	if ( res ) {
-		printf("res is not zero");
-		printf(res*2);
-	}
-	
-	i = 0;
-	while ( i != res) {
-		print_hello();
-		i = i+1;
-	}
-	
-	i = 2;
-	
-	
-	ch1 = 'b';
-	printf(ch1+1);
-	
-	
-	x = +6;
-	res = cal_fibonacci_val(x);
-	printf("the fibonacci value is",res);
+	i = add_two_nums(x,y);
 }

@@ -31,8 +31,8 @@ enum op_code {
     BRF,
     DIV,
     EQL,
-    GRT,
     GEQ,
+    GRT,
     JMP,
     JR,
     JSR,
@@ -45,6 +45,7 @@ enum op_code {
     MUL,
     NEQ,
     PRT,
+    PUF,
     RDA,
     STA,
     STO,
@@ -115,6 +116,7 @@ class Table {
         static bool is_constrcd ( id_rcd r );
         static id_rcd get_idrcd ( int index );
         static array_rcd get_arrayrcd ( int index );
+        static func_rcd get_funrcd ( int index );
         static float get_floatval ( int index );
         static string get_str ( int index );
         static int get_idtable_size();
@@ -150,7 +152,6 @@ class Table {
         static vector<func_rcd> func_table;//函数信息表
         static vector<float> rconst_table;//实常量表
         static vector<string> str_table;//字符串常量表
-
 
         static bool is_id_repeat ( string name, int lev );
         static void add_arrayrcd ( element_type eltype, int elsize, int size);

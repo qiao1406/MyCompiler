@@ -1,4 +1,6 @@
 #include "Table.h"
+#include "Runtime.h"
+
 #include <iostream>
 #include <iomanip>
 #include <fstream>
@@ -238,6 +240,19 @@ array_rcd Table::get_arrayrcd ( int index ) {
     }
 }
 
+func_rcd Table::get_funrcd ( int index ) {
+    /*
+        返回对应合法下标的函数信息表记录
+    */
+
+    if ( index < func_table.size() && index >= 0 ) {
+        return func_table[index];
+    }
+    else {
+        return {};
+    }
+}
+
 float Table::get_floatval ( int index ) {
     /*
         返回对应合法下标的实数表记录
@@ -300,6 +315,15 @@ void Table::add_idrcd ( string name, id_type type ) {
         if ( id_table.empty() ) {
             lev = 0;
             adr = data_adr++;
+            if ( type == INT_VAR ) { //整数默认先存为0
+                Runtime::push_rs({RS_INT,0});
+            }
+            else if ( type == CHAR_VAR ) {//字符默认先存为‘a’
+                Runtime::push_rs({RS_CHAR,97});
+            }
+            else {
+                Runtime::push_rs({RS_FLOAT,0});
+            }
         }
         else {
             id_rcd r = id_table.back();
@@ -309,8 +333,19 @@ void Table::add_idrcd ( string name, id_type type ) {
                 set_lastid();
             }
             else {//全局变量
+
                 lev = 0;
                 adr = data_adr++;
+                if ( type == INT_VAR ) { //整数默认先存为0
+                Runtime::push_rs({RS_INT,0});
+                }
+                else if ( type == CHAR_VAR ) {//字符默认先存为‘a’
+                    Runtime::push_rs({RS_CHAR,97});
+                }
+                else {
+                    Runtime::push_rs({RS_FLOAT,0});
+                }
+
             }
         }
 
@@ -331,6 +366,17 @@ void Table::add_idrcd ( string name, id_type type ) {
         //函数记录的lev都是0，所以不用额外设定
         adr = data_adr++;
         fun_adr = 0;
+
+        if ( type == CHAR_FUNCTION ) {
+            Runtime::push_rs({RS_CHAR,97});
+        }
+        else if ( type == FLOAT_FUNCTION ) {
+            Runtime::push_rs({RS_FLOAT,0});
+        }
+        else {
+            Runtime::push_rs({RS_INT,0});
+        }
+
 
         //填充func_table表和id_table表
         //func_table表的两个项的值先初始化为该函数名的在符号表中下标
@@ -436,6 +482,26 @@ void Table::add_idrcd ( string name, id_type type, int adr, int size) {
             lev = 0;
             adr = data_adr;
             data_adr += size;
+
+            if ( type == CHAR_ARRAY ) {
+                for ( int i = 0; i < size; i++) {
+                    Runtime::push_rs({RS_CHAR,97});
+                }
+
+            }
+            else if ( type == FLOAT_FUNCTION ) {
+                for ( int i = 0; i < size; i++) {
+                    Runtime::push_rs({RS_FLOAT,0});
+                }
+
+            }
+            else {
+                for ( int i = 0; i < size; i++) {
+                    Runtime::push_rs({RS_INT,0});
+                }
+
+            }
+
     }
     else {
         id_rcd r = id_table.back();
@@ -449,6 +515,26 @@ void Table::add_idrcd ( string name, id_type type, int adr, int size) {
             lev = 0;
             adr = data_adr;
             data_adr += size;
+
+            if ( type == CHAR_ARRAY ) {
+                for ( int i = 0; i < size; i++) {
+                    Runtime::push_rs({RS_CHAR,97});
+                }
+
+            }
+            else if ( type == FLOAT_FUNCTION ) {
+                for ( int i = 0; i < size; i++) {
+                    Runtime::push_rs({RS_FLOAT,0});
+                }
+
+            }
+            else {
+                for ( int i = 0; i < size; i++) {
+                    Runtime::push_rs({RS_INT,0});
+                }
+
+            }
+
         }
     }
 
@@ -498,18 +584,20 @@ void Table::update_emit ( op_code f, int l, int a, int loc ){
 void Table::test_id_table(){
     ofstream fout;
     fout.open("id_table.txt");
+    fout<<setw(5) <<"i";
     fout<<setw(10) <<"Name";
-    fout<<setw(10)<<"Type";
-    fout<<setw(10)<<"ref";
-    fout<<setw(10)<<"lev";
-    fout<<setw(10)<<"adr"<<endl;
+    fout<<setw(5)<<"Type";
+    fout<<setw(5)<<"ref";
+    fout<<setw(5)<<"lev";
+    fout<<setw(5)<<"adr"<<endl;
     for ( int i = 0; i < id_table.size(); i++ ) {
+        fout<<setw(5)  << i;
         fout<<setw(10)  << id_table[i].name;
-        fout<<setw(10)  << id_table[i].type;
-        fout<<setw(10)  << id_table[i].ref;
-        fout<<setw(10)  << id_table[i].lev;
-        fout<<setw(10)  << id_table[i].adr;
-        fout<<setw(10)  << endl;
+        fout<<setw(5)  << id_table[i].type;
+        fout<<setw(5)  << id_table[i].ref;
+        fout<<setw(5)  << id_table[i].lev;
+        fout<<setw(5)  << id_table[i].adr;
+        fout<< endl;
     }
 }
 
@@ -519,9 +607,9 @@ void Table::test_arr_table(){
     fout<<"Eltype\tElsize\tsizer"<<endl;
     for ( int i = 0; i < array_table.size(); i++ ) {
         fout<<setw(10) << array_table[i].eltype;
-        fout<<setw(10) << array_table[i].elsize;
-        fout<<setw(10) << array_table[i].size;
-        fout<<setw(10) << endl;
+        fout<<setw(5) << array_table[i].elsize;
+        fout<<setw(5) << array_table[i].size;
+        fout<<setw(5) << endl;
     }
 }
 
@@ -607,6 +695,9 @@ void Table::test_pcode_table(){
                 break;
             case PRT:
                 s = "PRT";
+                break;
+            case PUF:
+                s = "PUF";
                 break;
             case RDA:
                 s = "RDA";

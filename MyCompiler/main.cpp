@@ -7,10 +7,14 @@
 using namespace std;
 
 int main() {
+
+    string filename;
+    cout << "请输入文件名";
+    cin >> filename;
     //WordAnalysis::prt_analysis_res("test.txt");
     ofstream out;
     out.open("result.txt");
-    WordAnalysis::establish_cache("test.txt");
+    WordAnalysis::establish_cache(filename);
     for ( int i = 0; i < WordAnalysis::linewords.size(); i++ ) {
         for ( int j = 0; j < WordAnalysis::linewords[i].size(); j++ ) {
             out << WordAnalysis::linewords[i][j].type << " ";
@@ -27,6 +31,7 @@ int main() {
     Table::test_pcode_table();
     Table::test_func_table();
     Table::test_str_table();
+    cout << "编译结束，程序开始执行";
     Runtime::interpret(Table::pcode_table);
 
     return 0;
