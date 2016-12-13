@@ -1,6 +1,7 @@
 #include <cstdlib>
 #include <iostream>
 #include <sstream>
+#include <fstream>
 
 #include "Runtime.h"
 #include "Table.h"
@@ -50,6 +51,15 @@ void Runtime::push_rs ( run_stack r ) {
     runtime_stack.push_back(r);
 }
 
+void Runtime::print_stack() {
+    ofstream fout;
+    fout.open("run");
+    
+    for ( int i = 0; i < runtime_stack.size(); i++ ) {
+        fout << runtime_stack[i].type << "\n" << runtime_stack[i].value <<endl;
+    }
+}
+
 run_stack Runtime::get_val ( int index ) {
     /*
         返回运行栈中下标为index的记录
@@ -79,13 +89,18 @@ void Runtime::set_rs ( int index, run_stack r ) {
             if ( r.type == RS_FLOAT ) {
                 r.value = Table::get_floatval(r.value);
             }
-            runtime_stack[index] = {RS_CHAR,r.value%128};
+            else {
+                runtime_stack[index] = {RS_CHAR,r.value%128};
+            }
         }
         else if ( runtime_stack[index].type == RS_INT ) {
+            cout << "wwww";
             if ( r.type == RS_FLOAT ) {
                 r.value = Table::get_floatval(r.value);
             }
-            runtime_stack[index] = {RS_CHAR,r.value};
+            else {
+                runtime_stack[index] = {RS_INT,r.value};
+            }
         }
 
 
@@ -102,6 +117,10 @@ void Runtime::interpret ( vector<pcode> p ) {
     string temp_str;
     id_rcd rc, rc1;
     int i;
+
+    cout << main_pointer << "qwe";
+    cout << p.size() << "runtimestack.size" << runtime_stack.size();
+
 
     while ( true ) {
 
@@ -609,15 +628,18 @@ void Runtime::interpret ( vector<pcode> p ) {
                 pop_rs();//弹出栈顶内容
                 index++;//到下一条指令
                 break;
-            
+
             case PUF:
-            //先将当前栈地址压入到函数栈中，再将该函数的所有变量压入运行栈中a表示该函数在符号表中的位置
-            
+            //先将当前栈地址压入到函数栈中，再将该函数的所有
+            //变量压入运行栈中a表示该函数在符号表中的位置
+                fun_stack.push(runtime_stack.size());
+
                 rc = Table::get_idrcd(c.a);
-                for ( i = c.a+1; i < Table::get_funrcd(rc.ref).last; i++ ) {
-                        
+                for ( i = c.a+1; i <= Table::get_funrcd(rc.ref).last; i++ ) {
+
                     rc1 = Table::get_idrcd(i);
                     if ( rc1.type == INT_VAR ) { //整数默认先存为0
+                        cout << i <<"intvar" << runtime_stack.size();
                         Runtime::push_rs({RS_INT,0});
                     }
                     else if ( rc1.type == CHAR_VAR ) {//字符默认先存为‘a’
@@ -626,13 +648,14 @@ void Runtime::interpret ( vector<pcode> p ) {
                     else {
                         Runtime::push_rs({RS_FLOAT,0});
                     }
-                
+
                 }
-                
-                break;    
-            
+
+                index++;//到下一条指令
+                break;
+
             case RDA:
-            //从控制台读一个数，写到栈顶t是读入的类型
+            //从控制台读一个数，写到栈顶,t是读入的类型
             //（0表示整型，1表示字符型，2表示实型）
 
                 cout << "请输入";
@@ -641,6 +664,7 @@ void Runtime::interpret ( vector<pcode> p ) {
                 switch ( c.l ) {
                 case 0://整数
                     push_rs({RS_INT,str2num<int>(temp_str)});
+                    //cout << runtime_stack.back().value << "top stack";
                     break;
                 case 1://字符
                     push_rs({RS_CHAR,(int)temp_str[0]});
@@ -689,8 +713,12 @@ void Runtime::interpret ( vector<pcode> p ) {
                     set_rs(c.a,runtime_stack.back());
                 }
                 else if ( c.l == 1 ) { //局部变量
+                    cout << fun_stack.top()+c.a << "typey";
                     set_rs(fun_stack.top()+c.a,runtime_stack.back());
+                    cout << runtime_stack[fun_stack.top()+c.a].value << "asdiop";
+
                 }
+
                 pop_rs();//弹出栈顶的值
 
                 index++;//到下一条指令

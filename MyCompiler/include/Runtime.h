@@ -32,6 +32,7 @@ class Runtime {
         static void set_rs ( int index, run_stack r );
         static void set_main_pointer ( int i );
         static void interpret ( vector<pcode> p );
+        static void print_stack();
 
     private:
         static vector<run_stack> runtime_stack;//运行栈

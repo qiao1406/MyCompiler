@@ -125,6 +125,29 @@ void Table::set_lastpar ( string func_name ) {
     func_table[ref].lastpar = id_table.size()-1;
 }
 
+void Table::set_ploc ( string func_name ) {
+    /*
+        设定func_table中名为func_name的函数的入口位置
+        设为当前PCode表的大小
+    */
+
+    //查找前先把标识符改成小写的
+    transform(func_name.begin(),func_name.end(),func_name.begin(),::tolower);
+
+    //找出ref值
+    int i = 0;
+    int ref;
+    for ( ; i<id_table.size(); i++ ) {
+        if ( id_table[i].name == func_name && id_table[i].lev == 0 ) {
+            ref = id_table[i].ref;
+            break;
+        }
+    }
+
+    //设定ploc
+    func_table[ref].ploc = pcode_table.size();
+}
+
 int Table::get_lastpar ( id_rcd r ) {
     /*
         求得某个函数的最后一个参数在符号表中的下标值
@@ -132,6 +155,19 @@ int Table::get_lastpar ( id_rcd r ) {
     */
     if ( is_funcrcd(r) ) {
         return func_table[r.ref].lastpar;
+    }
+    else {
+        //baocuo
+    }
+
+}
+
+int Table::get_ploc ( id_rcd r ) {
+    /*
+        求得某个函数的入口地址
+    */
+    if ( is_funcrcd(r) ) {
+        return func_table[r.ref].ploc;
     }
     else {
         //baocuo
@@ -585,14 +621,14 @@ void Table::test_id_table(){
     ofstream fout;
     fout.open("id_table.txt");
     fout<<setw(5) <<"i";
-    fout<<setw(10) <<"Name";
+    fout<<setw(20) <<"Name";
     fout<<setw(5)<<"Type";
     fout<<setw(5)<<"ref";
     fout<<setw(5)<<"lev";
     fout<<setw(5)<<"adr"<<endl;
     for ( int i = 0; i < id_table.size(); i++ ) {
         fout<<setw(5)  << i;
-        fout<<setw(10)  << id_table[i].name;
+        fout<<setw(20)  << id_table[i].name;
         fout<<setw(5)  << id_table[i].type;
         fout<<setw(5)  << id_table[i].ref;
         fout<<setw(5)  << id_table[i].lev;
@@ -712,7 +748,7 @@ void Table::test_pcode_table(){
                 s = "SUB";
                 break;
         }
-        fout << s << "\t";
+        fout << "["<<i<<"]" <<s << "\t";
         fout << pcode_table[i].l << "\t";
         fout << pcode_table[i].a << "\t";
         fout << endl;
@@ -726,6 +762,7 @@ void Table::test_func_table(){
     for ( int i = 0; i < func_table.size(); i++ ) {
        fout << func_table[i].lastpar << "\t";
        fout << func_table[i].last << "\t";
+       fout << func_table[i].ploc;
        fout << endl;
     }
 }

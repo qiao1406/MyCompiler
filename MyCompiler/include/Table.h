@@ -125,7 +125,9 @@ class Table {
         static int get_strtable_size();
         static int get_array_size( id_rcd r );
         static void set_lastpar ( string func_name );
+        static void set_ploc ( string func_name );
         static int get_lastpar ( id_rcd r );
+        static int get_ploc ( id_rcd r );
         static void set_lastid();
         static id_type get_func_type ( string func_name );
         static void emit ( op_code f );

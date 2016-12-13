@@ -16,4 +16,5 @@ void main() {
 	int i;
 	scanf(x,y); 
 	i = add_two_nums(x,y);
+	printf(i+1);
 }
