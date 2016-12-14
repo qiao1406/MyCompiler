@@ -763,7 +763,7 @@ void GrammarAnalysis::ga_statement(){
             else if ( rt == VOID_FUNCTION ) {//无返回值函数调用
                 nowword = nextword();
                 ga_voidfuncall_stmt(name);
-                Table::emit(JR);//调用完后要跳到返回地址
+                //Table::emit(JR);//调用完后要跳到返回地址
             }
             else { //有返回值函数调用
                 nowword = nextword();
@@ -957,14 +957,13 @@ void GrammarAnalysis::ga_voidfuncall_stmt ( string func_name ){
         r = Table::get_idrcd(i);
     }
 
-    nowword = nextword();
+    //nowword = nextword();
     if ( nowword.value == ")" ) { //值参数表为空
         if ( ! i == Table::get_lastpar(r) ) { //参数个数不对
             //baocuo
             err_report(21);
         }
        // prt_grammar_info("noreturn-funcall statement");
-        return;
     }
     else {
         ga_expression();

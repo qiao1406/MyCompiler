@@ -51,7 +51,13 @@ void Runtime::pop_rs() {
 }
 
 void Runtime::push_rs ( run_stack r ) {
+    //把记录r压入栈中
     runtime_stack.push_back(r);
+}
+
+void Runtime::push_rs ( int n, run_stack r ) {
+    //一次性压入n个
+    runtime_stack.insert(runtime_stack.end(),n,r);
 }
 
 void Runtime::print_stack() {
@@ -143,6 +149,8 @@ void Runtime::interpret ( vector<pcode> p ) {
 
 
     while ( true ) {
+
+        //cout << "f"<< index << "--->";
 
         if ( index >= p.size() ) {
             //程序运行结束
@@ -588,7 +596,7 @@ void Runtime::interpret ( vector<pcode> p ) {
                 }
                 else {
                     int i1 = get_top_value();
-                    pop_rs;
+                    pop_rs();
                     if ( get_top_type() == RS_FLOAT ) {
                         float f1 = Table::get_floatval(get_top_value());
                         pop_rs();//弹出次栈顶的值
@@ -640,19 +648,25 @@ void Runtime::interpret ( vector<pcode> p ) {
 
             case PRT:
             //将栈顶的内容弹出并且输出到控制台,
+                Table::test_rconst_table();
 
                 switch ( get_top_type() ) {
                 case RS_INT:
+                    cout << "asd";
                     cout << get_top_value();
                     break;
                 case RS_CHAR:
                     cout << (char) get_top_value();
                     break;
                 case RS_FLOAT:
+                    //cout << "jibala" <<get_top_value() <<"koi";
                     cout << Table::get_floatval(get_top_value());
                     break;
                 case RS_STR:
-                    cout << Table::get_str(get_top_value());
+                    temp_str = Table::get_str(get_top_value());
+                    temp_str.erase(0,1);//把字符串开头和结尾的引号去掉
+                    temp_str.erase(temp_str.size()-1,1);
+                    cout << temp_str;
                     break;
                 }
 
@@ -671,15 +685,23 @@ void Runtime::interpret ( vector<pcode> p ) {
                     rc1 = Table::get_idrcd(i);
                     if ( rc1.type == INT_VAR ) { //整数默认先存为0
                         //cout << i <<"intvar" << runtime_stack.size();
-                        Runtime::push_rs({RS_INT,0});
+                        push_rs({RS_INT,0});
                     }
                     else if ( rc1.type == CHAR_VAR ) {//字符默认先存为‘a’
-                        Runtime::push_rs({RS_CHAR,97});
+                        push_rs({RS_CHAR,97});
                     }
-                    else if ( rc1.type == FLOAT_VAR ) {
-                        Runtime::push_rs({RS_FLOAT,0});
+                    else if ( rc1.type == FLOAT_VAR ) {//实数默认为实数表的第一项
+                        push_rs({RS_FLOAT,0});
                     }
-
+                    else if ( rc1.type == INT_ARRAY ) {
+                        push_rs(Table::get_arrayrcd(rc1.ref).size,{RS_INT,0});
+                    }
+                    else if ( rc1.type == CHAR_ARRAY ) {
+                        push_rs(Table::get_arrayrcd(rc1.ref).size,{RS_CHAR,97});
+                    }
+                    else if ( rc1.type == FLOAT_ARRAY ) {
+                        push_rs(Table::get_arrayrcd(rc1.ref).size,{RS_FLOAT,0});
+                    }
                 }
 
                 //cout<< fun_stack.top() << "funstacktop";
@@ -723,13 +745,19 @@ void Runtime::interpret ( vector<pcode> p ) {
             case STA:
             //把栈顶的值存到次栈顶值所在的地址，同时将它们弹出
             //l=1表示局部地址，l=0表示全局地址
-
+                //print_stack();
+                //Table::test_rconst_table();
                 temp = runtime_stack.back();
+                //cout << get_top_type() <<"typeee";
+                //cout << get_top_value();
+
                 pop_rs();//弹出栈顶的值
                 int target;
 
                 if ( get_top_type() != RS_INT ) {
                     //次栈顶地址值必须是整型的
+                    //cout << get_top_type() <<"typeee";
+                    //cout << get_top_value();
                     cout << "程序崩溃，地址必须是整型的"<<endl;
                     exit(0);
                 }
@@ -744,6 +772,7 @@ void Runtime::interpret ( vector<pcode> p ) {
                 }
                 pop_rs();//弹出次栈顶的值
 
+                print_stack();
                 index++;//到下一条指令
                 break;
 

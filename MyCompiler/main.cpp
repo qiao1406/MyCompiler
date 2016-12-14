@@ -34,7 +34,7 @@ int main() {
     Table::test_str_table();
     cout << "编译结束，程序开始执行"<<endl;
     Runtime::interpret(Table::pcode_table);
-    cout << "——————程序运行结束——————"<<endl;
+    cout << "\n——————程序运行结束——————"<<endl;
 
     return 0;
 }

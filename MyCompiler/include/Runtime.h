@@ -29,6 +29,7 @@ class Runtime {
         static data_type get_top_type();
         static void pop_rs();
         static void push_rs ( run_stack r );
+        static void push_rs ( int n, run_stack r );
         static void set_rs ( int index, run_stack r );
         static void set_main_pointer ( int i );
         static void interpret ( vector<pcode> p );
