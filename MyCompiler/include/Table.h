@@ -36,6 +36,7 @@ enum op_code {
     JMP,
     JR,
     JSR,
+    LDS,
     LDT,
     LEQ,
     LES,
@@ -47,6 +48,7 @@ enum op_code {
     PRT,
     PUF,
     RDA,
+    SDS,
     STA,
     STO,
     SUB

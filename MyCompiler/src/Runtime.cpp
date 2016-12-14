@@ -22,6 +22,9 @@ vector<run_stack> Runtime::runtime_stack;
 //入口位置在运行栈中的下标值
 stack<int> Runtime::fun_stack;
 
+//数据栈，用于临时存放函数调用时形参表达式的值
+stack<run_stack> Runtime::data_stack;
+
 //模板函数：将string类型变量转换为常用的数值类型（此方法具有普遍适用性）
 template <class Type>
 Type str2num(const string& str) {
@@ -185,6 +188,7 @@ void Runtime::interpret ( vector<pcode> p ) {
                     }
                 }
 
+                //cout << get_top_value() << "topval";
                 index++;//到下一条指令
                 break;
 
@@ -413,6 +417,15 @@ void Runtime::interpret ( vector<pcode> p ) {
 
                 index = c.l;
                 ret_adr = c.a;
+                //cout << "jsr" << index;
+                break;
+
+            case LDS:
+            //把数据栈栈顶的内容弹出，压入运行栈
+                push_rs(data_stack.top());
+                data_stack.pop();
+                index++;//到下一条指令
+                //cout << runtime_stack.back().value << "dasdsayyyy";
                 break;
 
             case LDT:
@@ -527,13 +540,14 @@ void Runtime::interpret ( vector<pcode> p ) {
             case LOD:
             //把一个变量放到运行栈栈顶，a表示变量的相对地址,
             //l表示层次，l=1为局部变量，l=0是全局变量
+
                 if ( c.l ==  0 ) {
                     push_rs(get_val(c.a));
                 }
                 else if ( c.l == 1 ) {
                     push_rs( get_val( fun_stack.top()+c.a ) );
                 }
-                cout << runtime_stack.back().value <<"tytiosda";
+                //cout << runtime_stack.back().value <<"tytiosda";
                 index++;//到下一条指令
                 break;
 
@@ -668,7 +682,9 @@ void Runtime::interpret ( vector<pcode> p ) {
 
                 }
 
-                print_stack();
+                //cout<< fun_stack.top() << "funstacktop";
+                //cout<< runtime_stack.size() << "size";
+                //print_stack();
                 index++;//到下一条指令
                 break;
 
@@ -693,6 +709,14 @@ void Runtime::interpret ( vector<pcode> p ) {
                     break;
                 }
 
+                index++;//到下一条指令
+                break;
+
+            case SDS:
+            //把运行栈栈顶的值弹出，存入数据栈
+                data_stack.push(runtime_stack.back());
+                pop_rs();
+                //cout << "datastack.top" << data_stack.top().value;
                 index++;//到下一条指令
                 break;
 
@@ -733,6 +757,7 @@ void Runtime::interpret ( vector<pcode> p ) {
                 else if ( c.l == 1 ) { //局部变量
                     //cout << fun_stack.top()+c.a << "typey";
                     set_rs(fun_stack.top()+c.a,runtime_stack.back());
+                    //cout << "mimimi";
                     //cout << runtime_stack[fun_stack.top()+c.a].value << "asdiop";
 
                 }

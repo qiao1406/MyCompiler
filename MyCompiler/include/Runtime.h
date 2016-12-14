@@ -36,6 +36,7 @@ class Runtime {
 
     private:
         static vector<run_stack> runtime_stack;//运行栈
+        static stack<run_stack> data_stack;//数据栈
         static stack<int> fun_stack;//函数栈
         static int ret_adr;
         static int main_pointer;

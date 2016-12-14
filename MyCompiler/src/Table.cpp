@@ -705,6 +705,9 @@ void Table::test_pcode_table(){
             case JSR:
                 s = "JSR";
                 break;
+            case LDS:
+                s = "LDS";
+                break;
             case LDT:
                 s = "LDT";
                 break;
@@ -737,6 +740,9 @@ void Table::test_pcode_table(){
                 break;
             case RDA:
                 s = "RDA";
+                break;
+            case SDS:
+                s = "SDS";
                 break;
             case STA:
                 s = "STA";

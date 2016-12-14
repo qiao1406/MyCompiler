@@ -22,6 +22,9 @@ vector<run_stack> Runtime::runtime_stack;
 //入口位置在运行栈中的下标值
 stack<int> Runtime::fun_stack;
 
+//数据栈，用于临时存放函数调用时形参表达式的值
+stack<run_stack> Runtime::data_stack;
+
 //模板函数：将string类型变量转换为常用的数值类型（此方法具有普遍适用性）
 template <class Type>
 Type str2num(const string& str) {
@@ -53,10 +56,27 @@ void Runtime::push_rs ( run_stack r ) {
 
 void Runtime::print_stack() {
     ofstream fout;
-    fout.open("run");
-    
+    fout.open("runtime_stack.txt");
+
     for ( int i = 0; i < runtime_stack.size(); i++ ) {
-        fout << runtime_stack[i].type << "\n" << runtime_stack[i].value <<endl;
+        string s;
+
+        switch(runtime_stack[i].type){
+        case RS_INT:
+            s = "int";
+            break;
+        case RS_FLOAT:
+            s = "float";
+            break;
+        case RS_CHAR:
+            s = "char";
+            break;
+        case RS_STR:
+            s = "str";
+            break;
+        }
+
+        fout << "["<<i<<"]"<< s << "\t" << runtime_stack[i].value <<endl;
     }
 }
 
@@ -94,7 +114,7 @@ void Runtime::set_rs ( int index, run_stack r ) {
             }
         }
         else if ( runtime_stack[index].type == RS_INT ) {
-            cout << "wwww";
+            //cout << "wwww";
             if ( r.type == RS_FLOAT ) {
                 r.value = Table::get_floatval(r.value);
             }
@@ -118,8 +138,8 @@ void Runtime::interpret ( vector<pcode> p ) {
     id_rcd rc, rc1;
     int i;
 
-    cout << main_pointer << "qwe";
-    cout << p.size() << "runtimestack.size" << runtime_stack.size();
+    //cout << main_pointer << "qwe";
+    //cout << p.size() << "runtimestack.size" << runtime_stack.size();
 
 
     while ( true ) {
@@ -396,6 +416,14 @@ void Runtime::interpret ( vector<pcode> p ) {
 
                 index = c.l;
                 ret_adr = c.a;
+                //cout << "jsr" << index;
+                break;
+
+            case LDS:
+            //把数据栈栈顶的内容弹出，压入运行栈
+                push_rs(data_stack.top());
+                data_stack.pop();
+                index++;//到下一条指令
                 break;
 
             case LDT:
@@ -508,15 +536,16 @@ void Runtime::interpret ( vector<pcode> p ) {
                 break;
 
             case LOD:
-            //把一个变量放到数据栈栈顶，a表示变量的相对地址,
+            //把一个变量放到运行栈栈顶，a表示变量的相对地址,
             //l表示层次，l=1为局部变量，l=0是全局变量
+
                 if ( c.l ==  0 ) {
                     push_rs(get_val(c.a));
                 }
                 else if ( c.l == 1 ) {
                     push_rs( get_val( fun_stack.top()+c.a ) );
                 }
-
+                //cout << runtime_stack.back().value <<"tytiosda";
                 index++;//到下一条指令
                 break;
 
@@ -639,18 +668,20 @@ void Runtime::interpret ( vector<pcode> p ) {
 
                     rc1 = Table::get_idrcd(i);
                     if ( rc1.type == INT_VAR ) { //整数默认先存为0
-                        cout << i <<"intvar" << runtime_stack.size();
+                        //cout << i <<"intvar" << runtime_stack.size();
                         Runtime::push_rs({RS_INT,0});
                     }
                     else if ( rc1.type == CHAR_VAR ) {//字符默认先存为‘a’
                         Runtime::push_rs({RS_CHAR,97});
                     }
-                    else {
+                    else if ( rc1.type == FLOAT_VAR ) {
                         Runtime::push_rs({RS_FLOAT,0});
                     }
 
                 }
 
+                //cout<< fun_stack.top() << "funstacktop";
+                //print_stack();
                 index++;//到下一条指令
                 break;
 
@@ -674,6 +705,14 @@ void Runtime::interpret ( vector<pcode> p ) {
                     push_rs({RS_FLOAT,Table::get_rctable_size()-1});
                     break;
                 }
+
+                index++;//到下一条指令
+                break;
+
+            case SDS:
+            //把运行栈栈顶的值弹出，存入数据栈
+                data_stack.push(runtime_stack.back());
+                pop_rs();
 
                 index++;//到下一条指令
                 break;
@@ -713,9 +752,9 @@ void Runtime::interpret ( vector<pcode> p ) {
                     set_rs(c.a,runtime_stack.back());
                 }
                 else if ( c.l == 1 ) { //局部变量
-                    cout << fun_stack.top()+c.a << "typey";
+                    //cout << fun_stack.top()+c.a << "typey";
                     set_rs(fun_stack.top()+c.a,runtime_stack.back());
-                    cout << runtime_stack[fun_stack.top()+c.a].value << "asdiop";
+                    //cout << runtime_stack[fun_stack.top()+c.a].value << "asdiop";
 
                 }
 

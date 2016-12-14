@@ -892,15 +892,14 @@ void GrammarAnalysis::ga_retfuncall_stmt ( string func_name ){
     else { //装入表示值参数的表达式
         ga_expression();//把值参数的值写到栈顶
         i++;
-        //id_rcd temp = Table::get_idrcd(i);
-        //Table::emit(STO,temp.lev,temp.adr);
+        Table::emit(SDS);//把值参数的值写到数据栈栈顶
 
         while ( nowword.value == "," ) {
             nowword = nextword();
             ga_expression();//把值参数的值写到栈顶
             i++;
-            //temp = Table::get_idrcd(i);
-            //Table::emit(STO,temp.lev,temp.adr);
+            Table::emit(SDS);//把值参数的写到数据栈栈顶
+
         }
 
         if ( ! i == Table::get_lastpar(r) ) { //参数个数不对
@@ -913,12 +912,13 @@ void GrammarAnalysis::ga_retfuncall_stmt ( string func_name ){
     if ( nowword.value == ")" ) {
 
         //生成PUF指令，将函数入栈
-        Table::emit(PUF,i1);
+        Table::emit(PUF,0,i1);
 
         //逆向登录形参的值
         for ( i = Table::get_lastpar(r); i > i1; i-- ){
             temp = Table::get_idrcd(i);
-            Table::emit(STO,temp.lev,temp.adr);
+            Table::emit(LDS);//从数据栈栈顶得到实参数的值
+            Table::emit(STO,temp.lev,temp.adr);//把实参的值填入形参的位置
         }
 
         //设定返回地址以及跳转到函数入口
@@ -969,17 +969,13 @@ void GrammarAnalysis::ga_voidfuncall_stmt ( string func_name ){
     else {
         ga_expression();
         i++;
-        //id_rcd temp = Table::get_idrcd(i);
-        //生成指令，把实参的值写入数据区
-        //Table::emit(STO,0,r.adr+temp.adr);
+        Table::emit(SDS);//把值参数的值写到数据栈栈顶
 
         while ( nowword.value == "," ) {
             nowword = nextword();
             ga_expression();
             i++;
-            //temp = Table::get_idrcd(i);
-            //生成指令，把实参的值写入数据区
-           // Table::emit(STO,0,r.adr+temp.adr);
+            Table::emit(SDS);//把值参数的值写到数据栈栈顶;
         }
 
         if ( ! i == Table::get_lastpar(r) ) { //参数个数不对
@@ -993,11 +989,12 @@ void GrammarAnalysis::ga_voidfuncall_stmt ( string func_name ){
     if ( nowword.value == ")" ) {
 
         //生成PUF指令，将函数入栈
-        Table::emit(PUF,i1);
+        Table::emit(PUF,0,i1);
 
         //逆向登录形参的值
         for ( i = Table::get_lastpar(r); i > i1; i-- ){
             tmp = Table::get_idrcd(i);
+            Table::emit(LDS);//从数据栈栈顶得到实参数的值
             Table::emit(STO,tmp.lev,tmp.adr);
         }
 
@@ -1082,7 +1079,7 @@ void GrammarAnalysis::ga_assign_stmt ( string id_name ) {
     else if (  nowword.value == "=" ) {
         nowword = nextword();
         ga_expression();
-        Table::emit(STO,0,r.adr);
+        Table::emit(STO,r.lev,r.adr);
         //prt_grammar_info("assignation statement");
         return;
     }
