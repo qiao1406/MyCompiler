@@ -111,6 +111,34 @@ bool GrammarAnalysis::is_sametype ( id_type t1, data_type t2 ) {
     }
 }
 
+void GrammarAnalysis::jump_read ( vector<string> v ) {
+    /*
+        跳读源代码,直到读到v中的字符串为止
+        入口无预读
+        出口无预读
+    */
+
+    if ( v.empty() ) {
+        return;
+    }
+
+
+    while ( true ) {
+
+        if (row_index >= WordAnalysis::linewords.size() ){
+            return;
+        }
+
+        for ( auto iter = v.begin(); iter < v.end(); iter++ ) {
+            if ( nowword.value == (*iter) ) {
+                return;
+            }
+        }
+
+        nowword = nextword();
+    }
+}
+
 void GrammarAnalysis::ga_programme () {
     /*
         <程序>
@@ -141,9 +169,9 @@ void GrammarAnalysis::ga_programme () {
             ga_returnfun();
             nowword = nextword();
         }
-        else {//不是函数命名
-            //baocuo
+        else {//不是函数命名，跳读到下一个var_type
             err_report(33);
+            jump_read({"int","char","float","void"});
         }
     }
 
@@ -169,9 +197,9 @@ void GrammarAnalysis::ga_programme () {
                 nowword = nextword();
             }
         }
-        else {
-            //baocuo
+        else {//报错，结束编译
             err_report(34);
+            return;
         }
     }
     //读取主函数
@@ -181,7 +209,7 @@ void GrammarAnalysis::ga_programme () {
 
 void GrammarAnalysis::ga_constant () {
     /*
-        <常量声明>子程序
+        <常量说明>子程序
         入口有预读
         出口有预读
     */
@@ -189,13 +217,14 @@ void GrammarAnalysis::ga_constant () {
         ga_constdef();
 
         if ( nowword.value != ";" ) {
-            //baocuo
+            //遗漏分号，报错并且继续常量说明
             err_report(11);
+            continue;
         }
         nowword = nextword();
     }
     prt_grammar_info("constant declaration");
-
+    return;
 }
 
 void GrammarAnalysis::ga_constdef () {
@@ -209,32 +238,35 @@ void GrammarAnalysis::ga_constdef () {
     if ( nowword.is_vartype() ) {
 
         string data_typ = (nowword.value == "int")?"INTEGER"
-                            :( nowword.value == "char")?"CHARACTER":"FLOAT";
+                    :( nowword.value == "char")?"CHARACTER":"FLOAT";
+
         while ( true ) {
+
             nowword = nextword();
             if ( nowword.type == "IDENT") {
                 string name = nowword.value; //记录标识符的名字
                 nowword = nextword();
                 if ( nowword.type != "EQUAL" ) {
-                    //报错
                     err_report(3);
+                    jump_read({";"});
+                    return;
                 }
                 nowword = nextword();
                 if ( nowword.type != data_typ ) { //检查常量类型是否一致
-                    //baocuo
+                    //若不一致则报错，继续循环
                     err_report(35);
+                    continue;
                 }
 
                 //填符号表
-                if ( data_typ == "INTEGER" ) {
-                    //把string转成数字
+                if ( data_typ == "INTEGER" ) { //把string转成int型
                     Table::add_idrcd(name,str2num<int>(nowword.value),INT_CONST);
                 }
                 else if ( data_typ == "CHARACTER" ) {
                     int ascii_code = nowword.value[0];
                     Table::add_idrcd(name,ascii_code,CHAR_CONST);
                 }
-                else {
+                else {//把string转成float型
                     Table::add_idrcd(name,str2num<float>(nowword.value));
                 }
 
@@ -242,6 +274,8 @@ void GrammarAnalysis::ga_constdef () {
             else {
                 //报错,应该是标识符
                 err_report(2);
+                jump_read({";"});
+                return;
             }
 
             //看是否有多个常量一起定义
@@ -251,12 +285,15 @@ void GrammarAnalysis::ga_constdef () {
                 break; //若是逗号则继续循环
             }
         }
+
        return;
     }
-    else { //不是变量标识符
-        //baocuo
+    else { //不是变量类型符
         err_report(28);
+        jump_read({";"});
+        return;
     }
+
 }
 
 void GrammarAnalysis::ga_variable () {
@@ -268,8 +305,9 @@ void GrammarAnalysis::ga_variable () {
     while (true) {
         ga_vardef();
         if ( nowword.value != ";" ) {
-            //baocuo
+            //遗漏分号，报错且继续进行变量说明
             err_report(11);
+            continue;
         }
 
         nowword = nextword();
@@ -278,11 +316,13 @@ void GrammarAnalysis::ga_variable () {
         }
         else {
 
-            if (  nowword.is_vartype() ) {
+            if ( nowword.is_vartype() ) {
                 nowword = nextword();
                 if ( nowword.type != "IDENT" ) {
-                //baocuo
+                    //不是标识符，
                     err_report(2);
+                    jump_read({";"});
+                    continue;
                 }
 
                 nowword = nextword();
@@ -325,28 +365,35 @@ void GrammarAnalysis::ga_vardef () {
     if ( nowword.is_vartype() ) {
         string data_typ = nowword.value;//记录数据类型(int,char,float)
         while ( true ) {
+
             nowword = nextword();
             string name = nowword.value;//记录标识符名字
             if ( nowword.type != "IDENT" ) {
-                //baocuo
                 err_report(2);
+                jump_read({";"});
+                return;
             }
+
             nowword = nextword();
             if ( nowword.value == "[" ) { // 有可能是数组
+
                 nowword = nextword();
-                if ( nowword.type != "INTEGER" ) {
-                    // 报错
+                if ( nowword.type != "INTEGER" ) { //数组的大小必须是整型
                     err_report(31);
+                    jump_read({";"});
+                    return;
                 }
                 int arr_size = str2num<int>(nowword.value);//记录数组的大小
                 if ( arr_size <= 0 ) {
-                    //baocuo
+                    //数组大小不是正数，报错并继续变量定义
                     err_report(42);
                 }
                 nowword = nextword();
                 if ( nowword.value != "]" ) {
-                    //baocuo
+                    //缺少右中括号，跳读
                     err_report(7);
+                    jump_read({";"});
+                    return;
                 }
 
                 //填符号表，增加一项数组记录
@@ -371,9 +418,10 @@ void GrammarAnalysis::ga_vardef () {
         //prt_grammar_info("variable define");
         return;
     }
-    else {//不是类型表示符
-        //baocuo
+    else {//不是类型类型符
         err_report(28);
+        jump_read({";"});
+        return;
     }
 }
 
@@ -390,8 +438,9 @@ void GrammarAnalysis::ga_returnfun () {
     nowword = nextword();
     string name = nowword.value;//记录函数名
     if ( nowword.type != "IDENT" ) {
-        //baocuo
         err_report(2);
+        jump_read({"int","char","void","float"});
+        return;
     }
     else {//填符号表
         renew_pointer();//更新所在函数块指针
@@ -402,11 +451,12 @@ void GrammarAnalysis::ga_returnfun () {
 
     nowword = nextword();
     if ( nowword.value != "(" ) {
-        //baocuo
         err_report(4);
     }
+    else {
+        nowword = nextword();
+    }
 
-    nowword = nextword();
     if ( nowword.type == ")" ) {
         //无参数,设lastpar值
         Table::set_lastpar(name);
@@ -415,19 +465,24 @@ void GrammarAnalysis::ga_returnfun () {
         ga_argulist(name);
     }
     else {
-        //baocuo
         err_report(36);
+        jump_read({"int","char","void","float"});
+        return;
     }
 
     if ( nowword.value != ")" ) {
-        //baocuo
         err_report(5);
     }
+    else {
+        nowword = nextword();
+    }
 
-    nowword = nextword();
     if ( nowword.value != "{" ) {
-        //baocuo
+        //缺少大括号，报错并且退一个词
         err_report(8);
+        lastword();
+        lastword();
+        nowword = nextword();
     }
 
     //记录函数的入口
@@ -436,7 +491,7 @@ void GrammarAnalysis::ga_returnfun () {
     //生成函数主体部分的PCode
     ga_complex_stmt();
     if ( nowword.value != "}" ) {
-        //baocuo
+        //缺少反大括号，报错
         err_report(9);
     }
 
@@ -453,8 +508,9 @@ void GrammarAnalysis::ga_voidfun () {
     nowword = nextword();
     string name = nowword.value;//记录函数名
     if ( nowword.type != "IDENT" ) { //函数名若不是标识符则报错
-        //baocuo
         err_report(2);
+        jump_read({"int","char","void","float"});
+        return;
     }
     else { //填符号表
         renew_pointer();//更新所在函数块指针
@@ -463,11 +519,13 @@ void GrammarAnalysis::ga_voidfun () {
 
     nowword = nextword();
     if ( nowword.value != "(" ) {
-        //baocuo
+        //缺少左括号，报错
         err_report(4);
     }
+    else {
+        nowword = nextword();
+    }
 
-    nowword = nextword();
     if ( nowword.type == ")" ) {
         //无参数,设lastpar值
         Table::set_lastpar(name);
@@ -476,20 +534,24 @@ void GrammarAnalysis::ga_voidfun () {
         ga_argulist(name);
     }
     else {
-        //baocuo
         err_report(36);
+        jump_read({"int","char","void","float"});
+        return;
     }
 
-    if ( nowword.value != ")" ) {
-        //baocuo
+    if ( nowword.value != ")" ) { //缺少反括号，报错
         err_report(5);
     }
-   // cout << nowword.value << "#666yyy";
+    else {
+        nowword = nextword();
+    }
 
-    nowword = nextword();
     if ( nowword.value != "{" ) {
-        //baocuo
+        //缺少大括号，报错并且退一个词
         err_report(8);
+        lastword();
+        lastword();
+        nowword = nextword();
     }
 
     //记录函数的入口
@@ -498,10 +560,11 @@ void GrammarAnalysis::ga_voidfun () {
     //生成主体部分的PCode
     ga_complex_stmt();
     if ( nowword.value != "}" ) {
-        //baocuo
+        //缺少反大括号，报错
         err_report(9);
     }
-    Table::emit(JR);
+
+    Table::emit(JR);//无返回值的函数末尾都要加一个JR指令
     prt_grammar_info("function that has no return value\n");
 }
 
@@ -512,10 +575,11 @@ void GrammarAnalysis::ga_mainfun () {
         出口无预读
 
     */
+
     nowword = nextword();
     if ( nowword.value != "main" ) {
-        //baocuo
         err_report(37);
+        return;
     }
     else { //填符号表
         renew_pointer();//更新所在函数块指针
@@ -524,26 +588,31 @@ void GrammarAnalysis::ga_mainfun () {
 
     nowword = nextword();
     if ( nowword.value != "(" ) {
-        //baocuo
+        //缺少左括号,报错
         err_report(4);
     }
+    else {
+        nowword = nextword();
+    }
 
-    nowword = nextword();
     if ( nowword.value != ")" ) {
-        //baocuo
+        //缺少右括号报错
         err_report(5);
     }
-
-    nowword = nextword();
-    if ( nowword.value != "{" ) {
-        //baocuo
-        err_report(8);
+    else {
+        nowword = nextword();
     }
 
-    //ga_complex_stmt();
+    if ( nowword.value != "{" ) {
+        //缺少左大括号。报错
+        err_report(8);
+    }
+    else {
+        nowword = nextword();
+    }
+
     //在main函数的读取分析时不调用ga_complex_stmt()
     //是为了添加PUF指令
-    nowword = nextword();
 
     if ( nowword.value == "const" ) {//常量说明
         ga_constant();
@@ -567,7 +636,7 @@ void GrammarAnalysis::ga_mainfun () {
     }
 
     if ( nowword.value != "}" ) {
-        //baocuo
+        //缺少右大括号，报错
         err_report(9);
     }
 
@@ -585,7 +654,6 @@ void GrammarAnalysis::ga_argulist ( string func_name ) {
         string data_type = nowword.value;//记录参数类型
         nowword = nextword();
         if ( nowword.type != "IDENT" ) {
-            //baocuo
             err_report(2);
         }
         else{ //登录符号表,同时改变函数表的lastpar值
@@ -600,14 +668,17 @@ void GrammarAnalysis::ga_argulist ( string func_name ) {
             nowword = nextword();
             data_type = nowword.value;
             if ( !nowword.is_vartype() ) {
-                //baocuo
                 err_report(28);
+                jump_read({"{"});
+                return;
             }
             nowword = nextword();
 
             if ( nowword.type != "IDENT") {
-                //baocuo
+                //不是标识符，跳读一个词，并继续循环
                 err_report(2);
+                nowword = nextword();
+                continue;
             }
             else { //登录符号表，同时改变函数表的lastpar值
                 id_type t = (data_type == "int")?INT_VAR:
@@ -622,8 +693,9 @@ void GrammarAnalysis::ga_argulist ( string func_name ) {
         return;
     }
     else {
-        //baocuo
+        //不是变量类型符号，报错
         err_report(28);
+        return;
     }
 }
 
@@ -688,10 +760,11 @@ void GrammarAnalysis::ga_statement(){
         ga_read_stmt();
         nowword = nextword();
         if ( nowword.value != ";" ) {
-            //baocuo
             err_report(11);
         }
-        nowword = nextword();
+        else {
+            nowword = nextword();
+        }
         return;
     }
     else if ( nowword.value == "printf" ) { //写语句
@@ -699,10 +772,11 @@ void GrammarAnalysis::ga_statement(){
         ga_write_stmt();
         nowword = nextword();
         if ( nowword.value != ";" ) {
-            //baocuo
             err_report(11);
         }
-        nowword = nextword();
+        else {
+            nowword = nextword();
+        }
         return;
     }
     else if ( nowword.value == "return" ) { //返回语句
@@ -710,10 +784,11 @@ void GrammarAnalysis::ga_statement(){
         ga_return_stmt();
         nowword = nextword();
         if ( nowword.value != ";" ) {
-            //baocuo
             err_report(11);
         }
-        nowword = nextword();
+        else{
+            nowword = nextword();
+        }
         return;
     }
     else if ( nowword.value == "{" ) { //语句列
@@ -728,8 +803,11 @@ void GrammarAnalysis::ga_statement(){
                 ga_statement();
             }
             if ( nowword.value != "}") {
-                //baocuo
+                //缺少右大括号，后退一个词
                 err_report(9);
+                lastword();
+                lastword();
+                nowword = nextword();
             }
             else {
                 prt_grammar_info("statement list");
@@ -747,23 +825,25 @@ void GrammarAnalysis::ga_statement(){
         if ( nowword.value == "=" || nowword.value == "[" ) { //赋值语句
             ga_assign_stmt(name);
             if ( nowword.value != ";" ) {
-                //baocuo
+                //遗漏分号
                 err_report(11);
             }
-            nowword = nextword();
+            else{
+                nowword = nextword();
+            }
             return;
         }
         else if ( nowword.value == "(" ) { //函数调用语句
 
             id_type rt = Table::get_func_type(name);//获得该函数的返回值类型
             if ( rt == ERROR ) {
-                //baocuo
+                //函数的返回值错误
                 err_report(38);
+                return;
             }
             else if ( rt == VOID_FUNCTION ) {//无返回值函数调用
                 nowword = nextword();
                 ga_voidfuncall_stmt(name);
-                Table::emit(JR);//调用完后要跳到返回地址
             }
             else { //有返回值函数调用
                 nowword = nextword();
@@ -774,19 +854,21 @@ void GrammarAnalysis::ga_statement(){
                 //baocuo
                 err_report(11);
             }
+            else{
+                nowword = nextword();
+            }
             prt_grammar_info("funcall statement");
-            nowword = nextword();
             return;
         }
         else {
-            //baocuo
             err_report(39);
+            return;
         }
 
     }
     else {
-        //baocuo
         err_report(40);
+        return;
     }
 
 }
@@ -799,8 +881,11 @@ void GrammarAnalysis::ga_condition_stmt(){
     */
 
     if ( nowword.value != "(" ) {
-        //baocuo
+        //不是左括号，报错并后退一个词
         err_report(4);
+        lastword();
+        lastword();
+        nowword = nextword();
     }
     ga_condition();
     //此时条件表达式的真值已经写到栈顶
@@ -812,7 +897,6 @@ void GrammarAnalysis::ga_condition_stmt(){
     Table::emit(BRF,0,0);
     nowword = nextword();
     ga_statement();
-
 
     if( nowword.value == "else" ) {
         int jmp_loc = Table::get_pctable_size();//记录JMP指令的位置
@@ -836,26 +920,29 @@ void GrammarAnalysis::ga_cycle_stmt(){
         出口有预读
     */
     if ( nowword.value != "(" ) {
-        //baocuo
+        //不是左括号，报错并后退一个词
         err_report(4);
+        lastword();
+        lastword();
+        nowword = nextword();
     }
     int jp_loc = Table::get_pctable_size();//一次循环后跳转的地址
 
     ga_condition();
     //此时已经把条件结果加载到栈顶了
     if ( nowword.value != ")" ) {
-        //baocuo
         err_report(5);
+    }
+    else {
+        nowword = nextword();
     }
 
     int brf_loc = Table::get_pctable_size();
     Table::emit(BRF,0,0);
-
-    nowword = nextword();
     ga_statement();
     Table::emit(JMP,0,jp_loc);
     Table::update_emit(BRF,0,Table::get_pctable_size(),brf_loc);
-    //prt_grammar_info("cycle statement");
+    prt_grammar_info("cycle statement#");
 }
 
 void GrammarAnalysis::ga_retfuncall_stmt ( string func_name ){
@@ -873,8 +960,10 @@ void GrammarAnalysis::ga_retfuncall_stmt ( string func_name ){
     int i1 = i;//记录函数名的位置
     id_rcd r, temp;//r是函数名的记录
     if ( i == -1 ) {
-        //baocuo
+        //没找到该函数
         err_report(38);
+        jump_read({";"});
+        return;
     }
     else {
         r = Table::get_idrcd(i);
@@ -883,11 +972,9 @@ void GrammarAnalysis::ga_retfuncall_stmt ( string func_name ){
     nowword = nextword();
     if ( nowword.value == ")" ) { //值参数表为空
         if ( ! i == Table::get_lastpar(r) ) { //参数个数不对
-            //baocuo
             err_report(21);
+            return;
         }
-
-        return;
     }
     else { //装入表示值参数的表达式
         ga_expression();//把值参数的值写到栈顶
@@ -903,8 +990,8 @@ void GrammarAnalysis::ga_retfuncall_stmt ( string func_name ){
         }
 
         if ( ! i == Table::get_lastpar(r) ) { //参数个数不对
-            //baocuo
             err_report(21);
+            return;
         }
 
     }
@@ -912,7 +999,7 @@ void GrammarAnalysis::ga_retfuncall_stmt ( string func_name ){
     if ( nowword.value == ")" ) {
 
         //生成PUF指令，将函数入栈
-        Table::emit(PUF,i1);
+        Table::emit(PUF,0,i1);
 
         //逆向登录形参的值
         for ( i = Table::get_lastpar(r); i > i1; i-- ){
@@ -924,14 +1011,16 @@ void GrammarAnalysis::ga_retfuncall_stmt ( string func_name ){
         //设定返回地址以及跳转到函数入口
         Table::emit(JSR,Table::get_ploc(r),Table::get_pctable_size()+1);
         nowword = nextword();
-        //prt_grammar_info("return-funcall statement");
+        prt_grammar_info("return-funcall statement");
         return;
     }
     else {
-        //baocuo
+        //缺少右括号，报错并后退一个词
         err_report(5);
+        lastword();
+        lastword();
+        nowword = nextword();
     }
-
 
 }
 
@@ -949,22 +1038,21 @@ void GrammarAnalysis::ga_voidfuncall_stmt ( string func_name ){
     int i = Table::find_ident(pointer,func_name);
     int i1 = i;//记录函数名的位置
     id_rcd r, tmp;//r是函数名的记录
-    if ( i == -1 ) {
-        //baocuo
+    if ( i == -1 ) { //找不到该函数
         err_report(38);
+        jump_read({";"});
+        return;
     }
     else {
         r = Table::get_idrcd(i);
     }
 
-    nowword = nextword();
     if ( nowword.value == ")" ) { //值参数表为空
         if ( ! i == Table::get_lastpar(r) ) { //参数个数不对
-            //baocuo
             err_report(21);
+            jump_read({";"})
+            return;
         }
-       // prt_grammar_info("noreturn-funcall statement");
-        return;
     }
     else {
         ga_expression();
@@ -979,10 +1067,10 @@ void GrammarAnalysis::ga_voidfuncall_stmt ( string func_name ){
         }
 
         if ( ! i == Table::get_lastpar(r) ) { //参数个数不对
-            //baocuo
             err_report(21);
+            jump_read({";"});
+            return;
         }
-
 
     }
 
@@ -1006,8 +1094,11 @@ void GrammarAnalysis::ga_voidfuncall_stmt ( string func_name ){
 
     }
     else {
-        //baocuo
+        //缺少右括号，后退一个词
         err_report(5);
+        lastword();
+        lastword();
+        nowword = nextword();
     }
 }
 
@@ -1021,9 +1112,10 @@ void GrammarAnalysis::ga_assign_stmt ( string id_name ) {
     //查表，试图找到该标识符的记录
     int loc = Table::find_ident(pointer,id_name);
     id_rcd r;
-    if ( loc == -1 ) { //没找到该标识符
-        //baocuo
+    if ( loc == -1 ) { //没找到该标识符，报错并返回
         err_report(2);
+        jump_read({";"});
+        return;
     }
     else {
         //从符号表中提取出该标识符的记录
@@ -1031,22 +1123,24 @@ void GrammarAnalysis::ga_assign_stmt ( string id_name ) {
     }
 
     if( !( Table::is_varrcd(r) || Table::is_arrayrcd(r) ) ) {
-        //baocuo
+        //该标识符不是变量或数组，报错
         err_report(41);
+        jump_read({";"});
+        return;
     }
 
     if ( nowword.value == "[" ) { //数组的赋值
 
         //先判断该标识符是不是数组
         if ( !Table::is_arrayrcd(r) ) {
-            //baocuo
             err_report(32);
+            jump_read({";"});
+            return;
         }
         int arr_size = Table::get_array_size(r);
         int index;
         array_rcd ar = Table::get_arrayrcd(r.ref);
         if ( arr_size <= 0 ) { //元素个数应该是正数
-            //baocuo
             err_report(42);
         }
 
@@ -1058,13 +1152,15 @@ void GrammarAnalysis::ga_assign_stmt ( string id_name ) {
         Table::emit(ADD);
 
         if ( nowword.value != "]" ) {
-            //baocuo
+            //缺少右中括号，报错
             err_report(7);
         }
+        else {
+           nowword = nextword(); 
+        }
 
-        nowword = nextword();
         if ( nowword.value != "=" ) {
-            //baocuo
+            //缺少等号，报错
             err_report(3);
         }
 
@@ -1073,15 +1169,19 @@ void GrammarAnalysis::ga_assign_stmt ( string id_name ) {
         //此时要写入的地址在次栈顶，表达式的值在栈顶
         Table::emit(STA,r.lev);
 
-        //prt_grammar_info("assignation statement");
+        prt_grammar_info("assignation statement");
         return;
     }
     else if (  nowword.value == "=" ) {
         nowword = nextword();
         ga_expression();
-        Table::emit(STO,0,r.adr);
-        //prt_grammar_info("assignation statement");
+        Table::emit(STO,r.lev,r.adr);
+        prt_grammar_info("assignation statement");
         return;
+    }
+    else {
+        err_report(3);
+        jump_read({";"});
     }
 }
 
@@ -1204,9 +1304,8 @@ void GrammarAnalysis::ga_return_stmt(){
         要求入口处有预读
         出口处无预读
     */
-    if ( nowword.value != "(" ) {
-        //baocuo
-        err_report(4);
+    if ( nowword.value != "(" ) {//只有“return”也是合法的
+        return;
     }
     nowword = nextword();
     ga_expression();
