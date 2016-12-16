@@ -1,28 +1,31 @@
+const char tc = 'a', tc2 = 'A', tc3 = '_';
 const float pi = 3.14; 
 const int a = 5,b=6; 
-int c[2], res, d[3]; 
+int c[2], res, d[30]; 
 float f1, _root; 
-char ch;
+char chAABBCC; 
 
-int add_two_nums ( int a1, int a2 ) { 
-	return (a1+a2);
+									
+float float_div( float f1, float f2 ) {
+	if ( f2 == 0 ) {
+		printf("the f2 cannot be 0");
+		return (0);
+	}
+	else 
+		return (f1/f2);
 }
 
-void print_hello ( ) { 
-	const float f1 = 2.33, print_hello = 6677.66441;
-	const char res = 'f';
-	int x;
-	float lwt[25], lwt1;
-	c[0] = a+b*2;
-	d[0] = 231;
-	d[1] = 10*23;
-	d[2] = 5;
-	_root = 1.26;
-	x = d[2]*d[b-a]-d[a+b*2-c[0]];
-	lwt[1] = (1+_root)*2-pi/x;
-	printf("uiop");
-	printf("beihang",lwt[1]);
-}
+char get_lower ( char c ) {
+	if ( c > 'Z' )
+		return ('_');
+	else{
+		if ( c < 'A')
+			return ('_');
+		else 
+			return (c);
+	} 
+	
+} 
 
 void main() {
 
@@ -32,12 +35,29 @@ void main() {
 	int x,y;
 	int i;
 	char kp[23];
+	scanf(x,y);
+	scanf(ch1,ch2);
+	scanf(sml_num,res);
 	
-	i = 2;
-	x = i + 1;
-	y = x*i + x;
-	c[1] = 6;
-	kp[x*y-2] = a;
-	f1 = e;
-	print_hello();
+	if ( res ) {
+		printf("res is not zero");
+		printf(res*2);
+	}
+	
+	chAABBCC = get_lower(ch1);
+	printf("chAABBCC value");
+	printf(chAABBCC);
+	
+	if (x>=y) { 
+		c[0] = x;
+		c[1] = y;
+	}
+	else {
+		c[0] = y;
+		c[1] = x;
+	}
+	
+	printf(c[0]);
+	printf("qijihaha",float_div(pi,sml_num));
+
 }

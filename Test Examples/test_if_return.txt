@@ -26,18 +26,6 @@ char get_lower ( char c ) {
 	
 } 
 
-void print_hello ( int ph, char phc ) { 
-	const float f1 = 2.33, print_hello = 6677.66441;
-	const char res = 'f';
-	int x;
-	float lwt[25], lwt1;
-	_root = 1.26;
-	x = pi+d[2]*d[a+b]-d[a+b*2+c[0]];
-	lwt[1] = (1+_root)*2+1;
-	printf("lihaile");
-	printf("wodege",ph);
-}
-
 void main() {
 
 	const float e = 2.71;
@@ -46,7 +34,7 @@ void main() {
 	int x,y;
 	int i;
 	char kp[23];
-	scanf(y);
+	scanf(x,y);
 	scanf(ch1,ch2);
 	scanf(sml_num,res);
 	
@@ -55,11 +43,9 @@ void main() {
 		printf(res*2);
 	}
 	
-	i = 5;
-	x = i + 1;
-	y = x*i + x;
-	c[1] = 6;
-	
+	chAABBCC = get_lower(ch1);
+	printf("chAABBCC value");
+	printf(chAABBCC);
 	
 	if (x>=y) { 
 		c[0] = x;
@@ -70,7 +56,7 @@ void main() {
 		c[1] = x;
 	}
 	
-	kp[x*y+2] = a;
-	f1 = e;
+	printf(c[0]);
+	printf("qijihaha",float_div(pi,sml_num));
 
 }

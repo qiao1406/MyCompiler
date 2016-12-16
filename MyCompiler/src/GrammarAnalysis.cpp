@@ -924,7 +924,7 @@ void GrammarAnalysis::ga_retfuncall_stmt ( string func_name ){
         //设定返回地址以及跳转到函数入口
         Table::emit(JSR,Table::get_ploc(r),Table::get_pctable_size()+1);
         nowword = nextword();
-        //prt_grammar_info("return-funcall statement");
+        prt_grammar_info("return-funcall statement");
         return;
     }
     else {
@@ -1022,6 +1022,7 @@ void GrammarAnalysis::ga_assign_stmt ( string id_name ) {
     id_rcd r;
     if ( loc == -1 ) { //没找到该标识符
         //baocuo
+        cout << loc;
         err_report(2);
     }
     else {
@@ -1072,14 +1073,14 @@ void GrammarAnalysis::ga_assign_stmt ( string id_name ) {
         //此时要写入的地址在次栈顶，表达式的值在栈顶
         Table::emit(STA,r.lev);
 
-        //prt_grammar_info("assignation statement");
+        prt_grammar_info("assignation statement");
         return;
     }
     else if (  nowword.value == "=" ) {
         nowword = nextword();
         ga_expression();
         Table::emit(STO,r.lev,r.adr);
-        //prt_grammar_info("assignation statement");
+        prt_grammar_info("assignation statement");
         return;
     }
 }

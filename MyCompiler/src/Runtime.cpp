@@ -446,11 +446,13 @@ void Runtime::interpret ( vector<pcode> p ) {
                     exit(0);
                 }
                 else {
+                    temp = runtime_stack.back();
+                    pop_rs();//把栈顶的值弹出
                     if ( c.l ==  0 ) { //全局变量
-                    push_rs(get_val(get_top_value()));
+                        push_rs(get_val(temp.value));
                     }
                     else if ( c.l == 1 ) { //局部变量
-                        push_rs( get_val( fun_stack.top()+get_top_value() ));
+                        push_rs( get_val( fun_stack.top() + temp.value ));
                     }
 
                 }
@@ -652,7 +654,7 @@ void Runtime::interpret ( vector<pcode> p ) {
 
                 switch ( get_top_type() ) {
                 case RS_INT:
-                    cout << "asd";
+                    //cout << "asd";
                     cout << get_top_value();
                     break;
                 case RS_CHAR:

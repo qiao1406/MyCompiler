@@ -25,6 +25,7 @@ class WordAnalysis {
         static bool is_letter ( char c );
         static bool is_noletter_char ( char c );
         static bool is_string ( char c );
+        static bool is_emptyline ( string s );
         static string judge_type ( string name );
 
         static queue<string> code_strs;

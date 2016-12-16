@@ -446,8 +446,10 @@ void Runtime::interpret ( vector<pcode> p ) {
                     exit(0);
                 }
                 else {
+                    temp = 
+                    pop_rs();//
                     if ( c.l ==  0 ) { //全局变量
-                    push_rs(get_val(get_top_value()));
+                        push_rs(get_val(get_top_value()));
                     }
                     else if ( c.l == 1 ) { //局部变量
                         push_rs( get_val( fun_stack.top()+get_top_value() ));
@@ -652,14 +654,14 @@ void Runtime::interpret ( vector<pcode> p ) {
 
                 switch ( get_top_type() ) {
                 case RS_INT:
-                    cout << "asd";
+                    //cout << "asd";
                     cout << get_top_value();
                     break;
                 case RS_CHAR:
                     cout << (char) get_top_value();
                     break;
                 case RS_FLOAT:
-                    cout << "jibala" <<get_top_value() <<"koi";
+                    //cout << "jibala" <<get_top_value() <<"koi";
                     cout << Table::get_floatval(get_top_value());
                     break;
                 case RS_STR:
@@ -685,37 +687,22 @@ void Runtime::interpret ( vector<pcode> p ) {
                     rc1 = Table::get_idrcd(i);
                     if ( rc1.type == INT_VAR ) { //整数默认先存为0
                         //cout << i <<"intvar" << runtime_stack.size();
-                        Runtime::push_rs({RS_INT,0});
+                        push_rs({RS_INT,0});
                     }
                     else if ( rc1.type == CHAR_VAR ) {//字符默认先存为‘a’
-                        Runtime::push_rs({RS_CHAR,97});
+                        push_rs({RS_CHAR,97});
                     }
                     else if ( rc1.type == FLOAT_VAR ) {//实数默认为实数表的第一项
-                        Runtime::push_rs({RS_FLOAT,0});
+                        push_rs({RS_FLOAT,0});
                     }
                     else if ( rc1.type == INT_ARRAY ) {
-                        //for(i = 0; i < Table::get_arrayrcd(rc1.ref).size; i++ ) {
-                        //    Runtime::push_rs({RS_INT,0});
-                        //}
-                        push_r
-                        runtime_stack.insert(runtime_stack.end(),
-                                Table::get_arrayrcd(rc1.ref).size,{RS_INT,0});
+                        push_rs(Table::get_arrayrcd(rc1.ref).size,{RS_INT,0});
                     }
                     else if ( rc1.type == CHAR_ARRAY ) {
-//                        for(i = 0; i < Table::get_arrayrcd(rc1.ref).size; i++ ) {
-//                            Runtime::push_rs({RS_CHAR,97});
-//                        }
-                        runtime_stack.insert(runtime_stack.end(),
-                                Table::get_arrayrcd(rc1.ref).size,{RS_CHAR,97});
+                        push_rs(Table::get_arrayrcd(rc1.ref).size,{RS_CHAR,97});
                     }
                     else if ( rc1.type == FLOAT_ARRAY ) {
-                        cout << Table::get_arrayrcd(rc1.ref).size;
-//                        for(i = 0; i < Table::get_arrayrcd(rc1.ref).size; i++ ) {
-//
-//                            Runtime::push_rs({RS_FLOAT,0});
-//                        }
-                        runtime_stack.insert(runtime_stack.end(),
-                                Table::get_arrayrcd(rc1.ref).size,{RS_FLOAT,0});
+                        push_rs(Table::get_arrayrcd(rc1.ref).size,{RS_FLOAT,0});
                     }
                 }
 

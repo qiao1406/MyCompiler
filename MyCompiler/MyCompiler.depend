@@ -9,7 +9,7 @@
 1480001306 e:\git\mycompiler\mycompiler\include\word.h
 	<string>
 
-1479921470 e:\git\mycompiler\mycompiler\include\wordanalysis.h
+1481813740 e:\git\mycompiler\mycompiler\include\wordanalysis.h
 	<iostream>
 	<fstream>
 	<string>
@@ -26,7 +26,7 @@
 	"Table.h"
 	"Runtime.h"
 
-1481725896 source:e:\git\mycompiler\mycompiler\src\grammaranalysis.cpp
+1481785990 source:e:\git\mycompiler\mycompiler\src\grammaranalysis.cpp
 	"GrammarAnalysis.h"
 	"ErrorProcess.h"
 	<sstream>
@@ -38,7 +38,7 @@
 1479921463 source:e:\git\mycompiler\mycompiler\src\word.cpp
 	"Word.h"
 
-1481128092 source:e:\git\mycompiler\mycompiler\src\wordanalysis.cpp
+1481813736 source:e:\git\mycompiler\mycompiler\src\wordanalysis.cpp
 	"WordAnalysis.h"
 
 1479909533 source:e:\git\mycompiler\mycompiler\src\codegenerate.cpp
@@ -69,7 +69,7 @@
 	<vector>
 	"Table.h"
 
-1481732016 source:e:\git\mycompiler\mycompiler\src\runtime.cpp
+1481768298 source:e:\git\mycompiler\mycompiler\src\runtime.cpp
 	<cstdlib>
 	<iostream>
 	<sstream>

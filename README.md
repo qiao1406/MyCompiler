@@ -26,3 +26,9 @@ A：暂时不做任何处理，好像也没有办法处理
 		int		int 	float 	int
 		float	float 	float 	float
 		char	int		float	int
+		
+4.因为在项目中使用了正则表达式，所以应该在编译选项中使用
+-std=c++0x or -std=gnu++0x
+设置方法；Settings->Compilers->Global Compiler Settings
+中选择GNU GCC Compiler,然后在Categories中勾选
+Have g++ follow the C++11 ISO language standard...

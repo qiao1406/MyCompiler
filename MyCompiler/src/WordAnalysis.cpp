@@ -57,6 +57,26 @@ bool WordAnalysis::is_string ( char c ) {
     return c == 32 || c == 33 || ( c >= 35 && c <= 126);
 }
 
+bool WordAnalysis::is_emptyline ( string s ) {
+    /*
+        判断一行代码是否为空行
+    */
+
+    bool res = true;
+
+    for ( int i = 0; i < s.size(); i++ ) {
+        if ( s[i] == '\t' || s[i] == '\n' || s[i] == ' ' ) {
+            continue;
+        }
+        else {
+            res = false;
+            break;
+        }
+    }
+
+    return res;
+}
+
 void WordAnalysis::read_programme_code ( string file_name ) {
     /*
         打开程序源代码的文件
@@ -70,8 +90,12 @@ void WordAnalysis::read_programme_code ( string file_name ) {
 
     while ( getline(fin,buff_str) ) {
         //buff_str不会读入回车的
-        if ( buff_str == "" || buff_str == " "
-            || buff_str == "\t" || buff_str ==  "\n"  ) { //忽略空行
+//        if ( buff_str == "" || buff_str == " "
+//            || buff_str == "\t" || buff_str ==  "\n"  ) { //忽略空行
+//            code_strs.push("%%");
+//            continue;
+//        }
+        if ( is_emptyline(buff_str) ){
             code_strs.push("%%");
             continue;
         }
@@ -254,8 +278,10 @@ void WordAnalysis::establish_cache ( string filename ) {
     while ( !code_strs.empty()) {
         string sym = getsym();
 
-        if ( sym == "%%")//空行
+        if ( sym == "%%") {//空行
+            now_line++;
             continue;
+        }
 
         if ( sym == "\n" ) {
             now_line++;

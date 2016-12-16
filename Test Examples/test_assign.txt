@@ -1,8 +1,5 @@
 const float pi = 3.14; 
 const int a = 5,b=6; 
-int c[2], res, d[30]; 
-const float pi = 3.14; 
-const int a = 5,b=6; 
 int c[2], res, d[3]; 
 float f1, _root; 
 char ch;
@@ -18,11 +15,13 @@ void print_hello ( ) {
 	float lwt[25], lwt1;
 	c[0] = a+b*2;
 	d[0] = 231;
-	d[1] = 10*23;
-	d[2] = 5;
+	d[1] = 10;
+	d[2] = 23;
 	_root = 1.26;
 	x = d[2]*d[b-a]-d[a+b*2-c[0]];
 	lwt[1] = (1+_root)*2-pi/x;
+	printf(a+b*2-c[0]);
+	printf("uiop");
 	printf("beihang",lwt[1]);
 }
 
@@ -39,9 +38,9 @@ void main() {
 	x = i + 1;
 	y = x*i + x;
 	c[1] = 6;
-	kp[x*y-2] = a;
+	kp[x*y-8] = a*20;
 	f1 = e;
 	print_hello();
 	printf(kp[19]);
-	printf(add_two_nums(kp[19],6+8));
+	printf(add_two_nums(c[1],6+8));
 }
