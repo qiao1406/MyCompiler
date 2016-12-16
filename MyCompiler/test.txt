@@ -1,63 +1,19 @@
-const char tc = 'a', tc2 = 'A', tc3 = '_';
-const float pi = 3.14; 
-const int a = 5,b=6; 
-int c[2], res, d[30]; 
-float f1, _root; 
-char chAABBCC; 
-
-									
-float float_div( float f1, float f2 ) {
-	if ( f2 == 0 ) {
-		printf("the f2 cannot be 0");
-		return (0);
-	}
-	else 
-		return (f1/f2);
+int cal_fibonacci_val (int n) {
+	if (n<=2)
+		return (1);
+	else
+		return (cal_fibonacci_val(n-1)+cal_fibonacci_val(n-2));
 }
 
-char get_lower ( char c ) {
-	if ( c > 'Z' )
-		return ('_');
-	else{
-		if ( c < 'A')
-			return ('_');
-		else 
-			return (c);
-	} 
-	
-} 
+int cal_factor ( int n ) {
+	if ( n <= 1 ) 
+		return (1);
+	else
+		return ( n*cal_factor(n-1));
+}
 
 void main() {
-
-	const float e = 2.71;
-	char ch1, ch2;
-	float sml_num;
-	int x,y;
-	int i;
-	char kp[23];
-	scanf(x,y);
-	scanf(ch1,ch2);
-	scanf(sml_num,res);
-	
-	if ( res ) {
-		printf("res is not zero");
-		printf(res*2);
-	}
-	
-	chAABBCC = get_lower(ch1);
-	printf("chAABBCC value");
-	printf(chAABBCC);
-	
-	if (x>=y) { 
-		c[0] = x;
-		c[1] = y;
-	}
-	else {
-		c[0] = y;
-		c[1] = x;
-	}
-	
-	printf(c[0]);
-	printf("qijihaha",float_div(pi,sml_num));
-
+	int x;
+	scanf(x);
+	printf(cal_fibonacci_val(x));
 }

@@ -38,7 +38,7 @@
 1479921463 source:e:\git\mycompiler\mycompiler\src\word.cpp
 	"Word.h"
 
-1481813736 source:e:\git\mycompiler\mycompiler\src\wordanalysis.cpp
+1481852281 source:e:\git\mycompiler\mycompiler\src\wordanalysis.cpp
 	"WordAnalysis.h"
 
 1479909533 source:e:\git\mycompiler\mycompiler\src\codegenerate.cpp
@@ -64,12 +64,12 @@
 	<vector>
 	<string>
 
-1481739159 e:\git\mycompiler\mycompiler\include\runtime.h
+1481888755 e:\git\mycompiler\mycompiler\include\runtime.h
 	<stack>
 	<vector>
 	"Table.h"
 
-1481768298 source:e:\git\mycompiler\mycompiler\src\runtime.cpp
+1481889755 source:e:\git\mycompiler\mycompiler\src\runtime.cpp
 	<cstdlib>
 	<iostream>
 	<sstream>

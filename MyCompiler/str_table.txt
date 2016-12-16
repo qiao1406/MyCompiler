@@ -1,4 +1,0 @@
-"the f2 cannot be 0"
-"res is not zero"
-"chAABBCC value"
-"qijihaha"

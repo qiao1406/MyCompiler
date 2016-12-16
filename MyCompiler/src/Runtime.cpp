@@ -6,8 +6,9 @@
 #include "Runtime.h"
 #include "Table.h"
 
-//表示返回地址的寄存器
-int Runtime::ret_adr = 0;
+//表示返回地址的栈，因为存在递归调用，所以需要用栈
+//来保存多个返回地址
+stack<int> Runtime::ret_adr;
 //主函数指针，指向主函数部分在PCode表中开始的位置
 int Runtime::main_pointer = 0;
 
@@ -406,8 +407,8 @@ void Runtime::interpret ( vector<pcode> p ) {
                 break;
 
             case JR:
-            //跳转到返回地址,并将函数出栈，
-            //此时栈顶存的是返回值（保留）
+            //跳转到返回地址（将返回地址从ret_adr中弹出）
+            //,并将函数出栈,此时栈顶存的是返回值（保留）
                 temp = runtime_stack.back();
 
                 //函数出栈
@@ -417,14 +418,15 @@ void Runtime::interpret ( vector<pcode> p ) {
                 fun_stack.pop();//把函数记录弹出
                 push_rs(temp);//把返回值压回到运行栈中
 
-                index = ret_adr;//跳到返回地址
+                index = ret_adr.top();//跳到返回地址
+                ret_adr.pop();
                 break;
 
             case JSR:
             //跳转到函数入口fa，同时设定返回地址ra
 
                 index = c.l;
-                ret_adr = c.a;
+                ret_adr.push(c.a);
                 //cout << "jsr" << index;
                 break;
 
@@ -468,10 +470,10 @@ void Runtime::interpret ( vector<pcode> p ) {
                     float f1 = Table::get_floatval(get_top_value());
                     pop_rs();//弹出栈顶的值
                     if ( get_top_type() == RS_FLOAT ) {
-                        res = ( f1 <= Table::get_floatval(get_top_value()) );
+                        res = ( f1 >= Table::get_floatval(get_top_value()) );
                     }
                     else {
-                        res = ( f1 <= get_top_value() );
+                        res = ( f1 >= get_top_value() );
                     }
                     pop_rs();//弹出次栈顶的值
                 }
@@ -479,10 +481,10 @@ void Runtime::interpret ( vector<pcode> p ) {
                     int i1 = get_top_value();
                     pop_rs();//弹出栈顶的值
                     if ( get_top_type() == RS_FLOAT ) {
-                        res = ( i1 <= Table::get_floatval(get_top_value()) );
+                        res = ( i1 >= Table::get_floatval(get_top_value()) );
                     }
                     else {
-                        res = ( i1 <= get_top_value() );
+                        res = ( i1 >= get_top_value() );
                     }
                     pop_rs();//弹出次栈顶的值
                 }
