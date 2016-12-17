@@ -1,0 +1,19 @@
+int cal_fibonacci_val (int n) {
+	if (n<=2)
+		return (1);
+	else
+		return (cal_fibonacci_val(n-1)+cal_fibonacci_val(n-2));
+}
+
+int cal_factor ( int n ) {
+	if ( n <= 1 ) 
+		return (1);
+	else
+		return ( n*cal_factor(n-1));
+}
+
+void main() {
+	int x;
+	scanf(x);
+	printf(cal_fibonacci_val(x));
+}

@@ -3,6 +3,7 @@
 #include "WordAnalysis.h"
 #include "GrammarAnalysis.h"
 #include "Runtime.h"
+#include "ErrorProcess.h"
 
 using namespace std;
 
@@ -32,9 +33,16 @@ int main() {
     Table::test_pcode_table();
     Table::test_func_table();
     Table::test_str_table();
-    cout << "编译结束，程序开始执行"<<endl;
-    Runtime::interpret(Table::pcode_table);
-    cout << "\n——————程序运行结束——————"<<endl;
+
+    if ( ErrorProcess::is_err_exist() ) {
+        cout << "编译结束，存在错误"<<endl;
+        ErrorProcess::prt_errs();
+    }
+    else {
+        cout << "编译结束，程序开始执行"<<endl;
+        Runtime::interpret(Table::pcode_table);
+        cout << "\n——————程序运行结束——————"<<endl;
+    }
 
     return 0;
 }

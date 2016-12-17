@@ -74,8 +74,7 @@ bool Table::is_arrayrcd ( id_rcd r ) {
     /*
         判断符号表的某条记录是否为数组名记录
     */
-    return r.type == INT_FUNCTION || r.type == CHAR_FUNCTION
-            || r.type == FLOAT_FUNCTION || r.type == VOID_FUNCTION;
+    return r.type == INT_ARRAY || r.type == CHAR_ARRAY || r.type == FLOAT_ARRAY;
 }
 
 id_type Table::get_func_type ( string func_name ) {

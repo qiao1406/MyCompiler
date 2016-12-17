@@ -1,0 +1,8 @@
+"the f2 cannot be 0"
+"hello"
+"worl"
+"res is not zero"
+"the value of is 2"
+"the value of i is 3"
+"yeyeye"
+"the fibonacci value is"

@@ -1,10 +1,11 @@
 # depslib dependency file v1.0
-1481728300 source:e:\git\mycompiler\mycompiler\main.cpp
+1481946582 source:e:\git\mycompiler\mycompiler\main.cpp
 	<iostream>
 	"Word.h"
 	"WordAnalysis.h"
 	"GrammarAnalysis.h"
 	"Runtime.h"
+	"ErrorProcess.h"
 
 1480001306 e:\git\mycompiler\mycompiler\include\word.h
 	<string>
@@ -20,13 +21,13 @@
 1479821241 e:\git\mycompiler\mycompiler\include\identifier.h
 	<string>
 
-1480876917 e:\git\mycompiler\mycompiler\include\grammaranalysis.h
+1481896674 e:\git\mycompiler\mycompiler\include\grammaranalysis.h
 	"Word.h"
 	"WordAnalysis.h"
 	"Table.h"
 	"Runtime.h"
 
-1481785990 source:e:\git\mycompiler\mycompiler\src\grammaranalysis.cpp
+1481948251 source:e:\git\mycompiler\mycompiler\src\grammaranalysis.cpp
 	"GrammarAnalysis.h"
 	"ErrorProcess.h"
 	<sstream>
@@ -53,10 +54,10 @@
 	<iostream>
 	<string>
 
-1481376848 source:e:\git\mycompiler\mycompiler\src\errorprocess.cpp
+1481945558 source:e:\git\mycompiler\mycompiler\src\errorprocess.cpp
 	"ErrorProcess.h"
 
-1481180284 e:\git\mycompiler\mycompiler\include\errorprocess.h
+1481945476 e:\git\mycompiler\mycompiler\include\errorprocess.h
 	<queue>
 	"Error.h"
 

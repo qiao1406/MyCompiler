@@ -2,6 +2,10 @@
 
 queue<Error> ErrorProcess::errs;
 
+bool ErrorProcess::is_err_exist() {
+    return !errs.empty();
+}
+
 void ErrorProcess::add_err ( int line, int index ) {
     // 往错误队列中添加一个错误
     errs.push( Error(line,index) );
