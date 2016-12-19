@@ -3,12 +3,16 @@
 	<ActiveTarget name="Debug" />
 	<File name="src\WordAnalysis.cpp" open="1" top="0" tabpos="5" split="0" active="1" splitpos="0" zoom_1="2" zoom_2="0">
 		<Cursor>
-			<Cursor1 position="7686" topLine="0" />
+			<Cursor1 position="4342" topLine="120" />
 		</Cursor>
+		<Folding>
+			<Collapse line="157" />
+			<Collapse line="171" />
+		</Folding>
 	</File>
 	<File name="main.cpp" open="1" top="0" tabpos="1" split="0" active="1" splitpos="0" zoom_1="2" zoom_2="0">
 		<Cursor>
-			<Cursor1 position="1426" topLine="24" />
+			<Cursor1 position="267" topLine="0" />
 		</Cursor>
 	</File>
 	<File name="include\ErrorProcess.h" open="1" top="0" tabpos="9" split="0" active="1" splitpos="0" zoom_1="0" zoom_2="0">
@@ -31,9 +35,9 @@
 			<Cursor1 position="783" topLine="15" />
 		</Cursor>
 	</File>
-	<File name="src\GrammarAnalysis.cpp" open="1" top="0" tabpos="7" split="0" active="1" splitpos="0" zoom_1="2" zoom_2="0">
+	<File name="src\GrammarAnalysis.cpp" open="1" top="1" tabpos="7" split="0" active="1" splitpos="0" zoom_1="2" zoom_2="0">
 		<Cursor>
-			<Cursor1 position="30966" topLine="955" />
+			<Cursor1 position="36171" topLine="1159" />
 		</Cursor>
 		<Folding>
 			<Collapse line="75" />
@@ -56,7 +60,7 @@
 	</File>
 	<File name="src\Word.cpp" open="1" top="0" tabpos="10" split="0" active="1" splitpos="0" zoom_1="0" zoom_2="0">
 		<Cursor>
-			<Cursor1 position="0" topLine="20" />
+			<Cursor1 position="0" topLine="25" />
 		</Cursor>
 	</File>
 	<File name="include\GrammarAnalysis.h" open="1" top="0" tabpos="6" split="0" active="1" splitpos="0" zoom_1="3" zoom_2="0">
@@ -64,9 +68,9 @@
 			<Cursor1 position="557" topLine="21" />
 		</Cursor>
 	</File>
-	<File name="src\Table.cpp" open="1" top="1" tabpos="11" split="0" active="1" splitpos="0" zoom_1="1" zoom_2="0">
+	<File name="src\Table.cpp" open="1" top="0" tabpos="11" split="0" active="1" splitpos="0" zoom_1="1" zoom_2="0">
 		<Cursor>
-			<Cursor1 position="2161" topLine="70" />
+			<Cursor1 position="2037" topLine="0" />
 		</Cursor>
 	</File>
 </CodeBlocks_layout_file>

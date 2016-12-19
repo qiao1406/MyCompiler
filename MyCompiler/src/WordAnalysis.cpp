@@ -90,11 +90,7 @@ void WordAnalysis::read_programme_code ( string file_name ) {
 
     while ( getline(fin,buff_str) ) {
         //buff_str不会读入回车的
-//        if ( buff_str == "" || buff_str == " "
-//            || buff_str == "\t" || buff_str ==  "\n"  ) { //忽略空行
-//            code_strs.push("%%");
-//            continue;
-//        }
+
         if ( is_emptyline(buff_str) ){
             code_strs.push("%%");
             continue;
@@ -102,13 +98,45 @@ void WordAnalysis::read_programme_code ( string file_name ) {
         // 逐个字符分析
         for ( int i = 0; i < buff_str.length(); i++ ) {
 
-            if ( buff_str[i] == ' ' || buff_str[i] == '\t') { //跳过空格和制表符
+            if ( buff_str[i] == ' ' || buff_str[i] == '\t') {
+                //跳过空格和制表符,并且除去他们
+                buff_str.erase(i,1);
+                i--;
                 continue;
+            }
+
+            else if ( buff_str[i] == '+' || buff_str[i] == '-' ) {
+                tempstr = "";
+
+                if ( buff_str[i-1] == '>' || buff_str[i-1] == '<'
+                     || buff_str[i-1] == '=' || buff_str[i-1] == ','
+                     || buff_str[i-1] == '(' ) {
+                    tempstr += buff_str[i];
+                    i++;
+                    if ( buff_str[i] == '+' || buff_str[i] == '-' ) {
+                        tempstr += buff_str[i];
+                        i++;
+                    }
+                    while ( ( buff_str[i] >= '0' && buff_str[i] <= '9' )
+                                ||  buff_str[i] == '.' ) {
+                        tempstr += buff_str[i];
+                        i++;
+                    }
+                    code_strs.push(tempstr);
+                    i--;
+
+                }
+                else{
+                    tempstr += buff_str[i];
+                    code_strs.push(tempstr);
+                }
+
             }
 
             else if ( is_noletter_char(buff_str[i]) ) {
                 tempstr = "";
                 //非字母字符
+                //cout << buff_str[i];
 
                 if ( ((buff_str[i] == '=' && buff_str[i+1] == '='  )// ==
                     || ( buff_str[i] == '!' && buff_str[i+1] == '=')// !=
@@ -166,8 +194,6 @@ void WordAnalysis::read_programme_code ( string file_name ) {
                 i--;
             }
 
-
-
         }
 
         // 读完一行之后，加上一个回车表示一行结束
@@ -215,9 +241,11 @@ string WordAnalysis::judge_type ( string name ) {
         else if ( name.length() == 3 && name[0] == '\'' && name[2] == '\'' ) { //字符
             res = "CHARACTER";
         }
-        else if ( (name[0] > '0' && name[0] <= '9') ) {
+        else if ( (name[0] >= '0' && name[0] <= '9')
+                 || name[0] == '-' || name[0] == '+' ) {
+
             int point_num = 0;
-            int i = 0;
+            int i = ( name[0] == '-' || name[0] == '+' )?1:0;
             for ( ; i < name.length(); i++ ) {
                 if ( name[i] == '.' ) {
                     point_num++;

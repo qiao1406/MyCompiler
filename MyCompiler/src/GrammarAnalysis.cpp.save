@@ -246,7 +246,7 @@ void GrammarAnalysis::ga_constdef () {
             if ( nowword.type == "IDENT") {
                 string name = nowword.value; //记录标识符的名字
                 nowword = nextword();
-                if ( nowword.type != "EQUAL" ) {
+                if ( nowword.type != "BECOME" ) {
                     err_report(3);
                     jump_read({";"});
                     return;
@@ -526,7 +526,7 @@ void GrammarAnalysis::ga_voidfun () {
         nowword = nextword();
     }
 
-    if ( nowword.type == ")" ) {
+    if ( nowword.value == ")" ) {
         //无参数,设lastpar值
         Table::set_lastpar(name);
     }
@@ -1050,7 +1050,7 @@ void GrammarAnalysis::ga_voidfuncall_stmt ( string func_name ){
     if ( nowword.value == ")" ) { //值参数表为空
         if ( ! i == Table::get_lastpar(r) ) { //参数个数不对
             err_report(21);
-            jump_read({";"})
+            jump_read({";"});
             return;
         }
     }
@@ -1212,7 +1212,7 @@ void GrammarAnalysis::ga_read_stmt(){
             jump_read({","});
         }
         else {
-                
+
             r = Table::get_idrcd(loc);
             if ( ! Table::is_varrcd(r) ) {
                 //读的不是变量，报错
@@ -1226,9 +1226,9 @@ void GrammarAnalysis::ga_read_stmt(){
             }
             nowword = nextword();
         }
-        
+
     }
-    
+
     while ( nowword.value == "," ) {
 
         nowword = nextword();
@@ -1278,11 +1278,11 @@ void GrammarAnalysis::ga_write_stmt(){
     */
     if ( nowword.value != "(" ) {
         err_report(4);
-    } 
+    }
     else {
         nowword = nextword();
     }
-    
+
     if ( nowword.type == "STRING" ) {
         //先把字符串登记到字符串表中
         Table::add_strrcd(nowword.value);
@@ -1317,7 +1317,12 @@ void GrammarAnalysis::ga_return_stmt(){
         要求入口处有预读
         出口处无预读
     */
+    
     if ( nowword.value != "(" ) {//只有“return”也是合法的
+        //但是此时要后退一个词
+        lastword();
+        lastword();
+        nowword = nextword();
         return;
     }
     nowword = nextword();
@@ -1342,7 +1347,7 @@ void GrammarAnalysis::ga_case_stmt(){
         要求入口预读
         出口无预读
     */
-    aa
+
     queue<int> bq;//记录BNE指令的地址
     queue<int> jq;//记录JMP指令的地址
 
@@ -1462,7 +1467,7 @@ void GrammarAnalysis::ga_condition() {
         入口不需要预读
         出口有预读
     */
-    
+
     nowword = nextword();
     ga_expression();
     if ( nowword.is_relation_op() ) {
@@ -1610,7 +1615,7 @@ void GrammarAnalysis::ga_factor() {
         }
 
         else if ( nowword.value == "(" ) { // 可能是有返回值的函数调用语句
-                
+
             if ( Table::is_funcrcd(r) && r.type != VOID_FUNCTION ) {
                 ga_retfuncall_stmt(id);
 
@@ -1618,7 +1623,7 @@ void GrammarAnalysis::ga_factor() {
             }
             else { //不是有返回值的
                 err_report(29);
-                return
+                return;
             }
 
         }
@@ -1652,7 +1657,7 @@ void GrammarAnalysis::ga_factor() {
         nowword = nextword();
         return;
     }
-    else {//不符合
+    else {//不符合因子的条件，报错
         err_report(45);
     }
 }

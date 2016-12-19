@@ -9,14 +9,13 @@ using namespace std;
 
 int main() {
 
-    //string filename;
-    //cout << "请输入文件名";
-    //cin >> filename;
-    //WordAnalysis::prt_analysis_res("test.txt");
+    string filename;
+    cout << "请输入文件名";
+    cin >> filename;
     ofstream out;
     out.open("result.txt");
-    //WordAnalysis::establish_cache(filename);
-    WordAnalysis::establish_cache("test.txt");
+    WordAnalysis::establish_cache(filename);
+    //WordAnalysis::establish_cache("test.txt");
     for ( int i = 0; i < WordAnalysis::linewords.size(); i++ ) {
         for ( int j = 0; j < WordAnalysis::linewords[i].size(); j++ ) {
             out << WordAnalysis::linewords[i][j].type << " ";

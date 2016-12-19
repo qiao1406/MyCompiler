@@ -39,7 +39,7 @@
 1479921463 source:e:\git\mycompiler\mycompiler\src\word.cpp
 	"Word.h"
 
-1481852281 source:e:\git\mycompiler\mycompiler\src\wordanalysis.cpp
+1482111936 source:e:\git\mycompiler\mycompiler\src\wordanalysis.cpp
 	"WordAnalysis.h"
 
 1479909533 source:e:\git\mycompiler\mycompiler\src\codegenerate.cpp
@@ -78,7 +78,7 @@
 	"Runtime.h"
 	"Table.h"
 
-1481703735 source:e:\git\mycompiler\mycompiler\src\table.cpp
+1481948748 source:e:\git\mycompiler\mycompiler\src\table.cpp
 	"Table.h"
 	"Runtime.h"
 	<iostream>

@@ -1,5 +1,6 @@
-const float pi = 3.14; 
-const int a = 5,b=6; 
+const float pi = 3.14;
+const float fcon1=0.5;
+const int a = -5,b=6; 
 int c[2], res, d[3]; 
 float f1, _root; 
 char ch;
@@ -44,67 +45,6 @@ int cal_fibonacci_val (int n) {
 
 void main() {
 
-	const float e = 2.71;
-	char ch1, ch2;
-	float sml_num;
-	int x,y;
-	int i;
-	scanf(x,y); 
-	scanf(ch1);
 	
-	if (x>=y) { 
-		c[0] = x;
-		c[1] = y;
-	}
-	else {
-		c[0] = y;
-		c[1] = x;
-	}
-	
-	i = c[0] - c[1];
-	
-	;
-	
-	_root = 1.23;
-	f1 = +2.33;
-	res = 2+5* add_two_nums(x,y);
-	
-	if ( res ) {
-		printf("res is not zero");
-		printf(res*2);
-	}
-	
-	i = 0;
-	while ( i != res) {
-		print_hello();
-		i = i+1;
-	}
-	
-	i = 2;
-	switch (i+1) {
-		case 2: 
-			printf("the value of is 2");
-		case 3:
-			printf("the value of i is 3");
-	}
-	
-	sml_num = -float_div(f1,_root);
-	printf(sml_num);
-	sml_num = -23.0;
-	printf(sml_num);
-	
-	ch2 = 'A';
-	ch1 = get_lower(ch2);
-	switch(ch1) {
-		case'a':
-			printf("yeyeye");
-	}
-	
-	ch1 = '2';
-	printf(ch1+1);
-	
-	
-	x = +6;
-	res = cal_fibonacci_val(x);
-	printf("the fibonacci value is",res);
+	printf(a);
 }

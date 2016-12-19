@@ -1317,7 +1317,12 @@ void GrammarAnalysis::ga_return_stmt(){
         要求入口处有预读
         出口处无预读
     */
+
     if ( nowword.value != "(" ) {//只有“return”也是合法的
+        //但是此时要后退一个词
+        lastword();
+        lastword();
+        nowword = nextword();
         return;
     }
     nowword = nextword();
