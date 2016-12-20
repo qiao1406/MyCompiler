@@ -9,10 +9,9 @@ using namespace std;
 
 int main() {
 
-    //string filename;
-    //cout << "请输入文件名";
-    //cin >> filename;
-    //WordAnalysis::prt_analysis_res("test.txt");
+//    string filename;
+//    cout << "请输入文件名";
+//    cin >> filename;
     ofstream out;
     out.open("result.txt");
     //WordAnalysis::establish_cache(filename);
@@ -43,9 +42,6 @@ int main() {
         Runtime::interpret(Table::pcode_table);
         cout << "\n——————程序运行结束——————"<<endl;
     }
-
-
-
 
     return 0;
 }

@@ -1,5 +1,5 @@
 # depslib dependency file v1.0
-1481946582 source:e:\git\mycompiler\mycompiler\main.cpp
+1482213068 source:e:\git\mycompiler\mycompiler\main.cpp
 	<iostream>
 	"Word.h"
 	"WordAnalysis.h"
@@ -10,7 +10,7 @@
 1480001306 e:\git\mycompiler\mycompiler\include\word.h
 	<string>
 
-1481813740 e:\git\mycompiler\mycompiler\include\wordanalysis.h
+1482220745 e:\git\mycompiler\mycompiler\include\wordanalysis.h
 	<iostream>
 	<fstream>
 	<string>
@@ -27,7 +27,7 @@
 	"Table.h"
 	"Runtime.h"
 
-1481948251 source:e:\git\mycompiler\mycompiler\src\grammaranalysis.cpp
+1482156374 source:e:\git\mycompiler\mycompiler\src\grammaranalysis.cpp
 	"GrammarAnalysis.h"
 	"ErrorProcess.h"
 	<sstream>
@@ -39,7 +39,7 @@
 1479921463 source:e:\git\mycompiler\mycompiler\src\word.cpp
 	"Word.h"
 
-1482111936 source:e:\git\mycompiler\mycompiler\src\wordanalysis.cpp
+1482221206 source:e:\git\mycompiler\mycompiler\src\wordanalysis.cpp
 	"WordAnalysis.h"
 
 1479909533 source:e:\git\mycompiler\mycompiler\src\codegenerate.cpp

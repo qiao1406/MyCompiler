@@ -214,12 +214,13 @@ string WordAnalysis::getsym () {
     return s;
 }
 
-string WordAnalysis::judge_type ( string name ) {
+Word WordAnalysis::gen_word ( string name ) {
     /*
-        根据名字判断类型
+        根据名字判断类型,并且返回一个Word对象
         先在syblist里面找，若找不到再去判断其他的可能性
     */
-    string res = "";
+
+    string res = "";//res表示的是这个词的类型
     for ( int i = 0; i < 34; i++ ) {
         if ( syblist[i].value == name ) {
             res = syblist[i].type;
@@ -228,35 +229,99 @@ string WordAnalysis::judge_type ( string name ) {
     }
 
     if ( res != "" ) {
-        return res;
+        return Word(name,res);
     }
     else { //判断是字符串或数字，或字符，还是标识符
 
         if ( name.length() >= 2 && name[0] == '"' && name[name.length()-1] == '"' ) { //字符串
             res = "STRING";
         }
+
         else if ( name == "0" ) { //整数0
             res = "INTEGER";
         }
+
         else if ( name.length() == 3 && name[0] == '\'' && name[2] == '\'' ) { //字符
             res = "CHARACTER";
         }
+
         else if ( (name[0] >= '0' && name[0] <= '9')
                  || name[0] == '-' || name[0] == '+' ) {
 
             int point_num = 0;
-            int i = ( name[0] == '-' || name[0] == '+' )?1:0;
-            for ( ; i < name.length(); i++ ) {
-                if ( name[i] == '.' ) {
-                    point_num++;
+            int i;
+            bool is_neg = false;//标志该数字是否为负数的变量
+
+            if ( name.length() >= 3 &&
+                ( name[0] == '+' || name[0] == '-') &&
+                ( name[1] == '+' || name[1] == '-') ) {//有两个符号的实数
+
+                if ( name[0] == '+' && name[1] == '+' ||
+                    name[0] == '-' && name[1] == '-' ) { //归类为正数
+
+                    name.erase(0,2);
+                    i = 0;
+                    for ( ; i < name.length(); i++ ) {
+                        if ( name[i] == '.' ) {
+                            point_num++;
+                        }
+                        if (!( name[i] == '.' || isdigit(name[i]) ) ){
+                            break; // 不是小数点或1-9 就退出
+                        }
+                    }
+
+                    //不能以小数点开头
+                    res = ( i == name.length() && point_num <= 1
+                           && name[0] != '.')? "FLOAT":"WRONGSYMBOL";
                 }
-                if (!( name[i] == '.' || isdigit(name[i]) ) ){
-                    break; // 不是小数点或1-9 就退出
+                else { //归类成负数
+                    name.erase(0,1);
+                    name[0] = '-';
+                    i = 1;
+                    for ( ; i < name.length(); i++ ) {
+                        if ( name[i] == '.' ) {
+                            point_num++;
+                        }
+                        if (!( name[i] == '.' || isdigit(name[i]) ) ){
+                            break; // 不是小数点或1-9 就退出
+                        }
+                    }
+                    //不能以小数点开头
+                    res = ( i == name.length() && point_num <= 1
+                           && name[1] != '.')? "FLOAT":"WRONGSYMBOL";
                 }
+
+            } else if ( name.length() >= 2 && ( name[0] == '+' || name[0] == '-')) {
+                //有一个符号的整数或实数
+
+                i = 1;
+                for ( ; i < name.length(); i++ ) {
+                    if ( name[i] == '.' ) {
+                        point_num++;
+                    }
+                    if (!( name[i] == '.' || isdigit(name[i]) ) ){
+                        break; // 不是小数点或1-9 就退出
+                    }
+                }
+                //不能以小数点开头
+                res = ( i == name.length() && point_num <= 1 && name[1] != '.')?
+                    (( point_num == 0 )?"INTEGER":"FLOAT"):"WRONGSYMBOL";
+            } else { //正常情况的整数和实数
+                i = 0;
+                for ( ; i < name.length(); i++ ) {
+                    if ( name[i] == '.' ) {
+                        point_num++;
+                    }
+                    if (!( name[i] == '.' || isdigit(name[i]) ) ){
+                        break; // 不是小数点或1-9 就退出
+                    }
+                }
+                res = ( i == name.length() && point_num <= 1 )?
+                                (( point_num==0)?"INTEGER":"FLOAT"):"WRONGSYMBOL";
             }
-            res = ( i == name.length() && point_num <= 1 )?
-                            (( point_num==0)?"INTEGER":"FLOAT"):"WRONGSYMBOL";
+
         }
+
         else if ( is_letter(name[0]) ) { //有可能是标识符
             int i = 0;
             for ( ; i < name.length(); i++ ) {
@@ -266,34 +331,35 @@ string WordAnalysis::judge_type ( string name ) {
             }
             res = ( i == name.length() )?"IDENT":"WRONGSYMBOL";
         }
+
         else {
             res = "WRONGSYMBOL";
         }
 
-        return res;
+        return Word(name,res);
     }
 
 }
 
-void WordAnalysis::prt_analysis_res( string filename ) {
-    int order = 1;
-    ofstream fout;
-    read_programme_code(filename);
-    fout.open("result.txt");
-
-    while (!code_strs.empty()){
-        string sym = getsym();
-        string type = judge_type(sym);
-        if ( sym != "\n") {
-            cout << order << "\t" << type << "\t" << sym << endl;
-            fout << order << "\t" << type << "\t" << sym << endl;
-            order++;
-        }
-    }
-
-    fout.close();
-
-}
+//void WordAnalysis::prt_analysis_res( string filename ) {
+//    int order = 1;
+//    ofstream fout;
+//    read_programme_code(filename);
+//    fout.open("result.txt");
+//
+//    while (!code_strs.empty()){
+//        string sym = getsym();
+//        string type = judge_type(sym);
+//        if ( sym != "\n") {
+//            cout << order << "\t" << type << "\t" << sym << endl;
+//            fout << order << "\t" << type << "\t" << sym << endl;
+//            order++;
+//        }
+//    }
+//
+//    fout.close();
+//
+//}
 
 void WordAnalysis::establish_cache ( string filename ) {
     /*
@@ -317,8 +383,10 @@ void WordAnalysis::establish_cache ( string filename ) {
             linetemp.clear();
         }
         else {
-            string typ = judge_type(sym);
-            linetemp.push_back(Word(sym,typ,now_line));
+            //string typ = judge_type(sym);
+            Word w = gen_word(sym);
+            w.loc = now_line;
+            linetemp.push_back(w);
         }
     }
 }

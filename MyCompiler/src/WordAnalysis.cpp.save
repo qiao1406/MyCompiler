@@ -123,12 +123,12 @@ void WordAnalysis::read_programme_code ( string file_name ) {
                         i++;
                     }
                     code_strs.push(tempstr);
+                    i--;
 
                 }
                 else{
                     tempstr += buff_str[i];
                     code_strs.push(tempstr);
-                    i++;
                 }
 
             }
@@ -214,12 +214,13 @@ string WordAnalysis::getsym () {
     return s;
 }
 
-string WordAnalysis::judge_type ( string name ) {
+Word WordAnalysis::gen_word ( string name ) {
     /*
-        根据名字判断类型
+        根据名字判断类型,并且返回一个Word对象
         先在syblist里面找，若找不到再去判断其他的可能性
     */
-    string res = "";
+    
+    string res = "";//res表示的是这个词的类型
     for ( int i = 0; i < 34; i++ ) {
         if ( syblist[i].value == name ) {
             res = syblist[i].type;
@@ -228,7 +229,7 @@ string WordAnalysis::judge_type ( string name ) {
     }
 
     if ( res != "" ) {
-        return res;
+        return Word(name,res);
     }
     else { //判断是字符串或数字，或字符，还是标识符
 
@@ -242,10 +243,70 @@ string WordAnalysis::judge_type ( string name ) {
             res = "CHARACTER";
         }
         else if ( (name[0] >= '0' && name[0] <= '9')
-                 || name[0] == '-' || name[0] == '+' ) {
+                 || name[0] == '-' || name[0] == '+' ) {//整数（包括带符号的）
 
             int point_num = 0;
-            int i = ( name[0] == '-' || name[0] == '+' )?1:0;
+            int i; 
+            bool is_neg = false;//标志该数字是否为负数的变量
+            
+            if ( name.length() >= 3 &&
+                ( name[0] == '+' || name[0] == '-') && 
+                ( name[1] == '+' || name[1] == '-') ) {//有两个符号的实数
+                 
+                if ( name[0] == '+' && name[1] == '+' || 
+                    name[0] == '-' && name[1] == '-' ) { //归类为正数
+                        
+                    name.erase(0,2);
+                    i = 0;
+                    for ( ; i < name.length(); i++ ) {
+                        if ( name[i] == '.' ) {
+                            point_num++;
+                        }
+                        if (!( name[i] == '.' || isdigit(name[i]) ) ){
+                            break; // 不是小数点或1-9 就退出
+                        }
+                    }
+                    
+                    //不能以小数点开头
+                    res = ( i == name.length() && point_num <= 1 
+                           && name[.] != '0')? "FLOAT":"WRONGSYMBOL";    
+                }
+                else { //归类成负数
+                    name.erase(0,1);
+                    name[0] = '-';
+                    i = 1;
+                    for ( ; i < name.length(); i++ ) {
+                        if ( name[i] == '.' ) {
+                            point_num++;
+                        }
+                        if (!( name[i] == '.' || isdigit(name[i]) ) ){
+                            break; // 不是小数点或1-9 就退出
+                        }
+                    }
+                    //不能以小数点开头
+                    res = ( i == name.length() && point_num <= 1 
+                           && name[1] != '.')? "FLOAT":"WRONGSYMBOL";
+                }
+                   
+            } else if ( name.length() >= 2 && ( name[0] == '+' || name[0] == '-')) {
+                //有一个符号的整数或实数
+                
+                i = 1;
+                for ( ; i < name.length(); i++ ) {
+                    if ( name[i] == '.' ) {
+                        point_num++;
+                    }
+                    if (!( name[i] == '.' || isdigit(name[i]) ) ){
+                        break; // 不是小数点或1-9 就退出
+                    }
+                }
+                //不能以小数点开头
+                res = ( i == name.length() && point_num <= 1 
+                       && name[1] != '.')? "FLOAT":"WRONGSYMBOL";
+            }
+            
+            
+            
             for ( ; i < name.length(); i++ ) {
                 if ( name[i] == '.' ) {
                     point_num++;
@@ -270,7 +331,7 @@ string WordAnalysis::judge_type ( string name ) {
             res = "WRONGSYMBOL";
         }
 
-        return res;
+        return Word(name,res);
     }
 
 }
