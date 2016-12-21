@@ -524,7 +524,7 @@ void Table::add_idrcd ( string name, id_type type, int adr, int size) {
                 }
 
             }
-            else if ( type == FLOAT_FUNCTION ) {
+            else if ( type == FLOAT_ARRAY ) {
                 for ( int i = 0; i < size; i++) {
                     Runtime::push_rs({RS_FLOAT,0});
                 }
@@ -557,7 +557,7 @@ void Table::add_idrcd ( string name, id_type type, int adr, int size) {
                 }
 
             }
-            else if ( type == FLOAT_FUNCTION ) {
+            else if ( type == FLOAT_ARRAY ) {
                 for ( int i = 0; i < size; i++) {
                     Runtime::push_rs({RS_FLOAT,0});
                 }

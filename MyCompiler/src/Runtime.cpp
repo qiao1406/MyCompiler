@@ -228,10 +228,12 @@ void Runtime::interpret ( vector<pcode> p ) {
                 }
 
                 if ( res ) {
+                    //pop_rs();//把栈顶弹出
                     index = c.a;//跳到a处
                 }
                 else {
-                    pop_rs();//将栈顶值弹出
+                    //pop_rs();//将栈顶值弹出
+                    pop_rs();//把次栈顶弹出
                     index++;//到下一条指令
                 }
                 break;
@@ -776,7 +778,7 @@ void Runtime::interpret ( vector<pcode> p ) {
                 }
                 pop_rs();//弹出次栈顶的值
 
-                print_stack();
+                //print_stack();
                 index++;//到下一条指令
                 break;
 

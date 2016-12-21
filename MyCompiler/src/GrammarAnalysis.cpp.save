@@ -263,6 +263,7 @@ void GrammarAnalysis::ga_constdef () {
                     Table::add_idrcd(name,str2num<int>(nowword.value),INT_CONST);
                 }
                 else if ( data_typ == "CHARACTER" ) {
+                    cout << nowword.b
                     int ascii_code = nowword.value[0];
                     Table::add_idrcd(name,ascii_code,CHAR_CONST);
                 }
@@ -457,7 +458,7 @@ void GrammarAnalysis::ga_returnfun () {
         nowword = nextword();
     }
 
-    if ( nowword.type == ")" ) {
+    if ( nowword.value == ")" ) {
         //无参数,设lastpar值
         Table::set_lastpar(name);
     }
@@ -842,11 +843,11 @@ void GrammarAnalysis::ga_statement(){
                 return;
             }
             else if ( rt == VOID_FUNCTION ) {//无返回值函数调用
-                nowword = nextword();
+                //nowword = nextword();
                 ga_voidfuncall_stmt(name);
             }
             else { //有返回值函数调用
-                nowword = nextword();
+                //nowword = nextword();
                 ga_retfuncall_stmt(name);
             }
 
@@ -857,7 +858,7 @@ void GrammarAnalysis::ga_statement(){
             else{
                 nowword = nextword();
             }
-            prt_grammar_info("funcall statement");
+            //prt_grammar_info("funcall statement");
             return;
         }
         else {
@@ -971,7 +972,7 @@ void GrammarAnalysis::ga_retfuncall_stmt ( string func_name ){
 
     nowword = nextword();
     if ( nowword.value == ")" ) { //值参数表为空
-        if ( ! i == Table::get_lastpar(r) ) { //参数个数不对
+        if ( ! (i == Table::get_lastpar(r)) ) { //参数个数不对
             err_report(21);
             return;
         }
@@ -1047,6 +1048,7 @@ void GrammarAnalysis::ga_voidfuncall_stmt ( string func_name ){
         r = Table::get_idrcd(i);
     }
 
+    nowword = nextword();
     if ( nowword.value == ")" ) { //值参数表为空
         if ( ! i == Table::get_lastpar(r) ) { //参数个数不对
             err_report(21);
@@ -1089,7 +1091,7 @@ void GrammarAnalysis::ga_voidfuncall_stmt ( string func_name ){
         //设定返回地址以及跳转到函数入口
         Table::emit(JSR,Table::get_ploc(r),Table::get_pctable_size()+1);
         nowword = nextword();
-        //prt_grammar_info("noreturn-funcall statement");
+        prt_grammar_info("noreturn-funcall statement");
         return;
 
     }
@@ -1317,12 +1319,13 @@ void GrammarAnalysis::ga_return_stmt(){
         要求入口处有预读
         出口处无预读
     */
-    
+
     if ( nowword.value != "(" ) {//只有“return”也是合法的
         //但是此时要后退一个词
         lastword();
         lastword();
         nowword = nextword();
+        prt_grammar_info("return statement");
         return;
     }
     nowword = nextword();
@@ -1338,7 +1341,7 @@ void GrammarAnalysis::ga_return_stmt(){
     else {
         Table::emit(JR);
     }
-    //prt_grammar_info("return statement");
+    prt_grammar_info("return statement");
 }
 
 void GrammarAnalysis::ga_case_stmt(){
@@ -1425,10 +1428,10 @@ void GrammarAnalysis::ga_case_stmt(){
                     int i = bq.front();
                     bq.pop();
                     if ( bq.empty() ) {
-                        Table::update_emit(BNE,0,end_adr,i);
+                        Table::update_emit(BNE,0,end_adr-1,i);
                     }
                     else {
-                        Table::update_emit(BNE,0,bq.front(),i);
+                        Table::update_emit(BNE,0,bq.front()-1,i);
                     }
                 }
                 Table::test_pcode_table();
@@ -1507,10 +1510,21 @@ void GrammarAnalysis::ga_expression() {
         要求入口有预读
         出口处有预读
     */
+    bool flag = false;
+
     if ( nowword.is_addition_op() ) {
+
+        if ( nowword.value == "-" ) {
+            flag = true;
+        }
         nowword = nextword();
     }
     ga_item();
+    if ( flag ) {//如果有前置的负号则要给第一个项取反
+        Table::emit(LOI,0,-1);
+        Table::emit(MUL);
+    }
+
     while ( nowword.is_addition_op() ) {
         string op = nowword.value;
         nowword = nextword();

@@ -6,7 +6,8 @@
 #include "Runtime.h"
 #include "Table.h"
 
-//表示返回地址的栈，因为存在递归调用，所以
+//表示返回地址的栈，因为存在递归调用，所以需要用栈
+//来保存多个返回地址
 stack<int> Runtime::ret_adr;
 //主函数指针，指向主函数部分在PCode表中开始的位置
 int Runtime::main_pointer = 0;
@@ -150,7 +151,7 @@ void Runtime::interpret ( vector<pcode> p ) {
 
     while ( true ) {
 
-        cout << "f"<< index << "--->";
+        //cout << "f"<< index << "--->";
 
         if ( index >= p.size() ) {
             //程序运行结束
@@ -227,10 +228,12 @@ void Runtime::interpret ( vector<pcode> p ) {
                 }
 
                 if ( res ) {
+                    //pop_rs();//把栈顶弹出
                     index = c.a;//跳到a处
                 }
                 else {
-                    pop_rs();//将栈顶值弹出
+                    //pop_rs();//将栈顶值弹出
+                    pop_rs();//把次栈顶弹出
                     index++;//到下一条指令
                 }
                 break;
@@ -406,8 +409,8 @@ void Runtime::interpret ( vector<pcode> p ) {
                 break;
 
             case JR:
-            //跳转到返回地址,并将函数出栈，
-            //此时栈顶存的是返回值（保留）
+            //跳转到返回地址（将返回地址从ret_adr中弹出）
+            //,并将函数出栈,此时栈顶存的是返回值（保留）
                 temp = runtime_stack.back();
 
                 //函数出栈
@@ -417,14 +420,15 @@ void Runtime::interpret ( vector<pcode> p ) {
                 fun_stack.pop();//把函数记录弹出
                 push_rs(temp);//把返回值压回到运行栈中
 
-                index = ret_adr;//跳到返回地址
+                index = ret_adr.top();//跳到返回地址
+                ret_adr.pop();
                 break;
 
             case JSR:
             //跳转到函数入口fa，同时设定返回地址ra
 
                 index = c.l;
-                ret_adr = c.a;
+                ret_adr.push(c.a);
                 //cout << "jsr" << index;
                 break;
 
@@ -661,7 +665,7 @@ void Runtime::interpret ( vector<pcode> p ) {
                     cout << (char) get_top_value();
                     break;
                 case RS_FLOAT:
-                    //cout << "jibala" <<get_top_value() <<"koi";
+                    、、cout << "jibala" <<get_top_value() <<"koi";
                     cout << Table::get_floatval(get_top_value());
                     break;
                 case RS_STR:
@@ -774,7 +778,7 @@ void Runtime::interpret ( vector<pcode> p ) {
                 }
                 pop_rs();//弹出次栈顶的值
 
-                print_stack();
+                //print_stack();
                 index++;//到下一条指令
                 break;
 
