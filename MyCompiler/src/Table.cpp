@@ -403,15 +403,17 @@ void Table::add_idrcd ( string name, id_type type ) {
         fun_adr = 0;
 
         if ( type == CHAR_FUNCTION ) {
-            Runtime::push_rs({RS_CHAR,97});
+            Runtime::push_rs({RS_CHARFUN,97});
         }
         else if ( type == FLOAT_FUNCTION ) {
-            Runtime::push_rs({RS_FLOAT,0});
+            Runtime::push_rs({RS_FLOATFUN,0});
+        }
+        else if ( type == INT_FUNCTION ){
+            Runtime::push_rs({RS_INTFUN,0});
         }
         else {
-            Runtime::push_rs({RS_INT,0});
+            Runtime::push_rs({RS_VOIDFUN,0});
         }
-
 
         //填充func_table表和id_table表
         //func_table表的两个项的值先初始化为该函数名的在符号表中下标

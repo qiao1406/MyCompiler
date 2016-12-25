@@ -121,7 +121,6 @@ void Runtime::set_rs ( int index, run_stack r ) {
             }
         }
         else if ( runtime_stack[index].type == RS_INT ) {
-            //cout << "wwww";
             if ( r.type == RS_FLOAT ) {
                 r.value = Table::get_floatval(r.value);
             }
@@ -144,10 +143,6 @@ void Runtime::interpret ( vector<pcode> p ) {
     string temp_str;
     id_rcd rc, rc1;
     int i;
-
-    //cout << main_pointer << "qwe";
-    //cout << p.size() << "runtimestack.size" << runtime_stack.size();
-
 
     while ( true ) {
 
@@ -409,15 +404,45 @@ void Runtime::interpret ( vector<pcode> p ) {
                 break;
 
             case JR:
-            //跳转到返回地址（将返回地址从ret_adr中弹出）
-            //,并将函数出栈,此时栈顶存的是返回值（保留）
+            //跳转到返回地址并将函数出栈，此时栈顶存的是返回值（保留），
+            //同时还要对返回值类型进行检查
                 temp = runtime_stack.back();
+
+                //类型检查,发现返回值类型与函数类型不一致的时候要强制转换
+                if ( runtime_stack[fun_stack.top()-1].type == RS_INTFUN ) {
+                    if ( temp.type == RS_CHAR ) {
+                        temp.type = RS_INT;
+                    }
+                    else if ( temp.type == RS_FLOAT ) {
+                        temp.value = Table::get_floatval(temp.value);
+                        temp.type = RS_INT;
+                    }
+                }
+                else if ( runtime_stack[fun_stack.top()-1].type == RS_CHARFUN ) {
+                    if ( temp.type == RS_INT ) {
+                        temp.value = temp.value%128;
+                        temp.type = RS_CHAR;
+                    }
+                    else if ( temp.type == RS_FLOAT ) {
+                        temp.value = Table::get_floatval(temp.value);
+                        temp.value = temp.value%128;
+                        temp.type = RS_CHAR;
+                    }
+                }
+                else if ( runtime_stack[fun_stack.top()-1].type == RS_FLOATFUN ) {
+                    if ( temp.type != RS_FLOAT ) {
+                        Table::add_floatrcd(temp.value);
+                        temp.value = Table::get_rctable_size()-1;
+                        temp.type = RS_FLOAT;
+                    }
+                }
 
                 //函数出栈
                 while ( runtime_stack.size() > fun_stack.top() ) {
                     pop_rs();
                 }
                 fun_stack.pop();//把函数记录弹出
+                pop_rs();//弹出运行栈中记录函数返回值类型的信息
                 push_rs(temp);//把返回值压回到运行栈中
 
                 index = ret_adr.top();//跳到返回地址
@@ -658,14 +683,12 @@ void Runtime::interpret ( vector<pcode> p ) {
 
                 switch ( get_top_type() ) {
                 case RS_INT:
-                    //cout << "asd";
                     cout << get_top_value();
                     break;
                 case RS_CHAR:
                     cout << (char) get_top_value();
                     break;
                 case RS_FLOAT:
-                    //cout << "jibala" <<get_top_value() <<"koi";
                     cout << Table::get_floatval(get_top_value());
                     break;
                 case RS_STR:
@@ -681,10 +704,26 @@ void Runtime::interpret ( vector<pcode> p ) {
                 break;
 
             case PUF:
-            //先将当前栈地址压入到函数栈中，再将该函数的所有
-            //变量压入运行栈中a表示该函数在符号表中的位置
-                fun_stack.push(runtime_stack.size());
+            //先将该函数记录压入运行栈（t表示函数返回值的类型：
+            //0是int，1是char，2是float，3是void），再将当前栈地址
+            //（该函数的第一个参数的地址）压入到函数栈中，再将该函数
+            //的所有变量压入运行栈中a表示该函数在符号表中的位置
 
+                //根据t的值判断函数返回值类型
+                if ( c.l == 0 ) {
+                    push_rs({RS_INTFUN,0});
+                }
+                else if ( c.l == 1 ) {
+                    push_rs({RS_CHARFUN,97});
+                }
+                else if ( c.l == 2 ) {
+                    push_rs({RS_FLOATFUN,0});
+                }
+                else {
+                    push_rs({RS_VOIDFUN,0});
+                }
+
+                fun_stack.push(runtime_stack.size());
                 rc = Table::get_idrcd(c.a);
                 for ( i = c.a+1; i <= Table::get_funrcd(rc.ref).last; i++ ) {
 
@@ -711,7 +750,7 @@ void Runtime::interpret ( vector<pcode> p ) {
                 }
 
                 //cout<< fun_stack.top() << "funstacktop";
-                //cout<< runtime_stack.size() << "size";
+                //coutcout<< runtime_stack.size() << "size";
                 //print_stack();
                 index++;//到下一条指令
                 break;
@@ -754,16 +793,11 @@ void Runtime::interpret ( vector<pcode> p ) {
                 //print_stack();
                 //Table::test_rconst_table();
                 temp = runtime_stack.back();
-                //cout << get_top_type() <<"typeee";
-                //cout << get_top_value();
-
                 pop_rs();//弹出栈顶的值
                 int target;
 
                 if ( get_top_type() != RS_INT ) {
                     //次栈顶地址值必须是整型的
-                    //cout << get_top_type() <<"typeee";
-                    //cout << get_top_value();
                     cout << "程序崩溃，地址必须是整型的"<<endl;
                     exit(0);
                 }

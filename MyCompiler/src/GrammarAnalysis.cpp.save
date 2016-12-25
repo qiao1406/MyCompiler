@@ -217,7 +217,10 @@ void GrammarAnalysis::ga_constant () {
         ga_constdef();
 
         if ( nowword.value != ";" ) {
-            //遗漏分号，报错并且继续常量说明
+            //遗漏分号，报错并且继续常量说明（此时应该后退一位）
+            lastword();
+            lastword();
+            nowword = nextword();
             err_report(11);
             continue;
         }
@@ -263,8 +266,7 @@ void GrammarAnalysis::ga_constdef () {
                     Table::add_idrcd(name,str2num<int>(nowword.value),INT_CONST);
                 }
                 else if ( data_typ == "CHARACTER" ) {
-                    cout << nowword.b
-                    int ascii_code = nowword.value[0];
+                    int ascii_code = nowword.value[1]; //例如'A，应该取第[1]位的ascii值
                     Table::add_idrcd(name,ascii_code,CHAR_CONST);
                 }
                 else {//把string转成float型
@@ -998,6 +1000,10 @@ void GrammarAnalysis::ga_retfuncall_stmt ( string func_name ){
     }
 
     if ( nowword.value == ")" ) {
+        
+        int t = ( r.type == INT_FUNCTION )?0:
+                    ( r.type == CHAR_FUNCTION )?1:2;
+        
 
         //生成PUF指令，将函数入栈
         Table::emit(PUF,0,i1);
@@ -1325,6 +1331,7 @@ void GrammarAnalysis::ga_return_stmt(){
         lastword();
         lastword();
         nowword = nextword();
+        Table::emit(JR);
         prt_grammar_info("return statement");
         return;
     }

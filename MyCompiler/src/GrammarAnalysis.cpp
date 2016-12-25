@@ -217,7 +217,10 @@ void GrammarAnalysis::ga_constant () {
         ga_constdef();
 
         if ( nowword.value != ";" ) {
-            //遗漏分号，报错并且继续常量说明
+            //遗漏分号，报错并且继续常量说明（此时应该后退一位）
+            lastword();
+            lastword();
+            nowword = nextword();
             err_report(11);
             continue;
         }
@@ -629,7 +632,7 @@ void GrammarAnalysis::ga_mainfun () {
     Runtime::set_main_pointer(Table::get_pctable_size());
 
     //生成PUF指令
-    Table::emit(PUF,0,pointer);
+    Table::emit(PUF,3,pointer);
 
     while ( nowword.value != "}") {
         ga_statement();
@@ -997,9 +1000,9 @@ void GrammarAnalysis::ga_retfuncall_stmt ( string func_name ){
     }
 
     if ( nowword.value == ")" ) {
-
         //生成PUF指令，将函数入栈
-        Table::emit(PUF,0,i1);
+        int t = ( r.type == INT_FUNCTION )?0:(( r.type == CHAR_FUNCTION )?1:2);
+        Table::emit(PUF,t,i1);
 
         //逆向登录形参的值
         for ( i = Table::get_lastpar(r); i > i1; i-- ){
@@ -1078,7 +1081,7 @@ void GrammarAnalysis::ga_voidfuncall_stmt ( string func_name ){
     if ( nowword.value == ")" ) {
 
         //生成PUF指令，将函数入栈
-        Table::emit(PUF,0,i1);
+        Table::emit(PUF,3,i1);
 
         //逆向登录形参的值
         for ( i = Table::get_lastpar(r); i > i1; i-- ){

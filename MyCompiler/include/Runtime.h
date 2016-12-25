@@ -14,7 +14,11 @@ enum data_type {
     RS_INT,
     RS_FLOAT,
     RS_CHAR,
-    RS_STR
+    RS_STR,
+    RS_INTFUN,
+    RS_CHARFUN,
+    RS_FLOATFUN,
+    RS_VOIDFUN
 };
 
 struct run_stack{
