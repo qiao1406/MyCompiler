@@ -136,7 +136,6 @@ void WordAnalysis::read_programme_code ( string file_name ) {
             else if ( is_noletter_char(buff_str[i]) ) {
                 tempstr = "";
                 //·Ç×ÖÄ¸×Ö·û
-                //cout << buff_str[i];
 
                 if ( ((buff_str[i] == '=' && buff_str[i+1] == '='  )// ==
                     || ( buff_str[i] == '!' && buff_str[i+1] == '=')// !=

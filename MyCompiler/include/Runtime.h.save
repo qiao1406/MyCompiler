@@ -14,7 +14,11 @@ enum data_type {
     RS_INT,
     RS_FLOAT,
     RS_CHAR,
-    RS_STR
+    RS_STR,
+    RS_INTFUN,
+    RS_CHARFUN,
+    RS_FLOATFUN,
+    RS_VOIDFUN
 };
 
 struct run_stack{
@@ -29,7 +33,7 @@ class Runtime {
         static data_type get_top_type();
         static void pop_rs();
         static void push_rs ( run_stack r );
-        static void pushh
+        static void push_rs ( int n, run_stack r );
         static void set_rs ( int index, run_stack r );
         static void set_main_pointer ( int i );
         static void interpret ( vector<pcode> p );
@@ -39,11 +43,9 @@ class Runtime {
         static vector<run_stack> runtime_stack;//运行栈
         static stack<run_stack> data_stack;//数据栈
         static stack<int> fun_stack;//函数栈
-        static int ret_adr;
+        static stack<int> ret_adr;
         static int main_pointer;
         static int data_area[DATA_AREA_SIZE];//数据区
-
-
 
 };
 

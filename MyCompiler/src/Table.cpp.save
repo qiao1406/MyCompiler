@@ -17,7 +17,6 @@ vector<float> Table::rconst_table;//实常量表
 vector<string> Table::str_table;//字符串常量表
 vector<pcode> Table::pcode_table;//PCode码表
 
-
 bool Table::is_id_repeat ( string name, int lev ) {
     /*
         判断标识符是否重复
@@ -285,6 +284,19 @@ func_rcd Table::get_funrcd ( int index ) {
     }
     else {
         return {};
+    }
+}
+
+id_rcd Table::get_funrcd() {
+    /*
+        返回符号表中最近的一个函数记录
+    */
+    
+    int i = id_table.size();
+    while ( i >= 0 ) {
+        if ( is_funcrcd(id_table[i]) ) {
+            return id_table[i];
+        }
     }
 }
 

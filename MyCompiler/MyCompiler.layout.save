@@ -1,24 +1,30 @@
 <?xml version="1.0" encoding="UTF-8" standalone="yes" ?>
 <CodeBlocks_layout_file>
 	<ActiveTarget name="Debug" />
+	<File name="src\GrammarAnalysis.cpp" open="1" top="1" tabpos="6" split="0" active="1" splitpos="0" zoom_1="1" zoom_2="0">
+		<Cursor>
+			<Cursor1 position="14619" topLine="0" />
+		</Cursor>
+		<Folding>
+			<Collapse line="75" />
+			<Collapse line="82" />
+			<Collapse line="89" />
+			<Collapse line="94" />
+		</Folding>
+	</File>
+	<File name="src\Table.cpp" open="1" top="0" tabpos="5" split="0" active="1" splitpos="0" zoom_1="1" zoom_2="0">
+		<Cursor>
+			<Cursor1 position="4977" topLine="270" />
+		</Cursor>
+	</File>
 	<File name="include\Runtime.h" open="1" top="0" tabpos="3" split="0" active="1" splitpos="0" zoom_1="1" zoom_2="0">
 		<Cursor>
-			<Cursor1 position="783" topLine="27" />
+			<Cursor1 position="300" topLine="32" />
 		</Cursor>
 	</File>
-	<File name="include\Table.h" open="0" top="0" tabpos="4" split="0" active="1" splitpos="0" zoom_1="0" zoom_2="0">
+	<File name="src\Word.cpp" open="0" top="0" tabpos="8" split="0" active="1" splitpos="0" zoom_1="0" zoom_2="0">
 		<Cursor>
-			<Cursor1 position="3118" topLine="0" />
-		</Cursor>
-	</File>
-	<File name="include\WordAnalysis.h" open="1" top="0" tabpos="7" split="0" active="1" splitpos="0" zoom_1="0" zoom_2="0">
-		<Cursor>
-			<Cursor1 position="337" topLine="12" />
-		</Cursor>
-	</File>
-	<File name="include\ErrorProcess.h" open="0" top="0" tabpos="9" split="0" active="1" splitpos="0" zoom_1="0" zoom_2="0">
-		<Cursor>
-			<Cursor1 position="274" topLine="0" />
+			<Cursor1 position="0" topLine="13" />
 		</Cursor>
 	</File>
 	<File name="main.cpp" open="1" top="0" tabpos="1" split="0" active="1" splitpos="0" zoom_1="2" zoom_2="0">
@@ -28,20 +34,10 @@
 	</File>
 	<File name="src\Runtime.cpp" open="1" top="0" tabpos="2" split="0" active="1" splitpos="0" zoom_1="2" zoom_2="0">
 		<Cursor>
-			<Cursor1 position="3225" topLine="67" />
+			<Cursor1 position="29653" topLine="860" />
 		</Cursor>
 	</File>
-	<File name="src\Word.cpp" open="1" top="0" tabpos="8" split="0" active="1" splitpos="0" zoom_1="0" zoom_2="0">
-		<Cursor>
-			<Cursor1 position="0" topLine="13" />
-		</Cursor>
-	</File>
-	<File name="include\GrammarAnalysis.h" open="1" top="0" tabpos="5" split="0" active="1" splitpos="0" zoom_1="3" zoom_2="0">
-		<Cursor>
-			<Cursor1 position="557" topLine="32" />
-		</Cursor>
-	</File>
-	<File name="src\WordAnalysis.cpp" open="1" top="0" tabpos="4" split="0" active="1" splitpos="0" zoom_1="2" zoom_2="0">
+	<File name="src\WordAnalysis.cpp" open="0" top="0" tabpos="4" split="0" active="1" splitpos="0" zoom_1="2" zoom_2="0">
 		<Cursor>
 			<Cursor1 position="8820" topLine="74" />
 		</Cursor>
@@ -49,28 +45,29 @@
 			<Collapse line="79" />
 		</Folding>
 	</File>
-	<File name="src\GrammarAnalysis.cpp" open="1" top="1" tabpos="9" split="0" active="1" splitpos="0" zoom_1="1" zoom_2="0">
+	<File name="include\GrammarAnalysis.h" open="1" top="0" tabpos="4" split="0" active="1" splitpos="0" zoom_1="3" zoom_2="0">
 		<Cursor>
-			<Cursor1 position="5438" topLine="162" />
+			<Cursor1 position="557" topLine="36" />
 		</Cursor>
-		<Folding>
-			<Collapse line="75" />
-			<Collapse line="82" />
-			<Collapse line="89" />
-			<Collapse line="94" />
-		</Folding>
+	</File>
+	<File name="include\WordAnalysis.h" open="0" top="0" tabpos="7" split="0" active="1" splitpos="0" zoom_1="0" zoom_2="0">
+		<Cursor>
+			<Cursor1 position="337" topLine="12" />
+		</Cursor>
+	</File>
+	<File name="include\Table.h" open="1" top="0" tabpos="7" split="0" active="1" splitpos="0" zoom_1="0" zoom_2="0">
+		<Cursor>
+			<Cursor1 position="3118" topLine="0" />
+		</Cursor>
 	</File>
 	<File name="src\ErrorProcess.cpp" open="0" top="0" tabpos="8" split="0" active="1" splitpos="0" zoom_1="3" zoom_2="0">
 		<Cursor>
 			<Cursor1 position="127" topLine="0" />
 		</Cursor>
 	</File>
-	<File name="src\Table.cpp" open="1" top="0" tabpos="6" split="0" active="1" splitpos="0" zoom_1="1" zoom_2="0">
+	<File name="include\ErrorProcess.h" open="0" top="0" tabpos="9" split="0" active="1" splitpos="0" zoom_1="0" zoom_2="0">
 		<Cursor>
-			<Cursor1 position="13741" topLine="339" />
+			<Cursor1 position="274" topLine="0" />
 		</Cursor>
-		<Folding>
-			<Collapse line="336" />
-		</Folding>
 	</File>
 </CodeBlocks_layout_file>

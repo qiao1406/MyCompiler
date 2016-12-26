@@ -119,6 +119,7 @@ class Table {
         static id_rcd get_idrcd ( int index );
         static array_rcd get_arrayrcd ( int index );
         static func_rcd get_funrcd ( int index );
+        static id_rcd get_funrcd ();
         static float get_floatval ( int index );
         static string get_str ( int index );
         static int get_idtable_size();

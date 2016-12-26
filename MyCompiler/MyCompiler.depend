@@ -27,7 +27,7 @@
 	"Table.h"
 	"Runtime.h"
 
-1482677344 source:e:\git\mycompiler\mycompiler\src\grammaranalysis.cpp
+1482769662 source:e:\git\mycompiler\mycompiler\src\grammaranalysis.cpp
 	"GrammarAnalysis.h"
 	"ErrorProcess.h"
 	<sstream>
@@ -39,7 +39,7 @@
 1479921463 source:e:\git\mycompiler\mycompiler\src\word.cpp
 	"Word.h"
 
-1482221206 source:e:\git\mycompiler\mycompiler\src\wordanalysis.cpp
+1482752735 source:e:\git\mycompiler\mycompiler\src\wordanalysis.cpp
 	"WordAnalysis.h"
 
 1479909533 source:e:\git\mycompiler\mycompiler\src\codegenerate.cpp
@@ -61,11 +61,11 @@
 	<queue>
 	"Error.h"
 
-1481701444 e:\git\mycompiler\mycompiler\include\table.h
+1482767883 e:\git\mycompiler\mycompiler\include\table.h
 	<vector>
 	<string>
 
-1482676399 e:\git\mycompiler\mycompiler\include\runtime.h
+1482769644 e:\git\mycompiler\mycompiler\include\runtime.h
 	<stack>
 	<vector>
 	"Table.h"
@@ -78,7 +78,7 @@
 	"Runtime.h"
 	"Table.h"
 
-1482677345 source:e:\git\mycompiler\mycompiler\src\table.cpp
+1482768456 source:e:\git\mycompiler\mycompiler\src\table.cpp
 	"Table.h"
 	"Runtime.h"
 	<iostream>

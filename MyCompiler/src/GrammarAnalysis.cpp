@@ -217,14 +217,14 @@ void GrammarAnalysis::ga_constant () {
         ga_constdef();
 
         if ( nowword.value != ";" ) {
-            //遗漏分号，报错并且继续常量说明（此时应该后退一位）
-            lastword();
-            lastword();
-            nowword = nextword();
+            //遗漏分号，报错并且跳读
             err_report(11);
-            continue;
+            jump_read({"const","int","char","void","float"});
         }
-        nowword = nextword();
+        else {
+            nowword = nextword();
+        }
+
     }
     prt_grammar_info("constant declaration");
     return;
@@ -308,12 +308,14 @@ void GrammarAnalysis::ga_variable () {
     while (true) {
         ga_vardef();
         if ( nowword.value != ";" ) {
-            //遗漏分号，报错且继续进行变量说明
+            //遗漏分号，报错并且跳读
             err_report(11);
-            continue;
+            jump_read({"int","char","float","void"});
+        }
+        else {
+            nowword = nextword();
         }
 
-        nowword = nextword();
         if ( nowword.value == "void" ) { //有可能是主函数或无返回值函数
             break; // 此时变量说明已结束，跳出循环
         }
@@ -1315,12 +1317,14 @@ void GrammarAnalysis::ga_write_stmt(){
     prt_grammar_info("write statement");
 }
 
-void GrammarAnalysis::ga_return_stmt(){
+void GrammarAnalysis::ga_return_stmt(  ){
     /*
         <返回语句>子程序
         要求入口处有预读
         出口处无预读
     */
+
+    id_rcd r = Table::get_funrcd();//记录当前的返回语句所在的函数
 
     if ( nowword.value != "(" ) {//只有“return”也是合法的
         //但是此时要后退一个词
@@ -1332,19 +1336,32 @@ void GrammarAnalysis::ga_return_stmt(){
         return;
     }
     nowword = nextword();
-    ga_expression();
 
-    if ( nowword.value != ")" ) {
-        //缺少右括号，后退一个词
-        err_report(5);
-        lastword();
-        lastword();
-        nowword = nextword();
+    if ( nowword.value == ")" ) {
+        Table::emit(JR);
+        prt_grammar_info("return statement");
+        return;
     }
     else {
-        Table::emit(JR);
+        ga_expression();
+
+        if ( nowword.value != ")" ) {
+            //缺少右括号，后退一个词
+            err_report(5);
+            lastword();
+            lastword();
+            nowword = nextword();
+        }
+        else {
+            //判断一下是否是在void函数里，否则要报错
+            if ( r.type == VOID_FUNCTION ) {
+                err_report(26);
+            }
+            Table::emit(JR);
+        }
+        prt_grammar_info("return statement");
     }
-    prt_grammar_info("return statement");
+
 }
 
 void GrammarAnalysis::ga_case_stmt(){

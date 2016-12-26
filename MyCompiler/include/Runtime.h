@@ -47,8 +47,6 @@ class Runtime {
         static int main_pointer;
         static int data_area[DATA_AREA_SIZE];//数据区
 
-
-
 };
 
 #endif // RUNTIME_H
