@@ -45,7 +45,7 @@ class Runtime {
         static stack<int> fun_stack;//函数栈
         static stack<int> ret_adr;
         static int main_pointer;
-        static int data_area[DATA_AREA_SIZE];//数据区
+        //static int data_area[DATA_AREA_SIZE];//数据区
 
 };
 

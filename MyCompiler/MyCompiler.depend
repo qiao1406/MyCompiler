@@ -10,7 +10,7 @@
 1480001306 e:\git\mycompiler\mycompiler\include\word.h
 	<string>
 
-1482220745 e:\git\mycompiler\mycompiler\include\wordanalysis.h
+1482915407 e:\git\mycompiler\mycompiler\include\wordanalysis.h
 	<iostream>
 	<fstream>
 	<string>
@@ -65,12 +65,12 @@
 	<vector>
 	<string>
 
-1482769644 e:\git\mycompiler\mycompiler\include\runtime.h
+1482926761 e:\git\mycompiler\mycompiler\include\runtime.h
 	<stack>
 	<vector>
 	"Table.h"
 
-1482681291 source:e:\git\mycompiler\mycompiler\src\runtime.cpp
+1482937795 source:e:\git\mycompiler\mycompiler\src\runtime.cpp
 	<cstdlib>
 	<iostream>
 	<sstream>
@@ -78,7 +78,7 @@
 	"Runtime.h"
 	"Table.h"
 
-1482768456 source:e:\git\mycompiler\mycompiler\src\table.cpp
+1482769908 source:e:\git\mycompiler\mycompiler\src\table.cpp
 	"Table.h"
 	"Runtime.h"
 	<iostream>

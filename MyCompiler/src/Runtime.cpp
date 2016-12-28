@@ -13,7 +13,7 @@ stack<int> Runtime::ret_adr;
 int Runtime::main_pointer = 0;
 
 //数据区，存放全局变量函数
-int Runtime::data_area[DATA_AREA_SIZE];
+//int Runtime::data_area[DATA_AREA_SIZE];
 
 //运行栈,用vcector来实现运行栈是因为有时候要用
 //地址来访问栈的内容
