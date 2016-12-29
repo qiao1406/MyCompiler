@@ -1257,7 +1257,8 @@ void GrammarAnalysis::ga_read_stmt(){
                     err_report(19);
                 }
                 else {//生成读指令
-                    Table::emit(RDA);
+                    ( r.type == INT_VAR )? Table::emit(RDA,0):
+                        ( r.type == CHAR_VAR )? Table::emit(RDA,1):Table::emit(RDA,2);
                     Table::emit(STO,r.lev,r.adr);
                 }
 
@@ -1403,7 +1404,7 @@ void GrammarAnalysis::ga_case_stmt(){
                         err_report(44);
                     }
                     else {
-                        ( nowword.type == "CHARATER" )? Table::emit(LOI,1,(int)nowword.value[1])
+                        ( nowword.type == "CHARACTER" )? Table::emit(LOI,1,(int)nowword.value[1])
                                     :Table::emit(LOI,0,str2num<int>(nowword.value));
                         //生成BNE指令
                         bq.push(Table::get_pctable_size());
@@ -1422,7 +1423,7 @@ void GrammarAnalysis::ga_case_stmt(){
                             err_report(44);
                         }
                         else {
-                            ( nowword.type == "CHARATER" )? Table::emit(LOI,1,(int)nowword.value[1])
+                            ( nowword.type == "CHARACTER" )? Table::emit(LOI,1,(int)nowword.value[1])
                                     :Table::emit(LOI,0,str2num<int>(nowword.value));
                             //生成BNE指令
                             bq.push(Table::get_pctable_size());

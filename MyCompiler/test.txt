@@ -1,60 +1,30 @@
-int a[8];
-  
-int partition ( int p, int r ) {
-	int x, i, j;
-	int temp; 
-	
-	x = a[r];  
-    i = p - 1;  
-    
-	j = p;
-	while ( j <= r-1 ) {
-		if ( a[j] <= x ) {  
-            i = i +1;  
-            temp = a[i];  
-            a[i] = a[j];  
-            a[j] = temp;  
-        }
-		j = j+1;
+float cal_power ( int n, float a ) {
+	int i;
+	float res;
+	i = 0;
+	res = 1;
+	if ( n < 0 ) {
+		return (0);
 	}
-  
-    a[r] = a[i+1];  
-    a[i+1] = x;  
-  
-    return (i+1);  
-}  
-  
-void quick_sort (  int p, int r ) {  
-	int q;
-  
-    if ( p < r ) {  
-		q = partition(p,r);  
-        quick_sort(p,q-1);  
-        quick_sort(q+1,r);  
-    }  
-}  
-  
-void main()  
-{  
-   int i1,len;
-   a[0] = 21;
-   a[1] = 85;
-   a[2] = 17;
-   a[3] = 10;
-   a[4] = 51;
-   a[5] = 51;
-   a[6] = 666;
-   a[7] = 47;
- 
-   len = 8;
-  
-   quick_sort(0, len-1);  
-  
-   i1 = 0;
-   while ( i1 < len ) {
-	   printf("--",a[i1]);
-	   i1=i1+1;   }
-  
-  
-  
-}  
+	else {
+		while ( i < n ) {
+		res = res*a;
+		i = i+1;
+		}
+	}
+	
+	return (res);
+}
+
+void main ( ) {
+	int i;
+	float a;
+	int n;
+	i = 0;
+	while ( i < 3){
+		scanf(n,a);
+		printf("a = ",a);
+		printf("======");
+		printf(cal_power(n,a));
+	}
+}

@@ -1257,7 +1257,8 @@ void GrammarAnalysis::ga_read_stmt(){
                     err_report(19);
                 }
                 else {//生成读指令
-                    Table::emit(RDA);
+                    ( r.type == INT_VAR )? Table::emit(RDA,0):
+                        ( r.type == CHAR_VAR )? Table::emit(RDA,1):Table::emit(RDA,2);
                     Table::emit(STO,r.lev,r.adr);
                 }
 
@@ -1323,11 +1324,8 @@ void GrammarAnalysis::ga_return_stmt(  ){
         要求入口处有预读
         出口处无预读
     */
-    
-    id_rcd r = Table::get_funrcd();//记录当前的返回语句所在的函数
-    
-    if 
 
+    id_rcd r = Table::get_funrcd();//记录当前的返回语句所在的函数
 
     if ( nowword.value != "(" ) {//只有“return”也是合法的
         //但是此时要后退一个词
@@ -1339,7 +1337,7 @@ void GrammarAnalysis::ga_return_stmt(  ){
         return;
     }
     nowword = nextword();
-    
+
     if ( nowword.value == ")" ) {
         Table::emit(JR);
         prt_grammar_info("return statement");
@@ -1358,13 +1356,13 @@ void GrammarAnalysis::ga_return_stmt(  ){
         else {
             //判断一下是否是在void函数里，否则要报错
             if ( r.type == VOID_FUNCTION ) {
-                
+                err_report(26);
             }
             Table::emit(JR);
         }
         prt_grammar_info("return statement");
     }
-    
+
 }
 
 void GrammarAnalysis::ga_case_stmt(){
@@ -1406,7 +1404,7 @@ void GrammarAnalysis::ga_case_stmt(){
                         err_report(44);
                     }
                     else {
-                        ( nowword.type == "CHARATER" )? Table::emit(LOI,1,(int)nowword.value[1])
+                        ( nowword.type == "CHARACTER" )? Table::emit(LOI,1,(int)nowword.value[1])
                                     :Table::emit(LOI,0,str2num<int>(nowword.value));
                         //生成BNE指令
                         bq.push(Table::get_pctable_size());
@@ -1425,7 +1423,7 @@ void GrammarAnalysis::ga_case_stmt(){
                             err_report(44);
                         }
                         else {
-                            ( nowword.type == "CHARATER" )? Table::emit(LOI,1,(int)nowword.value[1])
+                            ( nowword.type == "CHARACTER" )? Table::emit(LOI,1,(int)nowword.value[1])
                                     :Table::emit(LOI,0,str2num<int>(nowword.value));
                             //生成BNE指令
                             bq.push(Table::get_pctable_size());
