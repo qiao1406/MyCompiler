@@ -9,22 +9,13 @@ using namespace std;
 
 int main() {
 
-//    string filename;
-//    cout << "请输入文件名";
-//    cin >> filename;
-    ofstream out;
-    out.open("result.txt");
-    //WordAnalysis::establish_cache(filename);
-    WordAnalysis::establish_cache("test.txt");
-    for ( int i = 0; i < WordAnalysis::linewords.size(); i++ ) {
-        for ( int j = 0; j < WordAnalysis::linewords[i].size(); j++ ) {
-            out << WordAnalysis::linewords[i][j].type << " ";
-            out << WordAnalysis::linewords[i][j].value << " ";
-            out << WordAnalysis::linewords[i][j].loc;
-            out << endl;
-        }
-    }
-    out.close();
+    string filename;
+    cout << "请输入文件名";
+    cin >> filename;
+
+    //词法分析
+    WordAnalysis::establish_cache(filename);
+    //语法分析
     GrammarAnalysis::ga_programme();
     Table::test_id_table();
     Table::test_arr_table();
@@ -33,6 +24,7 @@ int main() {
     Table::test_func_table();
     Table::test_str_table();
 
+    //代码执行
     if ( ErrorProcess::is_err_exist() ) {
         cout << "编译结束，存在错误"<<endl;
         ErrorProcess::prt_errs();

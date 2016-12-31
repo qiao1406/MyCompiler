@@ -1,5 +1,5 @@
 # depslib dependency file v1.0
-1482213068 source:e:\git\mycompiler\mycompiler\main.cpp
+1483215454 source:e:\git\mycompiler\mycompiler\main.cpp
 	<iostream>
 	"Word.h"
 	"WordAnalysis.h"
@@ -21,13 +21,13 @@
 1479821241 e:\git\mycompiler\mycompiler\include\identifier.h
 	<string>
 
-1481896674 e:\git\mycompiler\mycompiler\include\grammaranalysis.h
+1483209054 e:\git\mycompiler\mycompiler\include\grammaranalysis.h
 	"Word.h"
 	"WordAnalysis.h"
 	"Table.h"
 	"Runtime.h"
 
-1483012771 source:e:\git\mycompiler\mycompiler\src\grammaranalysis.cpp
+1483215319 source:e:\git\mycompiler\mycompiler\src\grammaranalysis.cpp
 	"GrammarAnalysis.h"
 	"ErrorProcess.h"
 	<sstream>
@@ -47,7 +47,7 @@
 
 1479909533 e:\git\mycompiler\mycompiler\include\codegenerate.h
 
-1481219205 source:e:\git\mycompiler\mycompiler\src\error.cpp
+1483207320 source:e:\git\mycompiler\mycompiler\src\error.cpp
 	"Error.h"
 
 1481376837 e:\git\mycompiler\mycompiler\include\error.h
@@ -61,7 +61,7 @@
 	<queue>
 	"Error.h"
 
-1482767883 e:\git\mycompiler\mycompiler\include\table.h
+1483208348 e:\git\mycompiler\mycompiler\include\table.h
 	<vector>
 	<string>
 
@@ -70,17 +70,18 @@
 	<vector>
 	"Table.h"
 
-1482937795 source:e:\git\mycompiler\mycompiler\src\runtime.cpp
+1483209123 source:e:\git\mycompiler\mycompiler\src\runtime.cpp
 	<cstdlib>
 	<iostream>
 	<sstream>
 	<fstream>
 	"Runtime.h"
-	"Table.h"
 
-1482769908 source:e:\git\mycompiler\mycompiler\src\table.cpp
+1483208787 source:e:\git\mycompiler\mycompiler\src\table.cpp
 	"Table.h"
 	"Runtime.h"
+	"ErrorProcess.h"
+	"GrammarAnalysis.h"
 	<iostream>
 	<iomanip>
 	<fstream>

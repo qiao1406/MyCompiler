@@ -112,6 +112,7 @@ class Table {
         static void add_floatrcd ( float fl );
         static void add_strrcd ( string s );
         static int find_ident ( int p, string name );
+        static int find_ident_fun ( string name );
         static bool is_funcrcd ( id_rcd r );
         static bool is_arrayrcd ( id_rcd r );
         static bool is_varrcd ( id_rcd r );
@@ -160,6 +161,7 @@ class Table {
 
         static bool is_id_repeat ( string name, int lev );
         static void add_arrayrcd ( element_type eltype, int elsize, int size);
+        static void report_err ( int index );
 };
 
 #endif // IDENTTABLE_H

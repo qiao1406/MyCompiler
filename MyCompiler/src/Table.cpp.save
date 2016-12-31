@@ -17,6 +17,10 @@ vector<float> Table::rconst_table;//实常量表
 vector<string> Table::str_table;//字符串常量表
 vector<pcode> Table::pcode_table;//PCode码表
 
+void Table::report_err ( int index ) {
+    ErrorProcess::add_err(gra)
+}
+
 bool Table::is_id_repeat ( string name, int lev ) {
     /*
         判断标识符是否重复
@@ -156,6 +160,7 @@ int Table::get_lastpar ( id_rcd r ) {
     }
     else {
         //baocuo
+        
     }
 
 }
@@ -223,7 +228,7 @@ int Table::find_ident ( int p, string name ) {
 
     }
 
-     // 把标识符改成小写形式
+    // 把标识符改成小写形式
     transform(name.begin(),name.end(),name.begin(),::tolower);
     //先在函数内部找
     int i = p+1;
@@ -246,6 +251,31 @@ int Table::find_ident ( int p, string name ) {
     if ( i >= id_table.size() ) {
         return -1;
     }
+}
+
+int Table::find_ident_fun ( string name ) {
+     /*
+        根据标识符的名字和开始查找的位置来查找一个函数记录
+        若找到则返回其下标值，否则返回-1
+    */
+
+
+    int i;
+
+    // 把标识符改成小写形式
+    transform(name.begin(),name.end(),name.begin(),::tolower);
+    for ( i = 0; i < id_table.size(); i++ ) {
+        if ( id_table[i].lev == 0 && id_table[i].name == name
+             && is_funcrcd(id_table[i]) ) {
+            return i;
+        }
+    }
+
+    //还是没有找到，则返回-1
+    if ( i >= id_table.size() ) {
+        return -1;
+    }
+
 }
 
 id_rcd Table::get_idrcd ( int index ) {
@@ -291,12 +321,13 @@ id_rcd Table::get_funrcd() {
     /*
         返回符号表中最近的一个函数记录
     */
-    
-    int i = id_table.size();
+
+    int i = id_table.size()-1;
     while ( i >= 0 ) {
         if ( is_funcrcd(id_table[i]) ) {
             return id_table[i];
         }
+        i--;
     }
 }
 

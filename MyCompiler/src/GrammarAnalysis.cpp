@@ -73,6 +73,10 @@ void GrammarAnalysis::lastword () {
     }
 }
 
+int GrammarAnalysis::get_line_loc() {
+    return nowword.loc;
+}
+
 void GrammarAnalysis::renew_pointer() {
     /*
         更新指向当前函数位置的指针
@@ -84,31 +88,12 @@ void GrammarAnalysis::prt_grammar_info ( string name ) {
     /*
         输出语法分析的结果
     */
-    cout << "This is a " << name << endl;
+    //cout << "This is a " << name << endl;
 }
 
 void GrammarAnalysis::err_report ( int index ) {
     //报错
     ErrorProcess::add_err(nowword.loc,index);
-}
-
-bool GrammarAnalysis::is_sametype ( id_type t1, data_type t2 ) {
-    /*
-        比较两种符号是否等价
-    */
-
-    if ( t1 == INT_VAR ) {
-        return t2 == RS_INT;
-    }
-    else if ( t1 == CHAR_VAR ) {
-        return t2 == RS_CHAR || t2 == RS_INT;
-    }
-    else if ( t1 == FLOAT_VAR ) {
-        return t2 == RS_FLOAT;
-    }
-    else {
-        return false;
-    }
 }
 
 void GrammarAnalysis::jump_read ( vector<string> v ) {
@@ -961,7 +946,7 @@ void GrammarAnalysis::ga_retfuncall_stmt ( string func_name ){
     */
 
     //i是函数名在符号表中的下标值
-    int i = Table::find_ident(pointer,func_name);
+    int i = Table::find_ident_fun(func_name);
     int i1 = i;//记录函数名的位置
     id_rcd r, temp;//r是函数名的记录
     if ( i == -1 ) {
@@ -976,8 +961,9 @@ void GrammarAnalysis::ga_retfuncall_stmt ( string func_name ){
 
     nowword = nextword();
     if ( nowword.value == ")" ) { //值参数表为空
-        if ( ! (i == Table::get_lastpar(r)) ) { //参数个数不对
+        if (  i != Table::get_lastpar(r) ) { //参数个数不对
             err_report(21);
+            jump_read({";"});
             return;
         }
     }
@@ -994,8 +980,9 @@ void GrammarAnalysis::ga_retfuncall_stmt ( string func_name ){
 
         }
 
-        if ( ! i == Table::get_lastpar(r) ) { //参数个数不对
+        if (  i != Table::get_lastpar(r) ) { //参数个数不对
             err_report(21);
+            jump_read({";"});
             return;
         }
 
@@ -1020,11 +1007,11 @@ void GrammarAnalysis::ga_retfuncall_stmt ( string func_name ){
         return;
     }
     else {
-        //缺少右括号，报错并后退一个词
+        //缺少右括号，报错
         err_report(5);
-        lastword();
-        lastword();
-        nowword = nextword();
+//        lastword();
+//        lastword();
+//        nowword = nextword();
     }
 
 }
@@ -1040,7 +1027,7 @@ void GrammarAnalysis::ga_voidfuncall_stmt ( string func_name ){
     */
 
     //i是函数名在符号表中的下标值
-    int i = Table::find_ident(pointer,func_name);
+    int i = Table::find_ident_fun(func_name);
     int i1 = i;//记录函数名的位置
     id_rcd r, tmp;//r是函数名的记录
     if ( i == -1 ) { //找不到该函数
@@ -1054,7 +1041,7 @@ void GrammarAnalysis::ga_voidfuncall_stmt ( string func_name ){
 
     nowword = nextword();
     if ( nowword.value == ")" ) { //值参数表为空
-        if ( ! i == Table::get_lastpar(r) ) { //参数个数不对
+        if (  i != Table::get_lastpar(r) ) { //参数个数不对
             err_report(21);
             jump_read({";"});
             return;
@@ -1072,7 +1059,7 @@ void GrammarAnalysis::ga_voidfuncall_stmt ( string func_name ){
             Table::emit(SDS);//把值参数的值写到数据栈栈顶;
         }
 
-        if ( ! i == Table::get_lastpar(r) ) { //参数个数不对
+        if (  i != Table::get_lastpar(r) ) { //参数个数不对
             err_report(21);
             jump_read({";"});
             return;
@@ -1100,11 +1087,11 @@ void GrammarAnalysis::ga_voidfuncall_stmt ( string func_name ){
 
     }
     else {
-        //缺少右括号，后退一个词
+        //缺少右括号，报错
         err_report(5);
-        lastword();
-        lastword();
-        nowword = nextword();
+//        lastword();
+//        lastword();
+//        nowword = nextword();
     }
 }
 
@@ -1605,80 +1592,103 @@ void GrammarAnalysis::ga_factor() {
     else if ( nowword.type == "IDENT" ) { //变量、常量或函数调用
 
         string id = nowword.value;//记录标识符的名字
-        int loc = Table::find_ident(pointer,id);
+        int loc;
         id_rcd r;
-        if ( loc == -1 ) { //没找到该标识符
-            err_report(43);
-            jump_read({";","+","-","*","/"});
-        }
-        else {
-            //从符号表中提取出该标识符的记录
-            r = Table::get_idrcd(loc);
-        }
 
         nowword = nextword();
-        if ( nowword.value == "[" ) { // 有可能是数组
 
-            //先判断该标识符是不是数组
-            if ( !Table::is_arrayrcd(r) ) {
-                err_report(32);
-            }
-            int arr_size = Table::get_array_size(r);
-            int index;
-            if ( arr_size <= 0 ) { //元素个数应该是正数
-                err_report(42);
-            }
+        if ( nowword.value == "(" ) { // 可能是有返回值的函数调用语句
 
-            nowword = nextword();
-            ga_expression(); // 识别表示数组下标的表达式
-            //此时数组下标值已存到栈顶
-            //得到运行栈栈顶的类型,进行判断
+            //从符号表中取出对应的函数记录
+            loc = Table::find_ident_fun(id);
 
-            if ( nowword.value != "]" ) {
-                err_report(7);
-                jump_read({";","+","-","*","/"});
+            if ( loc == -1 ) { //没找到该标识符
+                err_report(43);
+                jump_read({";","+","-","*","/",")"});
                 return;
             }
-            else { //生成指令
-                Table::emit(LOI,0,r.adr);
-                Table::emit(ADD);//计算得到要取的数的地址
-                Table::emit(LDT,r.lev);
+            else {
+                //从符号表中提取出该标识符的记录
+                r = Table::get_idrcd(loc);
             }
-            nowword = nextword();
-            return;
 
-        }
-
-        else if ( nowword.value == "(" ) { // 可能是有返回值的函数调用语句
-
-            if ( Table::is_funcrcd(r) && r.type != VOID_FUNCTION ) {
+            if ( r.type != VOID_FUNCTION ) {
                 ga_retfuncall_stmt(id);
-
                 return;
             }
             else { //不是有返回值的
                 err_report(29);
+                jump_read({")"});
+                nowword = nextword();
                 return;
             }
 
         }
+        else {
 
-        else if ( Table::is_constrcd(r) ) { //常量
-            int l = ( r.type == INT_CONST )? 0:( r.type == CHAR_CONST )? 1:2;
-            Table::emit(LIT,l,r.adr);
-            return;
+            loc = Table::find_ident(pointer,id);
+
+            if ( loc == -1 ) { //没找到该标识符
+                err_report(43);
+                jump_read({";","+","-","*","/",")"});
+                return;
+            }
+            else {
+                //从符号表中提取出该标识符的记录
+                r = Table::get_idrcd(loc);
+            }
+
+           if ( nowword.value == "[" ) { // 有可能是数组
+
+                //先判断该标识符是不是数组
+                if ( !Table::is_arrayrcd(r) ) {
+                    err_report(32);
+                }
+                int arr_size = Table::get_array_size(r);
+                int index;
+                if ( arr_size <= 0 ) { //元素个数应该是正数
+                    err_report(42);
+                }
+
+                nowword = nextword();
+                ga_expression(); // 识别表示数组下标的表达式
+                //此时数组下标值已存到栈顶
+                //得到运行栈栈顶的类型,进行判断
+
+                if ( nowword.value != "]" ) {
+                    err_report(7);
+                    jump_read({";","+","-","*","/"});
+                    return;
+                }
+                else { //生成指令
+                    Table::emit(LOI,0,r.adr);
+                    Table::emit(ADD);//计算得到要取的数的地址
+                    Table::emit(LDT,r.lev);
+                }
+                nowword = nextword();
+                return;
+
+            }
+            else if ( Table::is_constrcd(r) ) { //常量
+
+                int l = ( r.type == INT_CONST )? 0:( r.type == CHAR_CONST )? 1:2;
+                Table::emit(LIT,l,r.adr);
+                return;
+            }
+            else if ( Table::is_varrcd(r) ) { //普通变量
+                Table::emit(LOD,r.lev,r.adr);
+                return;
+            }
+            else {//未知标识符,报错
+                err_report(43);
+            }
+
+
+
+
         }
-
-        else if ( Table::is_varrcd(r) ) { //普通变量
-            Table::emit(LOD,r.lev,r.adr);
-            return;
-        }
-        else {//未知标识符,报错
-            err_report(43);
-        }
-
-
     }
+
     else if ( nowword.value == "(" ) { //可能是表达式
         nowword = nextword();
         ga_expression();

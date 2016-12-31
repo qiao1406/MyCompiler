@@ -4,7 +4,6 @@
 #include <fstream>
 
 #include "Runtime.h"
-#include "Table.h"
 
 //表示返回地址的栈，因为存在递归调用，所以需要用栈
 //来保存多个返回地址

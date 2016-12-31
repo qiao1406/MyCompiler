@@ -1,5 +1,4 @@
-int a[8];
-  
+
 int partition ( int p, int r ) {
 	int x, i, j;
 	int temp; 

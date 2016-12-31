@@ -1,5 +1,7 @@
 #include "Table.h"
 #include "Runtime.h"
+#include "ErrorProcess.h"
+#include "GrammarAnalysis.h"
 
 #include <iostream>
 #include <iomanip>
@@ -16,6 +18,10 @@ vector<func_rcd> Table::func_table;//函数信息表
 vector<float> Table::rconst_table;//实常量表
 vector<string> Table::str_table;//字符串常量表
 vector<pcode> Table::pcode_table;//PCode码表
+
+void Table::report_err ( int index ) {
+    ErrorProcess::add_err(GrammarAnalysis::get_line_loc(),index);
+}
 
 bool Table::is_id_repeat ( string name, int lev ) {
     /*
@@ -155,7 +161,7 @@ int Table::get_lastpar ( id_rcd r ) {
         return func_table[r.ref].lastpar;
     }
     else {
-        //baocuo
+        report_err(25);
     }
 
 }
@@ -168,7 +174,7 @@ int Table::get_ploc ( id_rcd r ) {
         return func_table[r.ref].ploc;
     }
     else {
-        //baocuo
+        report_err(25);
     }
 
 }
@@ -218,12 +224,10 @@ int Table::find_ident ( int p, string name ) {
 
     if ( p >= id_table.size() || !is_funcrcd(id_table[p]) ) {
         //排除掉越界的情况和p没有指向函数的情况
-        //cout << "dsadyyy";
         return -1;
-
     }
 
-     // 把标识符改成小写形式
+    // 把标识符改成小写形式
     transform(name.begin(),name.end(),name.begin(),::tolower);
     //先在函数内部找
     int i = p+1;
@@ -246,6 +250,30 @@ int Table::find_ident ( int p, string name ) {
     if ( i >= id_table.size() ) {
         return -1;
     }
+}
+
+int Table::find_ident_fun ( string name ) {
+     /*
+        根据标识符的名字和开始查找的位置来查找一个函数记录
+        若找到则返回其下标值，否则返回-1
+    */
+
+    int i;
+
+    // 把标识符改成小写形式
+    transform(name.begin(),name.end(),name.begin(),::tolower);
+    for ( i = 0; i < id_table.size(); i++ ) {
+        if ( id_table[i].lev == 0 && id_table[i].name == name
+             && is_funcrcd(id_table[i]) ) {
+            return i;
+        }
+    }
+
+    //还是没有找到，则返回-1
+    if ( i >= id_table.size() ) {
+        return -1;
+    }
+
 }
 
 id_rcd Table::get_idrcd ( int index ) {
@@ -399,6 +427,7 @@ void Table::add_idrcd ( string name, id_type type ) {
 
         if ( !id_table.empty() && is_id_repeat(name,lev) ) {
             //名称重复，报错
+            report_err(1);
         }
 
         id_table.push_back({name,type,-1,lev,adr});
@@ -408,6 +437,7 @@ void Table::add_idrcd ( string name, id_type type ) {
 
         if ( !id_table.empty() && is_id_repeat(name,0) ) {
             //名称重复，报错
+            report_err(1);
         }
 
         //设定adr的值，以及将fun_adr置零
@@ -463,6 +493,7 @@ void Table::add_idrcd ( string name, int adr, id_type type) {
 
     if ( !id_table.empty() && is_id_repeat(name,lev) ) {
         //名称重复，报错
+        report_err(1);
     }
 
     id_table.push_back({name,type,-1,lev,adr});
@@ -495,6 +526,7 @@ void Table::add_idrcd ( string name, float float_value ) {
 
     if ( !id_table.empty() && is_id_repeat(name,lev) ) {
         //名称重复，报错
+        report_err(1);
     }
 
     //填实常量表和标识符表
@@ -529,28 +561,28 @@ void Table::add_idrcd ( string name, id_type type, int adr, int size) {
     //设定lev和adr的值
     int lev;
     if ( id_table.empty() ) {
-            lev = 0;
-            adr = data_adr;
-            data_adr += size;
+        lev = 0;
+        adr = data_adr;
+        data_adr += size;
 
-            if ( type == CHAR_ARRAY ) {
-                for ( int i = 0; i < size; i++) {
-                    Runtime::push_rs({RS_CHAR,97});
-                }
-
+        if ( type == CHAR_ARRAY ) {
+            for ( int i = 0; i < size; i++) {
+                Runtime::push_rs({RS_CHAR,97});
             }
-            else if ( type == FLOAT_ARRAY ) {
-                for ( int i = 0; i < size; i++) {
-                    Runtime::push_rs({RS_FLOAT,0});
-                }
 
+        }
+        else if ( type == FLOAT_ARRAY ) {
+            for ( int i = 0; i < size; i++) {
+                Runtime::push_rs({RS_FLOAT,0});
             }
-            else {
-                for ( int i = 0; i < size; i++) {
-                    Runtime::push_rs({RS_INT,0});
-                }
 
+        }
+        else {
+            for ( int i = 0; i < size; i++) {
+                Runtime::push_rs({RS_INT,0});
             }
+
+        }
 
     }
     else {
@@ -590,9 +622,9 @@ void Table::add_idrcd ( string name, id_type type, int adr, int size) {
 
     if ( !id_table.empty() && is_id_repeat(name,lev) ) {
         //名称重复，报错
+        report_err(1);
     }
 
-    //cout << adr;
     int ref = array_table.size();
     add_arrayrcd(et,elsize,size);
     id_table.push_back({name,type,ref,lev,adr});
@@ -675,7 +707,6 @@ void Table::test_rconst_table(){
 void Table::test_str_table(){
     ofstream fout;
     fout.open("str_table.txt");
-    //fout<<"Eltype\tElsize\tsizer"
     for ( int i = 0; i < str_table.size(); i++ ) {
        fout << str_table[i] << endl;
     }
@@ -684,7 +715,6 @@ void Table::test_str_table(){
 void Table::test_pcode_table(){
     ofstream fout;
     fout.open("pcode_table.txt");
-    //fout<<"Eltype\tElsize\tsizer"
     for ( int i = 0; i < pcode_table.size(); i++ ) {
 
         string s;

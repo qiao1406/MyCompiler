@@ -10,6 +10,7 @@ class GrammarAnalysis
 {
     public:
         static void ga_programme();
+        static int get_line_loc();
 
     private:
         static Word nextword();
@@ -17,7 +18,6 @@ class GrammarAnalysis
         static void renew_pointer();
         static void prt_grammar_info ( string name);
         static void err_report ( int index );
-        static bool is_sametype ( id_type t1, data_type t2 );
         static void jump_read ( vector<string> v );
 
         static void ga_constant();

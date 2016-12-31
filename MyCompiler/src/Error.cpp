@@ -30,7 +30,7 @@ error_type Error::errtyp_list[] = {
                  {26,"Wrong Return Type"},
                  {27,"Wrong Main Function Return Type"},
                  {28,"Should Be Type Symbol"},
-                 {29,"Except Return Value"},
+                 {29,"Function Except Return Value"},
                  {30,"This Identifier Is Not Array"},
                  {31,"Should Be Integer Value"},
                  {32,"Should Be Array Name"},
