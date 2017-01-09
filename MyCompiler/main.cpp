@@ -9,12 +9,12 @@ using namespace std;
 
 int main() {
 
-    string filename;
-    cout << "请输入文件名";
-    cin >> filename;
+//    string filename;
+//    cout << "请输入文件名";
+//    cin >> filename;
 
     //词法分析
-    WordAnalysis::establish_cache(filename);
+    WordAnalysis::establish_cache("test.txt");
     //语法分析
     GrammarAnalysis::ga_programme();
     Table::test_id_table();

@@ -1,5 +1,5 @@
 # depslib dependency file v1.0
-1483215454 source:e:\git\mycompiler\mycompiler\main.cpp
+1483848527 source:e:\git\mycompiler\mycompiler\main.cpp
 	<iostream>
 	"Word.h"
 	"WordAnalysis.h"
@@ -27,7 +27,7 @@
 	"Table.h"
 	"Runtime.h"
 
-1483215319 source:e:\git\mycompiler\mycompiler\src\grammaranalysis.cpp
+1483848527 source:e:\git\mycompiler\mycompiler\src\grammaranalysis.cpp
 	"GrammarAnalysis.h"
 	"ErrorProcess.h"
 	<sstream>

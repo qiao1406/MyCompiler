@@ -110,7 +110,8 @@ void WordAnalysis::read_programme_code ( string file_name ) {
 
                 if ( buff_str[i-1] == '>' || buff_str[i-1] == '<'
                      || buff_str[i-1] == '=' || buff_str[i-1] == ','
-                     || buff_str[i-1] == '(' ) {
+                     || buff_str[i-1] == '(' || buff_str[i-1] == '+'
+                     || buff_str[i-1] == '-' ) {
                     tempstr += buff_str[i];
                     i++;
                     if ( buff_str[i] == '+' || buff_str[i] == '-' ) {

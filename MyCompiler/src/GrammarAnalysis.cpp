@@ -88,7 +88,7 @@ void GrammarAnalysis::prt_grammar_info ( string name ) {
     /*
         输出语法分析的结果
     */
-    //cout << "This is a " << name << endl;
+    cout << "This is a " << name << endl;
 }
 
 void GrammarAnalysis::err_report ( int index ) {
