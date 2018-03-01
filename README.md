@@ -27,7 +27,7 @@
 | float  | float  | float  | float |
 | cahr   | int  |   float  | int |
 
-| a | b | c | d |
+| y   | int  |  float | char |
 | - | :-: | :-: | -: |
 | int | int  |  float  | int |
 | float | float  | float  | float |
