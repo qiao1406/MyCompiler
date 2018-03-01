@@ -11,21 +11,21 @@
 6.数组下标的表达式不够复杂，要有函数调用的，数组传值嵌套的
 
 对一些未规定问题的处理（更新中）
+
 1.Q：数组越界怎么处理
 A：暂时不做任何处理，若因此产生了运行时错误，则出错信息由其他语法方面的报错方式报出
 
 2. 数据类型转换：int可以转float，反之不行
 
-3.
-读语句只读普通变量，不读数组
+3.读语句只读普通变量，不读数组
 
-3.运算类型转换表
+4.运算类型转换表
 栈顶数\次栈顶数 int 	float 	char
 		int		int 	float 	int
 		float	float 	float 	float
 		char	int		float	int
 		
-4.因为在项目中使用了正则表达式，所以应该在编译选项中使用
+5.因为在项目中使用了正则表达式，所以应该在编译选项中使用
 -std=c++0x or -std=gnu++0x
 设置方法；Settings->Compilers->Global Compiler Settings
 中选择GNU GCC Compiler,然后在Categories中勾选
