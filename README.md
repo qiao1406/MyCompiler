@@ -14,7 +14,7 @@
 
 4.运算类型转换表
 | 栈顶数\次栈顶数   | int  |  float | char |
-| --------   | -----: | :----: | :----: |
+| --------   | -----: | ----: | :----: |
 | int        | int     |   float   | int |
 | float        | float      |   float    | float|
 | cahr       | int      |   float    | int |
