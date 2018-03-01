@@ -26,6 +26,10 @@
 | int | int     |   float   | int |
 | float  | float  | float  | float |
 | cahr   | int  |   float  | int |
+
+| a | b | c | d |
+| - | :-: | :-: | -: |
+| a | v | b | e |
 		
 5.因为在项目中使用了正则表达式，所以应该在编译选项中使用
 -std=c++0x or -std=gnu++0x
