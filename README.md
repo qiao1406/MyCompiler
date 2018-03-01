@@ -21,7 +21,7 @@
 | Hermione Granger | Gryffindor | 100 | 
 | Draco Malfoy | Slytherin | 90 |
 
-| 栈顶数\次栈顶数   | int  |  float | char |
+| y   | int  |  float | char |
 | -   | :-: | :-: | -: |
 | int | int     |   float   | int |
 | float  | float  | float  | float|
