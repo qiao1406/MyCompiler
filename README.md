@@ -22,15 +22,10 @@
 | Draco Malfoy | Slytherin | 90 |
 
 | 栈顶数\次栈顶数   | int  |  float | char |
-
-| --------   | -----: | ----: | :----: |
-
-| int        | int     |   float   | int |
-
-| float        | float      |   float    | float|
-
-| cahr       | int      |   float    | int |
-
+| -   | :-: | :-: | -: |
+| int | int     |   float   | int |
+| float  | float  | float  | float|
+| cahr   | int  |   float    | int |
 		
 5.因为在项目中使用了正则表达式，所以应该在编译选项中使用
 -std=c++0x or -std=gnu++0x
