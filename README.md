@@ -15,6 +15,12 @@
 
 4.运算类型转换表
 
+| Name | Academy | score | 
+| - | :-: | -: | 
+| Harry Potter | Gryffindor| 90 | 
+| Hermione Granger | Gryffindor | 100 | 
+| Draco Malfoy | Slytherin | 90 |
+
 | 栈顶数\次栈顶数   | int  |  float | char |
 
 | --------   | -----: | ----: | :----: |
