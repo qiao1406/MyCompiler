@@ -21,4 +21,5 @@
 | cahr | int | float  | int |
 		
 5.因为在项目中使用了正则表达式，所以应该在编译选项中使用 -std=c++0x or -std=gnu++0x
+
 设置方法：Settings->Compilers->Global Compiler Settings 中选择 GNU GCC Compiler, 然后在 Categories 中勾选 Have g++ follow the C++11 ISO language standard...
